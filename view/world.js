@@ -10,28 +10,45 @@
 
 
 ////// ---------------- TEST --------------
-const WATER = [4,0]
-const GRASS = [3,0]
-const FLOOR = [2,0]
+const GRASS = [3,0];
+const WALL = [1,0];
+const RIVER = [4,0];
+const OCEAN = [3,4];
+const TRAP = [4,1];
+const N = 64 // map size NxN
 
+const tileSet = [GRASS, WALL, RIVER, OCEAN, TRAP];
 var map = {
     cols: 8,
     rows: 8,
     tsize: 32,
     tiles: [
-        GRASS, WATER, WATER, WATER, GRASS, GRASS, WATER, GRASS,
+        GRASS, OCEAN, OCEAN, OCEAN, GRASS, GRASS, OCEAN, GRASS,
         GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
-        GRASS, GRASS, GRASS, GRASS, GRASS, FLOOR, GRASS, GRASS,
-        GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
-        GRASS, GRASS, GRASS, FLOOR, GRASS, GRASS, GRASS, GRASS,
-        GRASS, GRASS, GRASS, GRASS, FLOOR, GRASS, GRASS, GRASS,
-        GRASS, GRASS, GRASS, GRASS, FLOOR, GRASS, GRASS, GRASS,
-        GRASS, GRASS, GRASS, GRASS, FLOOR, GRASS, GRASS, GRASS
+        GRASS, GRASS, TRAP, GRASS, GRASS, RIVER, GRASS, GRASS,
+        GRASS, WALL, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
+        GRASS, WALL, GRASS, RIVER, GRASS, GRASS, GRASS, GRASS,
+        GRASS, WALL, WALL, WALL, RIVER, GRASS, GRASS, GRASS,
+        GRASS, GRASS, GRASS, GRASS, RIVER, GRASS, GRASS, GRASS,
+        GRASS, GRASS, GRASS, GRASS, RIVER, GRASS, GRASS, GRASS
     ],
     getTile: function (col, row) {
         return this.tiles[row * map.cols + col];
     }
 };
+
+var map = {
+    cols: N,
+    rows: N,
+    tsize: 32,
+    tiles: Array.from({length:N*N}, () => tileSet[Math.floor(Math.random() * tileSet.length)]),
+
+    getTile: function (col, row) {
+        return this.tiles[row * map.cols + col];
+    }
+};
+
+
 /////////// -----------------------------------------
 
 
@@ -71,30 +88,41 @@ Loader.getImage = function (key) {
 
 var Game = {};
 
-Game.mapPoller = function (elapsed) {
-    window.requestAnimationFrame(this.mapPoller);
+Game.mapPoller = function () {
     loadRate = 0.25
+    // Draw yellow background
+
     // clear previous map
-    this.ctx.canvas.width = map.cols*32;
-    this.ctx.canvas.height = map.rows*32;    
+    this.ctx.canvas.width = map.cols*map.tsize;
+    this.ctx.canvas.height = map.rows*map.tsize;    
     this.ctx.clearRect(0, 0, map.cols, map.rows);
+
+    // update map 
+    this.render(); 
+}
+
+Game.statusPoller = function () {}
+Game.updateStatus = function () {}
+
+Game.loop = function (elapsed) {
+    window.requestAnimationFrame(this.loop);
+    this.updateStatus();
+    this.mapPoller();
+    this.statusPoller();
 
     var delta = (elapsed - this._previousElapsed) / 1000.0;
     delta = Math.min(delta, loadRate); // load map rate
     this._previousElapsed = elapsed;
+}.bind(Game); // avoid Losing “this”
 
-    // update map 
-    this.render(); 
-}.bind(Game);
-
-Game.run = function (context) {
+Game.start = function (context) {
     this.ctx = context;
     this._previousElapsed = 0;
 
     var p = this.load();
     Promise.all(p).then(function (loaded) {
         this.init();
-        window.requestAnimationFrame(this.mapPoller);
+        window.requestAnimationFrame(this.loop);
     }.bind(this));
 };
 
@@ -117,7 +145,7 @@ Game.render = function () {
                 this.ctx.drawImage(
                     this.tileAtlas, // image
                     tile[0] * map.tsize, // source x
-                    tile[1], // source y
+                    tile[1] * map.tsize, // source y
                     map.tsize, // source width
                     map.tsize, // source height
                     c * map.tsize,  // target x
@@ -136,5 +164,5 @@ Game.render = function () {
 
 window.onload = function () {
     var context = document.getElementById('canvas').getContext('2d');
-    Game.run(context);
+    Game.start(context);
 };
