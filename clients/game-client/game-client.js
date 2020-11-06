@@ -1,1 +1,1 @@
-export default class GameClient extends TotallyUnreliableGameClient {}
+class GameClient {}

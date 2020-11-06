@@ -1,4 +1,4 @@
-export default class LobbyManager {    
+/*export default*/ class LobbyManager {    
 
     constructor(client) {}
 
