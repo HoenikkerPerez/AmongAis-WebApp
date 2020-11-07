@@ -4,21 +4,24 @@
 <!-- canvas -->
 
 <!-- footer -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-
         <title>AMONGAIs</title>
-        <meta name="description" content="A basic HTML5 game">
-        <meta name="author" content="[Your name]">
+        <meta name="description" content="AMONGAIs">
+        <script src="controller/controller.js"></script>
+        <script src="controller/session.js"></script>
+        <script src="view/world.js"></script>
     </head>
     <body>
-
-        <!--Your canvas will come here -->
-
-        <script>
-            // Your script will come here
-        </script>
+        <div class="canvas_wrapper">
+            <canvas id="canvas" width="512" height="512"></canvas>    
+        </div>    
+        <form name="myform" id="myform" ACTION="">ENTER GAME name: <BR>
+            <input type="text" name="nameGame" VALUE=""><P>
+            <input type="button" id="startButton" name="startButton" Value="START">
+            <input type="button" id="joinButton" name="joinButton" Value="JOIN">
+        </form>
     </body>
 </html>

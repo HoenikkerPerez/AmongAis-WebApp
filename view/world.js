@@ -17,7 +17,7 @@ const OCEAN = [3,4];
 const TRAP = [4,1];
 const FLAG = [0,0];
 
-const imgTileSet = '../assets/maptiles.bmp'
+const imgTileSet = './assets/maptiles.bmp'
 
 // const GRASS = [3,0];
 // const WALL = [1,0];
@@ -233,7 +233,7 @@ Game.render = function () {
 // start up function
 //
 
-window.onload = function () {
-    var context = document.getElementById('canvas').getContext('2d');
-    Game.start(context);
-};
+// window.onload = function () {
+//     var context = document.getElementById('canvas').getContext('2d');
+//     Game.start(context);
+// };
