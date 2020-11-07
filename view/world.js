@@ -10,44 +10,90 @@
 
 
 ////// ---------------- TEST --------------
-const GRASS = [3,0];
+const GRASS = [19,7]// [3,0];
 const WALL = [1,0];
 const RIVER = [4,0];
 const OCEAN = [3,4];
 const TRAP = [4,1];
-const N = 64 // map size NxN
+const FLAG = [0,0];
 
-const tileSet = [GRASS, WALL, RIVER, OCEAN, TRAP];
-var map = {
-    cols: 8,
-    rows: 8,
-    tsize: 32,
-    tiles: [
-        GRASS, OCEAN, OCEAN, OCEAN, GRASS, GRASS, OCEAN, GRASS,
-        GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
-        GRASS, GRASS, TRAP, GRASS, GRASS, RIVER, GRASS, GRASS,
-        GRASS, WALL, GRASS, GRASS, GRASS, GRASS, GRASS, GRASS,
-        GRASS, WALL, GRASS, RIVER, GRASS, GRASS, GRASS, GRASS,
-        GRASS, WALL, WALL, WALL, RIVER, GRASS, GRASS, GRASS,
-        GRASS, GRASS, GRASS, GRASS, RIVER, GRASS, GRASS, GRASS,
-        GRASS, GRASS, GRASS, GRASS, RIVER, GRASS, GRASS, GRASS
-    ],
-    getTile: function (col, row) {
-        return this.tiles[row * map.cols + col];
-    }
-};
+const imgTileSet = '../assets/maptiles.bmp'
 
+// const GRASS = [3,0];
+// const WALL = [1,0];
+// const RIVER = [4,0];
+// const OCEAN = [3,4];
+// const TRAP = [4,1];
+// const imgTileSet = '../assets/32x32_map_tile.png'
+const N = 32 // map size NxN
+const terrainSet = [GRASS, WALL, RIVER, OCEAN, TRAP];
 var map = {
     cols: N,
     rows: N,
     tsize: 32,
-    tiles: Array.from({length:N*N}, () => tileSet[Math.floor(Math.random() * tileSet.length)]),
+    tiles: Array.from({length:N*N}, () => terrainSet[Math.floor(Math.random() * terrainSet.length)]),
 
     getTile: function (col, row) {
         return this.tiles[row * map.cols + col];
     }
 };
 
+const mapSymbols = ["A", "a", "b", "c", "x", "X", ".", "@", "#", "~", "!"];
+var map = {
+    cols: N,
+    rows: N,
+    tsize: 32,
+    tiles: Array.from({length:N*N}, () => mapSymbols[Math.floor(Math.random() * mapSymbols.length)]),
+
+    getTile: function (col, row) {
+        idx = row * map.cols + col;
+        x = this.tiles[idx];
+        var tile;
+        var team = -1;
+        xcode = x.charCodeAt(0);
+        if (xcode == 88) { // X: team A flag
+            tile = FLAG;
+            team = 0;
+        }
+        else if (xcode == 120) { // x: team B flag
+            tile = FLAG;
+            team = 1;
+        }        
+        else if(xcode >= 65 && xcode <= 84) {  // uppercase letter team 0
+            tile = [19,7];
+            team = 0;
+        }
+        else if (xcode >= 97 && xcode <= 116) {// lowecase letter team 1
+            tile = [19,7];
+            team = 1;
+        }
+        else { // terrains
+            switch(x) {
+                case ".":
+                    tile = GRASS;
+                    break;
+                case "#":
+                    tile = WALL;
+                    break;
+                case "~":
+                    tile = RIVER;
+                    break;
+                case "@":
+                    tile = OCEAN;
+                    break;
+                case "!":
+                    tile = TRAP;
+                    break;
+                default:
+                    console.log("ERROR map symbol: " + x)
+                    break;
+            }
+            x = "0";
+        }
+        // return correct position in tilemap and the atlas
+        return [tile, x, team]
+    }
+};
 
 /////////// -----------------------------------------
 
@@ -93,8 +139,12 @@ Game.mapPoller = function () {
     // Draw yellow background
 
     // clear previous map
-    this.ctx.canvas.width = map.cols*map.tsize;
-    this.ctx.canvas.height = map.rows*map.tsize;    
+    // this.ctx.canvas.width = map.cols*map.tsize;
+    // this.ctx.canvas.height = map.rows*map.tsize; 
+
+    this.ctx.canvas.width = 512;
+    this.ctx.canvas.height = 512;   
+    this.tsizeMap = this.ctx.canvas.height / N
     this.ctx.clearRect(0, 0, map.cols, map.rows);
 
     // update map 
@@ -129,7 +179,7 @@ Game.start = function (context) {
 
 Game.load = function () {
     return [
-        Loader.loadImage('tiles', '../assets/maptiles.bmp')
+        Loader.loadImage('tiles', imgTileSet)
     ];
 };
 
@@ -138,21 +188,42 @@ Game.init = function () {
 };
 
 Game.render = function () {
+    // console.log("W:" + this.ctx.canvas.width)
+    // console.log(this.ctx.canvas.height)
+    // console.log(this.tsizeMap)
     for (var c = 0; c < map.cols; c++) {
         for (var r = 0; r < map.rows; r++) {
-            var tile = map.getTile(c, r);
+            var [tile, x, team] = map.getTile(c, r);
             if (tile !== (0,0)) { // 0 => empty tile
+                // draw backroung character:
+                if (team == 0) {
+                    this.ctx.fillStyle = "#FF0000";
+                    this.ctx.fillRect(c * this.tsizeMap, 
+                        r * this.tsizeMap,
+                        this.tsizeMap,
+                        this.tsizeMap);
+                }
+                else if (team == 1) {
+                    this.ctx.fillStyle = "#FFF000";
+                    this.ctx.fillRect(c * this.tsizeMap, 
+                        r * this.tsizeMap,
+                        this.tsizeMap,
+                        this.tsizeMap);
+                }
                 this.ctx.drawImage(
                     this.tileAtlas, // image
                     tile[0] * map.tsize, // source x
                     tile[1] * map.tsize, // source y
                     map.tsize, // source width
                     map.tsize, // source height
-                    c * map.tsize,  // target x
-                    r * map.tsize, // target y
-                    map.tsize, // target width
-                    map.tsize // target height
+                    c * this.tsizeMap,  // target x
+                    r * this.tsizeMap, // target y
+                    this.tsizeMap, // target width
+                    this.tsizeMap // target height
                 );
+                if (x !== "0") {
+                    this.ctx.fillText(x, c * this.tsizeMap + 5, r * this.tsizeMap + 12);
+                }
             }
         }
     }
