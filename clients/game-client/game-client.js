@@ -7,7 +7,7 @@ class GameClient {
     // AuthManager
     _auth;
     // MatchSync
-    //_sync;
+    _sync;
 
     // Queue for syncing WebSocket events.
     _wsQueue;
@@ -25,7 +25,7 @@ class GameClient {
             // this._receive,
             () => {console.debug("[STUB_login.receive] "); return "OK"},
         );
-        //this._sync = new MatchSync();
+        this._sync = new MatchSync();
     }
 
     _connect() {
@@ -60,11 +60,19 @@ class GameClient {
 
         let msg = this._lobby.createGame(gameName);
         this._send("miticoOggettoCheNonEsiste.CREATE_GAME", msg);
+        model.status.ga=gameName;
     }
 
     login(username){
         console.debug("Game Client is requesting to login for user " + username);
         return this._auth.login(username);
+    }
+
+    getStatus(gameName){
+        console.debug("Game Client is requesting a game status for " + gameName);
+
+        let msg = this._sync(gameName);
+        this._send("miticoOggettoCheNonEsiste.STATUS", msg);
     }
 
     /* MATCH interface */

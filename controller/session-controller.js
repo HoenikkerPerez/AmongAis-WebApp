@@ -44,7 +44,9 @@ class SessionController {
         // });
 
         document.getElementById("loginButton").addEventListener("click", this.handlers.loginButton);
-
+        document.addEventListener("STATUS", () => {
+            
+        });
         console.debug("SessionController: ready!");
     };
 
