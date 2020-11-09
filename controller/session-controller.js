@@ -7,7 +7,7 @@ class SessionController {
             console.debug("StartGameButton has been clicked!");
             let gameName = document.getElementById("gameNameInput").value;
             console.debug("SessionController: starting a name called " + gameName);
-            this._gameClient.createGame(gameName);
+            this._gameClient.createGame(gameName); // TODO Probabilmente questo "this" è sbagliato
             console.debug("SessionController: going to display the WorldView canvas.");
             let context = document.getElementById('canvas').getContext('2d');
             console.debug("SessionController: going to start the WorldView canvas.");
@@ -27,6 +27,9 @@ class SessionController {
         console.debug("SessionController: loading the listeners for UI events...");
         document.getElementById("startButton").addEventListener("click", this.handlers.startGameButton);
         // document.getElementById("joinButton").addEventListener("click", this.handlers.joinButton);
+        document.addEventListener(miticoOggettoCheNonEsiste.GAME_JOINED, () => {
+            // ...
+        });
         console.debug("SessionController: ready!");
     };
 
