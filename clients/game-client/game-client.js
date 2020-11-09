@@ -30,15 +30,15 @@ class GameClient {
 
         this._wsQueue = [];
         this._ws.onmessage = function(evt) {
-            //console.debug("Game Client received a message - " + data);
+            console.debug("Game Client received a message - " + evt.data);
             let msgtag = this._wsQueue.pop()
             //console.debug("Game Client: Dispatching event" + msgtag);
             document.dispatchEvent(new CustomEvent(msgtag, {data: evt.data })); // TODO non sono sicuro di data:evt.data
-        }
+        }.bind(this)
     }
 
     _send(msgtag, msg) {
-        this._ws.send(msg);
+        this._ws.send(msg + "\n");
         this._wsQueue.push(msgtag);
     }
 
@@ -52,7 +52,7 @@ class GameClient {
         console.debug("Game Client is requesting a game creation for " + gameName);
 
         let msg = this._lobby.createGame(gameName);
-        this._send(miticoOggettoCheNonEsiste.CREATE_GAME, msg);
+        this._send("miticoOggettoCheNonEsiste.CREATE_GAME", msg);
     }
 
     /* MATCH interface */

@@ -27,9 +27,9 @@ class SessionController {
         console.debug("SessionController: loading the listeners for UI events...");
         document.getElementById("startButton").addEventListener("click", this.handlers.startGameButton);
         // document.getElementById("joinButton").addEventListener("click", this.handlers.joinButton);
-        document.addEventListener(miticoOggettoCheNonEsiste.GAME_JOINED, () => {
-            // ...
-        });
+        // document.addEventListener(miticoOggettoCheNonEsiste.GAME_JOINED, () => {
+        //     // ...
+        // });
         console.debug("SessionController: ready!");
     };
 
