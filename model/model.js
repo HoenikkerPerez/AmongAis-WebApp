@@ -2,6 +2,7 @@ var model = {
     map: [],
     status: [],
     username: "",
+
     login: false,
     
     setLogin: function(lg) {this.login=lg},

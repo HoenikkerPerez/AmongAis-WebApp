@@ -15,8 +15,7 @@ class GameClient {
     constructor() {
         this._connect();
         this._lobby = new LobbyManager(
-            (msg) => {this._ws.send(msg)}, // The closure is needed for incorporating the WebSocket.
-            this._receive,
+            (msg) => {this._send(msg)}, // The closure is needed for incorporating the WebSocket.
         );
 
         // TODO: Change with real login _send/_receive functions
@@ -38,29 +37,29 @@ class GameClient {
 
         this._wsQueue = [];
         this._ws.onmessage = function(evt) {
-            console.debug("Game Client received a message - " + data);
-            console.debug("Unfortunately there's no way to retrieve this yet. A Queue for these messages could be helpful, probably!");
-            //console.debug("Game Client received a message - " + data);
-            //this._wsQueue.push(evt.data);
-            //console.debug("Game Client: Dispatching event wsmsg");
-            //elem.dispatchEvent(new CustomEvent("wsmsg"));
-        }
+            console.debug("Game Client received a message - " + evt.data);
+            let msgtag = this._wsQueue.pop()
+            //console.debug("Game Client: Dispatching event" + msgtag);
+            document.dispatchEvent(new CustomEvent(msgtag, {data: evt.data })); // TODO non sono sicuro di data:evt.data
+        }.bind(this)
     }
 
-    _receive() {
-        // await from message queue
-        // return message
+    _send(msgtag, msg) {
+        this._ws.send(msg + "\n");
+        this._wsQueue.push(msgtag);
     }
 
-    /*#close() {
+    _close() {
         this._ws.close();
-    }*/
+    }
 
     /* SESSION interface */
 
     createGame(gameName) {
         console.debug("Game Client is requesting a game creation for " + gameName);
-        this._lobby.createGame(gameName);
+
+        let msg = this._lobby.createGame(gameName);
+        this._send("miticoOggettoCheNonEsiste.CREATE_GAME", msg);
     }
 
     login(username){
