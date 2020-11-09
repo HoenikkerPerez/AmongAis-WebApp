@@ -4,6 +4,7 @@ var model = {
     username: "",
 
     login: false,
+    ingamename:"",
     
     setLogin: function(lg) {this.login=lg},
     setUsername(uName){this.username=uName},
