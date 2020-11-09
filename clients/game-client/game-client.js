@@ -5,7 +5,7 @@ class GameClient {
     // LobbyManager implements the protocol related to the management of the match list.
     _lobby;
     // AuthManager
-    //_auth;
+    _auth;
     // MatchSync
     //_sync;
 
@@ -18,7 +18,14 @@ class GameClient {
             (msg) => {this._ws.send(msg)}, // The closure is needed for incorporating the WebSocket.
             this._receive,
         );
-        //this._auth = new AuthManager();
+
+        // TODO: Change with real login _send/_receive functions
+        this._auth = new AuthManager(
+            // (msg) => {this._ws.send(msg)},
+            (msg) => {console.debug("[STUB_login.send] "+ msg); },
+            // this._receive,
+            () => {console.debug("[STUB_login.receive] "); return "OK"},
+        );
         //this._sync = new MatchSync();
     }
 
@@ -54,6 +61,11 @@ class GameClient {
     createGame(gameName) {
         console.debug("Game Client is requesting a game creation for " + gameName);
         this._lobby.createGame(gameName);
+    }
+
+    login(username){
+        console.debug("Game Client is requesting to login for user " + username);
+        return this._auth.login(username);
     }
 
     /* MATCH interface */

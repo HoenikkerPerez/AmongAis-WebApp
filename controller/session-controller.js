@@ -14,6 +14,17 @@ class SessionController {
             Game.start(context);
         },
 
+        loginButton: (form) => {
+            console.debug("LoginButton has been clicked!");
+            let username = document.getElementById("usernameInput").value;
+            console.debug("LoginController: try to login for " + username);
+            if(this._gameClient.login(username)){
+                model.username = username;
+                model.inGameName = document.getElementById("ingamenameInput").value;
+                document.getElementById("loginForm").style.display="none"
+            }
+        },
+
         /*joinButton (form) {
             let val = document.forms[0].nameGame.value;
             ...
@@ -27,6 +38,8 @@ class SessionController {
         console.debug("SessionController: loading the listeners for UI events...");
         document.getElementById("startButton").addEventListener("click", this.handlers.startGameButton);
         // document.getElementById("joinButton").addEventListener("click", this.handlers.joinButton);
+        document.getElementById("loginButton").addEventListener("click", this.handlers.loginButton);
+
         console.debug("SessionController: ready!");
     };
 

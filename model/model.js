@@ -1,13 +1,16 @@
 var model = {
     map: [],
     status: [],
-    login = false,
+    username: "",
+    login: false,
     
-    getLogin:  function() {return this.login},
     setLogin: function(lg) {this.login=lg},
+    setUsername(uName){this.username=uName},
 
     getMap:  function() {},
     getStatus: function() {},
     setMap: function() {},
     setStatus: function() {}
 }
+
+console.debug("Model Initialized");
