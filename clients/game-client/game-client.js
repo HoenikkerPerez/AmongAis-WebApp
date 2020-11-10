@@ -52,7 +52,7 @@ class GameClient {
         console.debug("Game Client is requesting a game creation for " + gameName);
 
         let msg = this._lobby.createGame(gameName);
-        this._send(miticoOggettoCheNonEsiste.CREATE_GAME, msg);
+        this._send("miticoOggettoCheNonEsiste.CREATE_GAME", msg);
     }
 
     /* MATCH interface */
