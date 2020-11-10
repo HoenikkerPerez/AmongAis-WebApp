@@ -47,7 +47,6 @@ class Map {
         this._map = stringmap.replace('\n', '').split("");
     };
 };
-}
 
 console.debug("Model Initialized");
 
