@@ -36,7 +36,7 @@ class SessionController {
         document.getElementById("joinButton").addEventListener("click", () => {
             let gameName = document.getElementById("gameNameInput").value;
             let username = model.username;
-            console.debug("SessionController: joining a name called " + gameName);
+            console.debug("SessionController: joining a name called " + gameName + " as " + username);
             this._gameClient.joinGame(gameName, username);
         });
         // Login
@@ -66,12 +66,11 @@ class SessionController {
             console.debug(evt);
             let msg = evt.detail;
             let msgOk= msg.startsWith("OK");
+
             if(msgOk) {
                 // Remove home UI elements
-                document.getElementById("homeUI").remove();
-                // Start canvas
-                let context = document.getElementById("canvas").getContext("2d");
-                Game.start(model.status.ga, context);
+                model.setGameActive(true);
+
             }
         }, false);
     }

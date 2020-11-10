@@ -15,7 +15,6 @@ with telnetlib.Telnet(TCP_IP, TCP_PORT, TIMEOUT) as tn:
             print("WS resv:", message)
             tokens = message.split()
             encoded = message.encode()
-            print("Encoded message:", encoded)
             tn.write(encoded)
             # print("Waiting for response...")
             if(tokens[1] == "LOOK"):
