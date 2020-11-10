@@ -65,7 +65,7 @@ class SessionController {
 
     _loadWsMessages() {
         document.addEventListener("miticoOggettoCheNonEsiste.CREATE_GAME", (evt) => {
-            let msgOk = evt.data.startsWith("OK");
+            let msgOk = evt.detail.startsWith("OK");
             if(msgOk)
                 alert("Game has been created!");
             else
