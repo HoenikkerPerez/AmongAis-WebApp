@@ -36,7 +36,7 @@ class SessionController {
         document.getElementById("joinButton").addEventListener("click", () => {
             let gameName = document.getElementById("gameNameInput").value;
             let username = model.username;
-            console.debug("SessionController: joining a name called " + gameName);
+            console.debug("SessionController: joining a name called " + gameName + " as " + username);
             this._gameClient.joinGame(gameName, username);
         });
         // Login

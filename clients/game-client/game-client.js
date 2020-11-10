@@ -58,7 +58,7 @@ class GameClient {
     joinGame(gameName, characterName) {
         console.debug("Game Client is joining game named " + gameName);
         
-        let msg = this._lobby.joinGame(gameName);
+        let msg = this._lobby.joinGame(gameName, characterName);
         model.status.ga = gameName;
         this._send("miticoOggettoCheNonEsiste.JOIN_GAME", msg);
     }
