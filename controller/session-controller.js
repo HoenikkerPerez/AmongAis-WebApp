@@ -66,12 +66,11 @@ class SessionController {
             console.debug(evt);
             let msg = evt.detail;
             let msgOk= msg.startsWith("OK");
+
             if(msgOk) {
                 // Remove home UI elements
-                document.getElementById("homeUI").remove();
-                // Start canvas
-                let context = document.getElementById("canvas").getContext("2d");
-                Game.start(model.status.ga, context);
+                model.setGameActive(true);
+
             }
         }, false);
     }

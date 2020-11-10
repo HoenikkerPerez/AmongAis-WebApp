@@ -1,7 +1,7 @@
 class MatchSync {
 
     lookMap(gameName) {
-        return gameName + "LOOK";
+        return gameName + " LOOK";
     }
   
     getStatus(gameName) {

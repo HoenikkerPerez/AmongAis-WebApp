@@ -49,11 +49,20 @@ class MatchController {
         // send notification to render component
     };
 
-    mapPoller(gameName, timeframe) {
+    mapPoller() {
+        let timeframe = model.timeframe;
+        console.debug("Polling map")
+        let gameName = model.status.gameName;
+        
         this._gameclient.lookMap(gameName);
         window.setTimeout(this.mapPoller, timeframe);
+        //setMap()
     };
     
+    init() {
+        this.mapPoller();
+    };
+
     getStatusHandler(event) {
 
     }
@@ -63,6 +72,7 @@ class MatchController {
         document.addEventListener('keyup', this.keyUpHandler, false);
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", this.lookMapHandler, false);
         document.addEventListener("miticoOggettoCheNonEsiste.STATUS", this.getStatusHandler, false);
+        document.addEventListener("MODEL_SETGAMENAME", this.init, false);
     };
     
 };

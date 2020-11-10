@@ -1,6 +1,6 @@
 var model = {
     map: [],
-    map_name: [],
+    timeframe: 2000,
     status: {
         ga: "gamename",
         state: "lobby-started-ended",
@@ -19,36 +19,29 @@ var model = {
 
     login: false,
     ingamename:"",
-    
+    gameActive: false,
     setLogin: function(lg) {this.login=lg},
     setUsername(uName){this.username=uName},
 
-    getMap:  function() {},
-    getStatus: function() {},
-    setMap: function() {},
-    setStatus: function() {}
-};
-
-class Map {
-    _map;
-    _gameclient;
-    _mapname;
-
-    constructor(gameclient, mapname) {
-        this._gameclient = gameclient;
-        this._mapname = mapname;
-    };
+    setMap: function(map) {
+        // preprocess map
+        this._map = map;
+        document.dispatchEvent(new CustomEvent("MODEL_SETMAP", {detail: {map:map}}));
+    },
     
-    pollMap() {
-        gameclient._send("PollerTag", mapname + "LOOK");
-    };
+    setStatus: function(status) {
+        // preprocess status
+        this._map = status;
+        document.dispatchEvent(new CustomEvent("MODEL_SETSTATUS", {detail: {status:status}}));
+    },
 
-    parseMap(stringmap) {
-        this._map = stringmap.replace('\n', '').split("");
-    };
+    setGameActive: function(gameActive) {
+        // preprocess status
+        this.gameActive = gameActive;
+        document.dispatchEvent(new CustomEvent("MODEL_SETGAMEACTIVE", {detail:gameActive}));
+    }
 };
 
-console.debug("Model Initialized");
 
 // GA: name=nomepartita state=LOBBY size=32
 // ME: symbol=A name=ardo team=0 loyalty=0 energy=256 score=0

@@ -66,7 +66,7 @@ class GameClient {
     login(username){
         console.debug("Game Client is requesting to login for user " + username);
         let msg = this._auth.login(username);
-        this._send("miticoOggettoCheNonEsiste.LOGIN", msg);
+        //this._send("miticoOggettoCheNonEsiste.LOGIN", msg);
         return true;
     }
 
