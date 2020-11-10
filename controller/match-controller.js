@@ -54,10 +54,15 @@ class MatchController {
         window.setTimeout(this.mapPoller, timeframe);
     };
     
+    getStatusHandler(event) {
+
+    }
+
     load() {
         document.addEventListener('keydown', this.keyDownHandler, false);
         document.addEventListener('keyup', this.keyUpHandler, false);
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", this.lookMapHandler, false);
+        document.addEventListener("miticoOggettoCheNonEsiste.STATUS", this.getStatusHandler, false);
     };
     
 };

@@ -14,17 +14,10 @@ class GameClient {
 
     constructor() {
         this._connect();
-        this._lobby = new LobbyManager(
-            (msg) => {this._send(msg)}, // The closure is needed for incorporating the WebSocket.
-        );
+        this._lobby = new LobbyManager();
 
         // TODO: Change with real login _send/_receive functions
-        this._auth = new AuthManager(
-            // (msg) => {this._ws.send(msg)},
-            (msg) => {console.debug("[STUB_login.send] "+ msg); },
-            // this._receive,
-            () => {console.debug("[STUB_login.receive] "); return "OK"},
-        );
+        this._auth = new AuthManager();
         this._sync = new MatchSync();
     }
 
@@ -40,7 +33,7 @@ class GameClient {
             console.debug("Game Client received a message - " + evt.data);
             let msgtag = this._wsQueue.pop()
             console.debug("Game Client: Dispatching event" + msgtag);
-            document.dispatchEvent(new CustomEvent(msgtag, {data: evt.data })); // TODO non sono sicuro di data:evt.data
+            document.dispatchEvent(new CustomEvent(msgtag, {detail: evt.data }));
         }.bind(this)
     }
 
@@ -65,7 +58,9 @@ class GameClient {
 
     login(username){
         console.debug("Game Client is requesting to login for user " + username);
-        return this._auth.login(username);
+        let msg = this._auth.login(username);
+        this._send("miticoOggettoCheNonEsiste.LOGIN", msg);
+        return true;
     }
 
     getStatus(gameName){
