@@ -1,17 +1,53 @@
-var rightPressed = false;
-var leftPressed = false;
-var upPressed = false;
-var downPressed = false;
-
 class MatchController {
-    _gameclient;
+    _gameClient;
+    _lastDirection = {direction: GameClient.UP}; // Not in model because it's intended to be part of the interaction. The server actually allows to shoot in a different direction.
 
     constructor(gameclient) {
         this._gameclient = gameclient;
         this.load();
     }
 
-    lookMapHandler(evt) {
+    getLastDirection() {
+        return this._lastDirection;
+    }
+
+    humanHandler(event, gameClient, lastDirection) {
+        switch(event.key) {
+            case " ":
+                // SHOOT
+                console.debug("MatchController is asking the game client to SHOOT in the last direction moved (" + lastDirection.direction + ").");
+                gameClient.shoot(lastDirection.direction);
+                break;
+            default:
+                // MOVE. Moving also sets the lastDirection in which the player shoots.
+                let newDirection = undefined;
+                switch(event.key) {
+                case "w":
+                    console.debug("MatchController acknowledged the wish of the player to MOVE UP and is going to behave accordingly.");
+                    newDirection = GameClient.UP;
+                    break;
+                case "a":
+                    console.debug("MatchController acknowledged the wish of the player to MOVE LEFT and is going to behave accordingly.");
+                    newDirection = GameClient.LEFT;
+                    break;
+                case "s":
+                    console.debug("MatchController acknowledged the wish of the player to MOVE DOWN and is going to behave accordingly.");
+                    newDirection = GameClient.DOWN;
+                    break;
+                case "d":
+                    console.debug("MatchController acknowledged the wish of the player to MOVE RIGHT and is going to behave accordingly.");
+                    newDirection = GameClient.RIGHT;
+                    break;
+                }
+                if(newDirection) {
+                    console.debug("MatchController is asking the game client to moove " + newDirection);
+                    gameClient.move(newDirection);
+                    lastDirection.direction = newDirection;
+                }
+        }
+    }
+
+    lookMapHandler(event) {
         //LOOK MAP save to model
         console.debug("LOOKMAPHANDLER " + evt.detail);
         // parse map
@@ -38,6 +74,12 @@ class MatchController {
         this._gameclient.lookMap(gameName);
         // setMap()
         window.setTimeout(function(){ this.mapPoller() }.bind(this), timeframe);
+    };
+    
+    init() {
+        //this.mapPoller();
+        // Start listening to human input commands for playing
+        document.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
     };
 
     getStatusHandler(event) {}

@@ -63,13 +63,21 @@ class GameClient {
         this._send("miticoOggettoCheNonEsiste.JOIN_GAME", msg);
     }
 
+    leave() {
+        console.debug("Game Client is requesting to leave.");
+
+        let msg = this._lobby.leave(model.status.ga);
+        this._send("miticoOggettoCheNonEsiste.LEAVE", msg);
+    }
+
     login(username){
         console.debug("Game Client is requesting to login for user " + username);
         let msg = this._auth.login(username);
         //this._send("miticoOggettoCheNonEsiste.LOGIN", msg);
         return true;
     }
-
+    
+    /* MATCH interface */
     getStatus(gameName){
         console.debug("Game Client is requesting a game status for " + gameName);
 
@@ -77,12 +85,29 @@ class GameClient {
         this._send("miticoOggettoCheNonEsiste.STATUS", msg);
     }
 
+    static UP = "N";
+    static DOWN = "D";
+    static LEFT = "W";
+    static RIGHT = "R";
 
-    /* MATCH interface */
     lookMap(gameName) {
         console.debug("Game Client is requesting a map for " + gameName);
 
         let msg = this._sync.lookMap(gameName);
         this._send("miticoOggettoCheNonEsiste.LOOK_MAP", msg);
+    }
+
+    move(direction) {
+        console.debug ("Game Client is requesting a move to direction: " + direction);
+
+        let msg = this._sync.move(model.status.ga, direction);
+        this._send("miticoOggettoCheNonEsiste.MOVE", msg)
+    }
+
+    shoot(direction) {
+        console.debug("Game Client is requesting a shoot to direction: " + direction);
+
+        let msg = this._sync.shoot(model.status.ga, direction);
+        this._send("miticoOggettoCheNonEsiste.SHOOT", msg);
     }
 }

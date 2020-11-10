@@ -15,4 +15,10 @@ class LobbyManager {
         return msg;
     }
 
+    leave(gameName) {
+        let msg = gameName + " LEAVE human-wanted-to-leave";
+        console.debug("LobbyManager built " + msg);
+        return msg;
+    }
+
 }
