@@ -13,9 +13,10 @@ class AuthManager {
 
     login(username) {
         console.debug("AuthManager: sending loginmessage for  " + username);
-        // TODO: Change with real login message
-        this._send("LOGIN " + username);
-        return this._receive() == "OK";
+        return "LOGIN " + username;
     }
 
 }
+
+// this.session._gameClient._connect()
+// this.session._gameClient._send("tag", "test2 LOOK")
