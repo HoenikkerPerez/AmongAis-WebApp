@@ -47,7 +47,7 @@ class MatchController {
         }
     }
 
-    lookMapHandler(event) {
+    lookMapHandler(evt) {
         //LOOK MAP save to model
         console.debug("LOOKMAPHANDLER " + evt.detail);
         // parse map
