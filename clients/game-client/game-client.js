@@ -14,17 +14,10 @@ class GameClient {
 
     constructor() {
         this._connect();
-        this._lobby = new LobbyManager(
-            (msg) => {this._send(msg)}, // The closure is needed for incorporating the WebSocket.
-        );
+        this._lobby = new LobbyManager();
 
         // TODO: Change with real login _send/_receive functions
-        this._auth = new AuthManager(
-            // (msg) => {this._ws.send(msg)},
-            (msg) => {console.debug("[STUB_login.send] "+ msg); },
-            // this._receive,
-            () => {console.debug("[STUB_login.receive] "); return "OK"},
-        );
+        this._auth = new AuthManager();
         this._sync = new MatchSync();
     }
 
@@ -60,12 +53,21 @@ class GameClient {
 
         let msg = this._lobby.createGame(gameName);
         this._send("miticoOggettoCheNonEsiste.CREATE_GAME", msg);
-        model.status.ga=gameName;
+    }
+
+    joinGame(gameName, characterName) {
+        console.debug("Game Client is joining game named " + gameName);
+        
+        let msg = this._lobby.joinGame(gameName);
+        model.status.ga = gameName;
+        this._send("miticoOggettoCheNonEsiste.JOIN_GAME", msg);
     }
 
     login(username){
         console.debug("Game Client is requesting to login for user " + username);
-        return this._auth.login(username);
+        let msg = this._auth.login(username);
+        this._send("miticoOggettoCheNonEsiste.LOGIN", msg);
+        return true;
     }
 
     getStatus(gameName){

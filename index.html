@@ -41,19 +41,21 @@
         <script src="view/world.js"></script>
     </head>
     <body>
-        <div class="login_wrapper">
-            <form name="loginForm" id="loginForm" action="">Login Credentials:<br>
-                <input type="text" id="usernameInput" name="usernameInput" value="username"><P>
-                <input type="text" id="ingamenameInput" name="ingamenameInput" value="in-game Name"><P>
-                <input type="button" id="loginButton" name="loginButton" value="LOGIN">
-            </form>
-        </div>
-        <div class="startgame_wrapper">
-            <form name="startGameForm" id="startGameForm" action="">Enter game name:<br>
-                <input type="text" id="gameNameInput" name="gameNameInput" value=""><P>
-                <input type="button" id="startButton" name="startButton" value="START">
-                <input type="button" id="joinButton" name="joinButton" value="JOIN">
-            </form>
+        <div id="homeUI">
+            <div class="login_wrapper">
+                <form name="loginForm" id="loginForm" action="">Login Credentials:<br>
+                    <input type="text" id="usernameInput" name="usernameInput" value="username"><P>
+                    <input type="text" id="ingamenameInput" name="ingamenameInput" value="in-game Name"><P>
+                    <input type="button" id="loginButton" name="loginButton" value="LOGIN">
+                </form>
+            </div>
+            <div class="startgame_wrapper">
+                <form name="startGameForm" id="startGameForm" action="">Enter game name:<br>
+                    <input type="text" id="gameNameInput" name="gameNameInput" value=""><P>
+                    <input type="button" id="startButton" name="startButton" value="START">
+                    <input type="button" id="joinButton" name="joinButton" value="JOIN">
+                </form>
+            </div>
         </div>
 
         <div class="hud" id="hud">
