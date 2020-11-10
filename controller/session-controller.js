@@ -34,9 +34,6 @@ class SessionController {
         // });
 
         document.getElementById("loginButton").addEventListener("click", this.handlers.loginButton);
-<<<<<<< HEAD
-        
-=======
         document.addEventListener("STATUS", () => {
             
         });
@@ -45,7 +42,6 @@ class SessionController {
             let val = document.forms[0].nameGame.value;
             ...
         }*/
->>>>>>> develop
         console.debug("SessionController: ready!");
     };
 
