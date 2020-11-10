@@ -12,36 +12,38 @@ class MatchController {
     }
 
     humanHandler(event, gameClient, lastDirection) {
-        if(event.key == " ") {
-            // SHOOT case
-            console.debug("MatchController is asking the game client to SHOOT in the last direction moved (" + lastDirection.direction + ").");
-            gameClient.shoot(lastDirection.direction);
-        } else {
-            // MOVE case. Movement sets the lastDirection in which the player shoots.
-            let newDirection = undefined;
-            switch(event.key) {
-            case "w":
-                console.debug("MatchController acknowledged the wish of the player to MOVE UP and is going to behave accordingly.");
-                newDirection = GameClient.UP;
+        switch(event.key) {
+            case " ":
+                // SHOOT
+                console.debug("MatchController is asking the game client to SHOOT in the last direction moved (" + lastDirection.direction + ").");
+                gameClient.shoot(lastDirection.direction);
                 break;
-            case "a":
-                console.debug("MatchController acknowledged the wish of the player to MOVE LEFT and is going to behave accordingly.");
-                newDirection = GameClient.LEFT;
-                break;
-            case "s":
-                console.debug("MatchController acknowledged the wish of the player to MOVE DOWN and is going to behave accordingly.");
-                newDirection = GameClient.DOWN;
-                break;
-            case "d":
-                console.debug("MatchController acknowledged the wish of the player to MOVE RIGHT and is going to behave accordingly.");
-                newDirection = GameClient.RIGHT;
-                break;
-            }
-            if(newDirection) {
-                console.debug("MatchController is asking the game client to moove " + newDirection);
-                gameClient.move(newDirection);
-                lastDirection.direction = newDirection;
-            }
+            default:
+                // MOVE. Moving also sets the lastDirection in which the player shoots.
+                let newDirection = undefined;
+                switch(event.key) {
+                case "w":
+                    console.debug("MatchController acknowledged the wish of the player to MOVE UP and is going to behave accordingly.");
+                    newDirection = GameClient.UP;
+                    break;
+                case "a":
+                    console.debug("MatchController acknowledged the wish of the player to MOVE LEFT and is going to behave accordingly.");
+                    newDirection = GameClient.LEFT;
+                    break;
+                case "s":
+                    console.debug("MatchController acknowledged the wish of the player to MOVE DOWN and is going to behave accordingly.");
+                    newDirection = GameClient.DOWN;
+                    break;
+                case "d":
+                    console.debug("MatchController acknowledged the wish of the player to MOVE RIGHT and is going to behave accordingly.");
+                    newDirection = GameClient.RIGHT;
+                    break;
+                }
+                if(newDirection) {
+                    console.debug("MatchController is asking the game client to moove " + newDirection);
+                    gameClient.move(newDirection);
+                    lastDirection.direction = newDirection;
+                }
         }
     }
 

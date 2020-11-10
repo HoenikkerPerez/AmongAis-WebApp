@@ -50,6 +50,21 @@ class SessionController {
                 document.getElementById("loginForm").style.display="none"
             }
         });
+        // Leave game
+        document.addEventListener("keyup", (evt) => {
+            switch(evt.key) {
+                case "Escape":
+                    console.debug("SessionController retrieved an escape keyup and something is going to happen!");
+                    if(model.status.gameActive){
+                        // LEAVE
+                        console.debug("SessionController is asking the game client to LEAVE.");
+                        this._gameClient.leave();
+                    }
+                    break;
+                default:
+                    console.debug("SessionController retrieved a keyup, but nothing happened.");
+            }
+        });
     }
 
     _loadWsMessages() {
@@ -73,6 +88,12 @@ class SessionController {
 
             }
         }, false);
+
+        document.addEventListener("miticoOggettoCheNonEsiste.LEAVE", (evt) => {
+            console.debug("SessionController has received a LEAVE response from WS.");
+            alert("This has been so refreshing!");
+            location.reload(); 
+        });
     }
 
 }

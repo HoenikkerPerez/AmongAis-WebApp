@@ -63,12 +63,20 @@ class GameClient {
         this._send("miticoOggettoCheNonEsiste.JOIN_GAME", msg);
     }
 
+    leave() {
+        console.debug("Game Client is requesting to leave.");
+
+        let msg = this._lobby.leave(model.status.ga);
+        this._send("miticoOggettoCheNonEsiste.LEAVE", msg);
+    }
+
     login(username){
         console.debug("Game Client is requesting to login for user " + username);
         let msg = this._auth.login(username);
         //this._send("miticoOggettoCheNonEsiste.LOGIN", msg);
         return true;
     }
+    
     /* MATCH interface */
     getStatus(gameName){
         console.debug("Game Client is requesting a game status for " + gameName);
