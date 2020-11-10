@@ -15,10 +15,4 @@ class LobbyManager {
         return msg;
     }
 
-    lookMap(gameName) {
-        let msg = gameName + "LOOK"
-        console.debug("LobbyManager built " + msg);
-        return msg;
-    }
-
 }
