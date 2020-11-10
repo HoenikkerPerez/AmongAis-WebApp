@@ -27,9 +27,9 @@ class SessionController {
 
     _loadUI() {
         // Create game
-        document.getElementById("startButton").addEventListener("click", () => {
+        document.getElementById("createButton").addEventListener("click", () => {
             let gameName = document.getElementById("gameNameInput").value;
-            console.debug("SessionController: starting a name called " + gameName);
+            console.debug("SessionController: creating a name called " + gameName);
             this._gameClient.createGame(gameName);
         });
         // Join game
