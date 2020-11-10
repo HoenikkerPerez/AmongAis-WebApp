@@ -11,7 +11,7 @@ class SessionController {
             console.debug("SessionController: going to display the WorldView canvas.");
             let context = document.getElementById('canvas').getContext('2d');
             console.debug("SessionController: going to start the WorldView canvas.");
-            Game.start(context);
+            Game.start(gameName, context);
         },
 
         loginButton: (form) => {

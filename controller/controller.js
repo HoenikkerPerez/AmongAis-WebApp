@@ -13,5 +13,5 @@ window.onload = function () {
    let gameClient = new GameClient();
    console.debug("Controller: loading SessionController...");
    this.session = new SessionController(gameClient);
-   // this.match = new MatchController(gameClient);
+   this.match = new MatchController(gameClient);
 };

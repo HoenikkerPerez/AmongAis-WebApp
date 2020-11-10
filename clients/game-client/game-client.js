@@ -32,7 +32,7 @@ class GameClient {
         this._ws.onmessage = function(evt) {
             console.debug("Game Client received a message - " + evt.data);
             let msgtag = this._wsQueue.pop()
-            //console.debug("Game Client: Dispatching event" + msgtag);
+            console.debug("Game Client: Dispatching event" + msgtag);
             document.dispatchEvent(new CustomEvent(msgtag, {data: evt.data })); // TODO non sono sicuro di data:evt.data
         }.bind(this)
     }
@@ -70,6 +70,12 @@ class GameClient {
         this._send("miticoOggettoCheNonEsiste.STATUS", msg);
     }
 
-    /* MATCH interface */
 
+    /* MATCH interface */
+    lookMap(gameName) {
+        console.debug("Game Client is requesting a map for " + gameName);
+
+        let msg = this._sync.lookMap(gameName);
+        this._send("miticoOggettoCheNonEsiste.LOOK_MAP", msg);
+    }
 }
