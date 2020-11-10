@@ -60,10 +60,7 @@ class GameClient {
 
         let msg = this._lobby.createGame(gameName);
         this._send("miticoOggettoCheNonEsiste.CREATE_GAME", msg);
-<<<<<<< HEAD
-=======
         model.status.ga=gameName;
->>>>>>> develop
     }
 
     login(username){
