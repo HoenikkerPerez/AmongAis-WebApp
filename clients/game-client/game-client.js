@@ -94,9 +94,9 @@ class GameClient {
     }
 
     static UP = "N";
-    static DOWN = "D";
+    static DOWN = "S";
     static LEFT = "W";
-    static RIGHT = "R";
+    static RIGHT = "E";
 
     lookMap(gameName) {
         console.debug("Game Client is requesting a map for " + gameName);
