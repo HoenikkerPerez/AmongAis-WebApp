@@ -1,10 +1,11 @@
-/**
- * This class implements the protocol related to the match management.
- */
 class MatchSync {
 
+    lookMap(gameName) {
+        return gameName + "LOOK";
+    }
+  
     getStatus(gameName) {
         return gameName + " STATUS";
     }
-
 }
+

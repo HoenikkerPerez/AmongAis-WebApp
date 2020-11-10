@@ -1,5 +1,6 @@
 var model = {
     map: [],
+    map_name: [],
     status: {
         ga: "gamename",
         state: "lobby-started-ended",
@@ -26,6 +27,26 @@ var model = {
     getStatus: function() {},
     setMap: function() {},
     setStatus: function() {}
+};
+
+class Map {
+    _map;
+    _gameclient;
+    _mapname;
+
+    constructor(gameclient, mapname) {
+        this._gameclient = gameclient;
+        this._mapname = mapname;
+    };
+    
+    pollMap() {
+        gameclient._send("PollerTag", mapname + "LOOK");
+    };
+
+    parseMap(stringmap) {
+        this._map = stringmap.replace('\n', '').split("");
+    };
+};
 }
 
 console.debug("Model Initialized");

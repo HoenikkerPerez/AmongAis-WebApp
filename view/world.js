@@ -4,10 +4,7 @@
 // ~  river, walkable, cannot shoot while on it, allow shooting through it
 // @  ocean, not walkable, allow shooting through it
 // !  trap, will subtract energy from player if walked on, allow shooting through it
-
-
-
-
+// import Loader from './loader'
 
 ////// ---------------- TEST --------------
 const GRASS = [19,7]// [3,0];
@@ -19,6 +16,7 @@ const FLAG = [0,0];
 
 const imgTileSet = './assets/maptiles.bmp'
 
+const TIMEFRAME = 2000
 // const GRASS = [3,0];
 // const WALL = [1,0];
 // const RIVER = [4,0];
@@ -95,53 +93,18 @@ var map = {
     }
 };
 
-/////////// -----------------------------------------
-
-
-
-//
-// Asset loader
-//
-
-var Loader = {
-    images: {}
-};
-
-Loader.loadImage = function (key, src) {
-    var img = new Image();
-
-    var d = new Promise(function (resolve, reject) {
-        img.onload = function () {
-            this.images[key] = img;
-            resolve(img);
-        }.bind(this);
-
-        img.onerror = function () {
-            reject('Could not load image: ' + src);
-        };
-    }.bind(this));
-
-    img.src = src;
-    return d;
-};
-
-Loader.getImage = function (key) {
-    return (key in this.images) ? this.images[key] : null;
-};
-
-////////////////////////////////
-
-
 var Game = {};
 
 Game.mapPoller = function () {
-    loadRate = 0.25
+    
+    loadRate = 1
+    console.debug("Polling map")
     // Draw yellow background
 
     // clear previous map
     // this.ctx.canvas.width = map.cols*map.tsize;
     // this.ctx.canvas.height = map.rows*map.tsize; 
-
+    
     this.ctx.canvas.width = 512;
     this.ctx.canvas.height = 512;   
     this.tsizeMap = this.ctx.canvas.height / N
@@ -154,25 +117,26 @@ Game.mapPoller = function () {
 Game.statusPoller = function () {}
 Game.updateStatus = function () {}
 
-Game.loop = function (elapsed) {
-    window.requestAnimationFrame(this.loop);
+Game.loop = function () {
+    
     this.updateStatus();
     this.mapPoller();
     this.statusPoller();
-
-    var delta = (elapsed - this._previousElapsed) / 1000.0;
-    delta = Math.min(delta, loadRate); // load map rate
-    this._previousElapsed = elapsed;
+    endTime = new Date();
+    var elapsed = endTime - this._startTime;
+    this._startTime = endTime;
+    timeoutLoop = window.setTimeout(this.loop, TIMEFRAME);
 }.bind(Game); // avoid Losing “this”
 
-Game.start = function (context) {
+Game.start = function (gameName, context) {
+    this.gameName = gameName
     this.ctx = context;
-    this._previousElapsed = 0;
+    this._startTime = new Date();
 
     var p = this.load();
     Promise.all(p).then(function (loaded) {
         this.init();
-        window.requestAnimationFrame(this.loop);
+        Game.loop()
     }.bind(this));
 };
 
@@ -181,10 +145,11 @@ Game.load = function () {
     return [
         Loader.loadImage('tiles', imgTileSet)
     ];
-};
+}.bind(this);
 
 Game.init = function () {
     this.tileAtlas = Loader.getImage('tiles');
+    this.map = new Map(this, model.map_name);
 };
 
 Game.render = function () {
