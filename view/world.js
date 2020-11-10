@@ -5,26 +5,39 @@
 // ~  river, walkable, cannot shoot while on it, allow shooting through it
 // @  ocean, not walkable, allow shooting through it
 // !  trap, will subtract energy from player if walked on, allow shooting through it
-
+// GRASS: [19,7],
+// WALL: [1,0],
+// RIVER: [4,0],
+// OCEAN: [3,4],
+// TRAP: [4,1],
+// FLAG: [0,0],
+// RECHARGE: [0,0],
+// BARRIER: [0,0]
+const Terrain = {
+    GRASS: [0,1],
+    WALL: [3,3],
+    RIVER: [3,21],
+    OCEAN: [5,21],
+    TRAP: [10,3],
+    FLAG: [0,11],
+    RECHARGE: [21,8],
+    BARRIER: [21,3],
+    PLAYER: [7, 1]
+}
 class WorldUi {
-    GRASS = [19,7]
-    WALL = [1,0];
-    RIVER = [4,0];
-    OCEAN = [3,4];
-    TRAP = [4,1];
-    FLAG = [0,0];
 
-    imgTileSet = './assets/maptiles.bmp'    
+    imgTileSet = './assets/32x32_map_tile.png'    
     
     N = 32 // map size NxN
 
     images = {}
 
-    constructor() {
-        console.debug("RENDER STARTED");
+    constructor(ctx) {
+        this._load();
+        this.ctx = ctx;
         var p = this._loads();
         Promise.all(p).then(function (loaded) {
-            this.tileAtlas = this._getImage(_getImage('tiles'));
+            this.tileAtlas = this._getImage('tiles');
         }.bind(this));
 
         // this.map = new Map(this, model.map_name);
@@ -35,48 +48,54 @@ class WorldUi {
         this._loadWsMessages();
     };
 
-    _get_tile(col, row) {
-        map = model.map;
-        idx = row * map.cols + col;
-        x = this.tiles[idx];
-        var tile;
-        var team = -1;
-        xcode = x.charCodeAt(0);
+    _getTile(col, row) {
+        let map = model._map;
+        let idx = row * map.cols + col;
+        let x = map.tiles[idx];
+        let tile;
+        let team = -1;
+        let xcode = x.charCodeAt(0);
         if (xcode == 88) { // X: team A flag
-            tile = FLAG;
+            tile = Terrain.FLAG;
             team = 0;
         }
         else if (xcode == 120) { // x: team B flag
-            tile = FLAG;
+            tile = Terrain.FLAG;
             team = 1;
         }        
         else if(xcode >= 65 && xcode <= 84) {  // uppercase letter team 0
-            tile = [19,7];
+            tile = Terrain.PLAYER;
             team = 0;
         }
         else if (xcode >= 97 && xcode <= 116) {// lowecase letter team 1
-            tile = [19,7];
+            tile = Terrain.PLAYER;
             team = 1;
         }
         else { // terrains
             switch(x) {
                 case ".":
-                    tile = GRASS;
+                    tile = Terrain.GRASS;
                     break;
                 case "#":
-                    tile = WALL;
+                    tile = Terrain.WALL;
                     break;
                 case "~":
-                    tile = RIVER;
+                    tile = Terrain.RIVER;
                     break;
                 case "@":
-                    tile = OCEAN;
+                    tile = Terrain.OCEAN;
                     break;
                 case "!":
-                    tile = TRAP;
+                    tile = Terrain.TRAP;
+                    break;
+                case "$":
+                    tile = Terrain.RECHARGE;
+                    break;
+                case "&":
+                    tile = Terrain.BARRIER;
                     break;
                 default:
-                    console.log("ERROR map symbol: " + x)
+                    console.debug("ERROR map symbol: " + x)
                     break;
             }
             x = "0";
@@ -87,7 +106,9 @@ class WorldUi {
 
 
     renderMap() {
-        let map = model.map;
+        console.debug("Rendering MAP");
+        let map = model._map;
+        let tsizeMap = this.ctx.canvas.height / this.N
         for (let c = 0; c < map.cols; c++) {
             for (let r = 0; r < map.rows; r++) {
                 let [tile, x, team] = this._getTile(c, r);
@@ -95,17 +116,17 @@ class WorldUi {
                     // draw backroung character:
                     if (team == 0) {
                         this.ctx.fillStyle = "#FF0000";
-                        this.ctx.fillRect(c * this.tsizeMap, 
-                            r * this.tsizeMap,
-                            this.tsizeMap,
-                            this.tsizeMap);
+                        this.ctx.fillRect(c * tsizeMap, 
+                            r * tsizeMap,
+                            tsizeMap,
+                            tsizeMap);
                     }
                     else if (team == 1) {
                         this.ctx.fillStyle = "#FFF000";
-                        this.ctx.fillRect(c * this.tsizeMap, 
-                            r * this.tsizeMap,
-                            this.tsizeMap,
-                            this.tsizeMap);
+                        this.ctx.fillRect(c * tsizeMap, 
+                            r * tsizeMap,
+                            tsizeMap,
+                            tsizeMap);
                     }
                     this.ctx.drawImage(
                         this.tileAtlas, // image
@@ -113,33 +134,37 @@ class WorldUi {
                         tile[1] * map.tsize, // source y
                         map.tsize, // source width
                         map.tsize, // source height
-                        c * this.tsizeMap,  // target x
-                        r * this.tsizeMap, // target y
-                        this.tsizeMap, // target width
-                        this.tsizeMap // target height
+                        c * tsizeMap,  // target x
+                        r * tsizeMap, // target y
+                        tsizeMap, // target width
+                        tsizeMap // target height
                     );
                     if (x !== "0") {
-                        this.ctx.fillText(x, c * this.tsizeMap + 5, r * this.tsizeMap + 12);
+                        this.ctx.fillText(x, c * tsizeMap + 5, r * tsizeMap + 12);
                     }
                 }
             }
         }
-    }
+    };
 
 
     _loadWsMessages() {
-        console.debug("WorldUi: _loadWsMessages");
-
         document.addEventListener("MODEL_SETMAP", () => {
             this.renderMap()
         }, false);
+
+        // document.addEventListener("MODEL_SETGAMEACTIVE", () => {
+        //     console.debug("MODEL_SETGAMEACTIVE")
+        //     this.renderMap()
+        // }, false);
+
     }
 
     
     _loadImage = function (key, src) {
-        var img = new Image();
+        let img = new Image();
     
-        var d = new Promise(function (resolve, reject) {
+        let d = new Promise(function (resolve, reject) {
             img.onload = function () {
                 this.images[key] = img;
                 resolve(img);
@@ -160,10 +185,10 @@ class WorldUi {
 
     _loads = function () {
         return [
-            this.loadImage('tiles', imgTileSet)
+            this._loadImage('tiles', this.imgTileSet)
         ];
     }.bind(this);
-}
+};
 
 
 
