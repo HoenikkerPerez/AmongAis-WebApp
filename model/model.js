@@ -1,5 +1,5 @@
 var model = {
-    map: [],
+    _map: [],
     timeframe: 2000,
     status: {
         ga: "gamename",
@@ -31,7 +31,7 @@ var model = {
     
     setStatus: function(status) {
         // preprocess status
-        this._map = status;
+        this.status = status;
         document.dispatchEvent(new CustomEvent("MODEL_SETSTATUS", {detail: {status:status}}));
     },
 

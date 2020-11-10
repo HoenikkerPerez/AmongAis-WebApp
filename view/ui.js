@@ -22,15 +22,19 @@ class Ui {
         console.debug("UI: gameActivated");
         // Start canvas
         let context = document.getElementById("canvas").getContext("2d");
-        Game.start(model.status.ga, context); // read only model
+        let worldui = new WorldUi(context);
+        // Game.start(model.status.ga, context); // read only model
+        
     };
 
     _loadWsMessages() {
         console.debug("UI: _loadWsMessages");
 
         document.addEventListener("MODEL_SETGAMEACTIVE", () => {
-            this._gameActivated()
+            this._gameActivated();
         }, false);
     }
+
+    
 }
 
