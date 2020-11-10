@@ -27,9 +27,9 @@ class SessionController {
 
     _loadUI() {
         // Create game
-        document.getElementById("startButton").addEventListener("click", () => {
+        document.getElementById("createButton").addEventListener("click", () => {
             let gameName = document.getElementById("gameNameInput").value;
-            console.debug("SessionController: starting a name called " + gameName);
+            console.debug("SessionController: creating a name called " + gameName);
             this._gameClient.createGame(gameName);
         });
         // Join game
@@ -38,6 +38,11 @@ class SessionController {
             let username = model.username;
             console.debug("SessionController: joining a name called " + gameName + " as " + username);
             this._gameClient.joinGame(gameName, username);
+        });
+        // Start game
+        document.getElementById("startButton").addEventListener("click", () => {
+            console.debug("SessionController: starting the joined game");
+            this._gameClient.startGame();
         });
         // Login
         document.getElementById("loginButton").addEventListener("click", () => {
@@ -83,9 +88,20 @@ class SessionController {
             let msgOk= msg.startsWith("OK");
 
             if(msgOk) {
+                // Enable START button
+                document.getElementById("startButton").disabled = false;
+            }
+        }, false);
+
+        document.addEventListener("miticoOggettoCheNonEsiste.START_GAME", (evt) => {
+            console.debug("SessionController has received a START_GAME response from WS. " + evt.detail);
+            console.debug(evt);
+            let msg = evt.detail;
+            let msgOk= msg.startsWith("OK");
+
+            if(msgOk) {
                 // Remove home UI elements
                 model.setGameActive(true);
-
             }
         }, false);
 
