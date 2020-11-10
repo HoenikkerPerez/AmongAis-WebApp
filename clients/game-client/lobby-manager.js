@@ -4,11 +4,21 @@
 class LobbyManager {
 
     createGame(gameName) {
-        return "NEW " + gameName;
+        let msg = "NEW " + gameName;
+        console.debug("LobbyManager built " + msg);
+        return msg;
+    }
+
+    joinGame(gameName, characterName) {
+        let msg = gameName + " JOIN " + characterName + " H role web-team"
+        console.debug("LobbyManager built " + msg);
+        return msg;
     }
 
     lookMap(gameName) {
-        return gameName + "LOOK";
+        let msg = gameName + "LOOK"
+        console.debug("LobbyManager built " + msg);
+        return msg;
     }
 
 }
