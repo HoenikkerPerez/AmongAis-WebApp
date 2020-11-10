@@ -5,9 +5,9 @@ class GameClient {
     // LobbyManager implements the protocol related to the management of the match list.
     _lobby;
     // AuthManager
-    //_auth;
+    _auth;
     // MatchSync
-    //_sync;
+    _sync;
 
     // Queue for syncing WebSocket events.
     _wsQueue;
@@ -17,8 +17,15 @@ class GameClient {
         this._lobby = new LobbyManager(
             (msg) => {this._send(msg)}, // The closure is needed for incorporating the WebSocket.
         );
-        //this._auth = new AuthManager();
-        //this._sync = new MatchSync();
+
+        // TODO: Change with real login _send/_receive functions
+        this._auth = new AuthManager(
+            // (msg) => {this._ws.send(msg)},
+            (msg) => {console.debug("[STUB_login.send] "+ msg); },
+            // this._receive,
+            () => {console.debug("[STUB_login.receive] "); return "OK"},
+        );
+        this._sync = new MatchSync();
     }
 
     _connect() {
@@ -30,15 +37,15 @@ class GameClient {
 
         this._wsQueue = [];
         this._ws.onmessage = function(evt) {
-            //console.debug("Game Client received a message - " + data);
+            console.debug("Game Client received a message - " + evt.data);
             let msgtag = this._wsQueue.pop()
-            //console.debug("Game Client: Dispatching event" + msgtag);
-            document.dispatchEvent(new CustomEvent(msgtag, {data: evt.data })); // TODO non sono sicuro di data:evt.data
-        }
+            console.debug("Game Client: Dispatching event" + msgtag);
+            document.dispatchEvent(new CustomEvent(msgtag, {detail: evt.data }));
+        }.bind(this)
     }
 
     _send(msgtag, msg) {
-        this._ws.send(msg);
+        this._ws.send(msg + "\n");
         this._wsQueue.push(msgtag);
     }
 
@@ -52,9 +59,28 @@ class GameClient {
         console.debug("Game Client is requesting a game creation for " + gameName);
 
         let msg = this._lobby.createGame(gameName);
-        this._send(miticoOggettoCheNonEsiste.CREATE_GAME, msg);
+        this._send("miticoOggettoCheNonEsiste.CREATE_GAME", msg);
+        model.status.ga=gameName;
     }
 
-    /* MATCH interface */
+    login(username){
+        console.debug("Game Client is requesting to login for user " + username);
+        return this._auth.login(username);
+    }
 
+    getStatus(gameName){
+        console.debug("Game Client is requesting a game status for " + gameName);
+
+        let msg = this._sync(gameName);
+        this._send("miticoOggettoCheNonEsiste.STATUS", msg);
+    }
+
+
+    /* MATCH interface */
+    lookMap(gameName) {
+        console.debug("Game Client is requesting a map for " + gameName);
+
+        let msg = this._sync.lookMap(gameName);
+        this._send("miticoOggettoCheNonEsiste.LOOK_MAP", msg);
+    }
 }
