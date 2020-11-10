@@ -7,7 +7,7 @@ class GameClient {
     // AuthManager
     //_auth;
     // MatchSync
-    //_sync;
+    _sync;
 
     // Queue for syncing WebSocket events.
     _wsQueue;
@@ -17,8 +17,8 @@ class GameClient {
         this._lobby = new LobbyManager(
             (msg) => {this._send(msg)}, // The closure is needed for incorporating the WebSocket.
         );
+        this._sync = new MatchSync();
         //this._auth = new AuthManager();
-        //this._sync = new MatchSync();
     }
 
     _connect() {
@@ -32,7 +32,7 @@ class GameClient {
         this._ws.onmessage = function(evt) {
             console.debug("Game Client received a message - " + evt.data);
             let msgtag = this._wsQueue.pop()
-            //console.debug("Game Client: Dispatching event" + msgtag);
+            console.debug("Game Client: Dispatching event" + msgtag);
             document.dispatchEvent(new CustomEvent(msgtag, {data: evt.data })); // TODO non sono sicuro di data:evt.data
         }.bind(this)
     }
@@ -55,6 +55,12 @@ class GameClient {
         this._send("miticoOggettoCheNonEsiste.CREATE_GAME", msg);
     }
 
-    /* MATCH interface */
 
+    /* MATCH interface */
+    lookMap(gameName) {
+        console.debug("Game Client is requesting a map for " + gameName);
+
+        let msg = this._sync.lookMap(gameName);
+        this._send("miticoOggettoCheNonEsiste.LOOK_MAP", msg);
+    }
 }
