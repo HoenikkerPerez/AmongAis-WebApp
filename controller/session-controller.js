@@ -7,13 +7,10 @@ class SessionController {
         this._gameClient = gameClient;
         this._load();
 
-
         /*console.debug("SessionController: going to display the WorldView canvas.");
         let context = document.getElementById('canvas').getContext('2d');
         console.debug("SessionController: going to start the WorldView canvas.");
         Game.start(context);*/
-        
-        // 
 
         document.addEventListener("miticoOggettoCheNonEsiste.GAME_JOINED", () => {
             // ...
