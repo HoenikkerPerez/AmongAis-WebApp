@@ -7,4 +7,8 @@ class LobbyManager {
         return "NEW " + gameName;
     }
 
+    lookMap(gameName) {
+        return gameName + "LOOK";
+    }
+
 }

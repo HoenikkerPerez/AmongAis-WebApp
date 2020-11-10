@@ -3,4 +3,4 @@
 Collaborators
 Michele Agostini
 Luca Peretti
-Edoardo Maione Test1
+Edoardo Maione
