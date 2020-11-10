@@ -33,7 +33,7 @@ class GameClient {
             console.debug("Game Client received a message - " + evt.data);
             let msgtag = this._wsQueue.pop()
             console.debug("Game Client: Dispatching event" + msgtag);
-            document.dispatchEvent(new CustomEvent(msgtag, {data: evt.data })); // TODO non sono sicuro di data:evt.data
+            document.dispatchEvent(new CustomEvent(msgtag, {detail: evt.data }));
         }.bind(this)
     }
 
