@@ -2,8 +2,8 @@ class MatchController {
     _gameClient;
     _lastDirection = {direction: GameClient.UP}; // Not in model because it's intended to be part of the interaction. The server actually allows to shoot in a different direction.
 
-    constructor(gameclient) {
-        this._gameclient = gameclient;
+    constructor(gameClient) {
+        this._gameClient = gameClient;
         this.load();
     }
 
@@ -71,15 +71,9 @@ class MatchController {
         console.debug("Polling map")
         let gameName = model.status.ga;
         
-        this._gameclient.lookMap(gameName);
+        this._gameClient.lookMap(gameName);
         // setMap()
         window.setTimeout(function(){ this.mapPoller() }.bind(this), timeframe);
-    };
-    
-    init() {
-        //this.mapPoller();
-        // Start listening to human input commands for playing
-        document.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
     };
 
     getStatusHandler(event) {}
@@ -89,9 +83,12 @@ class MatchController {
         document.addEventListener("miticoOggettoCheNonEsiste.STATUS", this.getStatusHandler, false);
         // document.addEventListener("MODEL_SETGAMENAME", this.init, false);
         document.addEventListener("MODEL_SETGAMEACTIVE", () => {
-                let timeframe = model.timeframe;
-                window.setTimeout(function(){ this.mapPoller() }.bind(this), timeframe);
-            }, false);
+            // Init human commands
+            document.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
+            // Init map polling
+            let timeframe = model.timeframe;
+            window.setTimeout(function(){ this.mapPoller() }.bind(this), timeframe);
+        }, false);
     };
     
 };
