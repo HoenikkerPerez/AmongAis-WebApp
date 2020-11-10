@@ -42,10 +42,18 @@ class MatchController {
 
     lookMapHandler(event) {
         //LOOK MAP save to model
+        console.log("LOOKMAPHANDLER" + event.data);
         // parse map
         // update model
+
+        // send notification to render component
     };
 
+    mapPoller(gameName, timeframe) {
+        this._gameclient.lookMap(gameName);
+        window.setTimeout(this.mapPoller, timeframe);
+    };
+    
     load() {
         document.addEventListener('keydown', this.keyDownHandler, false);
         document.addEventListener('keyup', this.keyUpHandler, false);

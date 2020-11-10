@@ -100,7 +100,7 @@ Game.mapPoller = function () {
     loadRate = 1
     console.debug("Polling map")
     // Draw yellow background
-
+    
     // clear previous map
     // this.ctx.canvas.width = map.cols*map.tsize;
     // this.ctx.canvas.height = map.rows*map.tsize; 
@@ -118,10 +118,7 @@ Game.statusPoller = function () {}
 Game.updateStatus = function () {}
 
 Game.loop = function () {
-    
-    this.updateStatus();
-    this.mapPoller();
-    this.statusPoller();
+
     endTime = new Date();
     var elapsed = endTime - this._startTime;
     this._startTime = endTime;
@@ -151,6 +148,14 @@ Game.init = function () {
     this.tileAtlas = Loader.getImage('tiles');
     this.map = new Map(this, model.map_name);
 };
+
+
+Game.updatedMapHandler = function(evt) {
+    // On map update -> rerender the map
+    this.render
+    // parse map
+    // update model
+}.bind(this);
 
 Game.render = function () {
     // console.log("W:" + this.ctx.canvas.width)
