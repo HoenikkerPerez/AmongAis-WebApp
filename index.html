@@ -1,6 +1,17 @@
 <!-- header -->
 
 <!-- login -->
+    <!-- formLog -->
+        <!-- logName -->
+        <!-- nikname -->
+
+<!-- createGame -->
+    <!-- formCreate -->
+        <!-- matchName -->
+        <!-- PlayerNature -->
+        <!-- PlayerRole -->
+        <!-- Player-info -->
+
 <!-- canvas -->
 
 <!-- footer -->
@@ -10,10 +21,12 @@
         <meta charset="UTF-8">
         <title>AMONGAIs</title>
         <meta name="description" content="AMONGAIs">
+
         <!-- Model -->
         <script src="model/model.js"></script>
         
         <!-- Client -->
+        <script src="clients/game-client/auth.js"></script>
         <script src="clients/game-client/match-sync.js"></script>
         <script src="clients/game-client/lobby-manager.js"></script>
         <script src="clients/game-client/game-client.js"></script>
@@ -28,12 +41,22 @@
         <script src="view/world.js"></script>
     </head>
     <body>
+        <div class="login_wrapper">
+            <form name="loginForm" id="loginForm" action="">Login Credentials:<br>
+                <input type="text" id="usernameInput" name="usernameInput" value="username"><P>
+                <input type="text" id="ingamenameInput" name="ingamenameInput" value="in-game Name"><P>
+                <input type="button" id="loginButton" name="loginButton" value="LOGIN">
+            </form>
+        </div>
         <div class="startgame_wrapper">
             <form name="startGameForm" id="startGameForm" action="">Enter game name:<br>
                 <input type="text" id="gameNameInput" name="gameNameInput" value=""><P>
                 <input type="button" id="startButton" name="startButton" value="START">
-                <!--<input type="button" id="joinButton" name="joinButton" value="JOIN">-->
+                <input type="button" id="joinButton" name="joinButton" value="JOIN">
             </form>
+        </div>
+
+        <div class="hud" id="hud">
         </div>
 
         <div class="canvas_wrapper">
