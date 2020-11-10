@@ -54,6 +54,14 @@ class SessionController {
                 document.getElementById("loginForm").style.display="none"
             }
         });
+
+        document.getElementById("statusButton").addEventListener("click", () => {
+            console.debug("StatusButton has been clicked!");
+            let gameName = document.getElementById("gameNameInput").value;
+            let username = document.getElementById("usernameInput").value;
+            console.debug("SessionController: try to get status for " + gameName);
+            this._gameClient.getStatus(username)
+        });
     }
 
     _loadWsMessages() {

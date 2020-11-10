@@ -49,12 +49,17 @@ class MatchController {
     getStatusHandler(event) {
 
     }
+    _updateStatus() {
+        document.addEventListener("STATUS", (evt) => {
+            document.getElementById("hud").textContent = "Status received";
+        }, false);
+    }
 
     load() {
         document.addEventListener('keydown', this.keyDownHandler, false);
         document.addEventListener('keyup', this.keyUpHandler, false);
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", this.lookMapHandler, false);
-        document.addEventListener("miticoOggettoCheNonEsiste.STATUS", this.getStatusHandler, false);
+        document.addEventListener("STATUS", this.getStatusHandler, false);
     };
     
 };
