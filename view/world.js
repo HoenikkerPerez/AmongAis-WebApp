@@ -24,6 +24,7 @@ const Terrain = {
     BARRIER: [21,3],
     PLAYER: [7, 1]
 }
+
 class WorldUi {
 
     imgTileSet = './assets/32x32_map_tile.png'    
@@ -122,7 +123,7 @@ class WorldUi {
                             tsizeMap);
                     }
                     else if (team == 1) {
-                        this.ctx.fillStyle = "#FFF000";
+                        this.ctx.fillStyle = "#0000ff";
                         this.ctx.fillRect(c * tsizeMap, 
                             r * tsizeMap,
                             tsizeMap,
