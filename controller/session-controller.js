@@ -35,6 +35,14 @@ class SessionController {
             console.debug("SessionController: joining a name called " + gameName + " as " + username);
             this._gameClient.joinGame(gameName, username);
         });
+        // Spectate game
+        document.getElementById("spectateButton").addEventListener("click", () => {
+            let gameName = document.getElementById("gameNameInput").value;
+            
+            model.status.ga = gameName;
+            // Remove home UI elements
+            model.setGameActive(true);
+        });
         // Login
         document.getElementById("loginButton").addEventListener("click", () => {
             console.debug("LoginButton has been clicked!");

@@ -2,6 +2,14 @@ var model = {
     _map: [],
     timeframe: 2000, // Map polling rate
     connectionTimeframe: 200, // Minimum delay between requests
+    net: {
+        game: {
+            ws: "ws://93.150.215.219:8765"
+        },
+        chat: {
+            ws: "ws://localhost:8766"
+        }
+}   ,
     status: {
         ga: "gamename",
         state: "lobby-started-ended",
