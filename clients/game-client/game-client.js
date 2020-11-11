@@ -32,7 +32,7 @@ class GameClient {
         this._ws.onmessage = function(evt) {
             let msg = evt.data;
             console.debug("Game Client received a message - " + msg);
-            let msgtag = this._wsQueue.pop()
+            let msgtag = this._wsQueue.shift()
             console.debug("Game Client: Dispatching event" + msgtag);
             document.dispatchEvent(new CustomEvent(msgtag, {detail: evt.data }));
             // Check too fast error
@@ -41,11 +41,25 @@ class GameClient {
                 console.error("Too fast :(");
             }
         }.bind(this)
+
+        window.setTimeout(function(){ this._requestHandler() }.bind(this), model.connectionTimeframe);
     }
 
+    // _send is called by the other methods of the client to send a message
     _send(msgtag, msg) {
-        this._ws.send(msg + "\n");
         this._wsQueue.push(msgtag);
+        this._wsRequests.push(msg);
+    }
+
+    // _requestHandler is called the timer to avoid sending messages too fast
+    _requestHandler() {
+        console.debug("Game Client: it's TIME to send a message!");
+        if(this._wsRequests.length > 0) {
+            let msg = this._wsRequests.shift();
+            this._ws.send(msg + "\n");
+        }
+        // Repeat endlessly
+        window.setTimeout(function(){ this._requestHandler() }.bind(this), model.connectionTimeframe);
     }
 
     _close() {
