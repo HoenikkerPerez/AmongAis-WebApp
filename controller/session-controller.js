@@ -9,10 +9,6 @@ class SessionController {
 
         console.debug("SessionController: loading the listeners for UI events...");
 
-        document.addEventListener("STATUS", () => {
-            
-        });
-
         console.debug("SessionController: ready!");
     };
 
@@ -50,6 +46,7 @@ class SessionController {
                 document.getElementById("loginForm").style.display="none"
             }
         });
+     
         // Session-related commands during the match (keys)
         document.addEventListener("keyup", (evt) => {
             switch(evt.key) {

@@ -95,8 +95,8 @@ class GameClient {
     getStatus(gameName){
         console.debug("Game Client is requesting a game status for " + gameName);
 
-        let msg = this._sync(gameName);
-        this._send("miticoOggettoCheNonEsiste.STATUS", msg);
+        let msg = this._sync.getStatus(gameName);
+        this._send("STATUS", msg);
     }
 
     static UP = "N";
