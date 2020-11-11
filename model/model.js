@@ -1,6 +1,7 @@
 var model = {
     _map: [],
-    timeframe: 2000,
+    timeframe: 2000, // Map polling rate
+    connectionTimeframe: 200, // Minimum delay between requests
     status: {
         ga: "gamename",
         state: "lobby-started-ended",
