@@ -9,10 +9,6 @@ class SessionController {
 
         console.debug("SessionController: loading the listeners for UI events...");
 
-        document.addEventListener("STATUS", () => {
-            
-        });
-
         console.debug("SessionController: ready!");
     };
 
@@ -55,6 +51,8 @@ class SessionController {
                 document.getElementById("loginForm").style.display="none"
             }
         });
+
+
         // Leave game
         document.addEventListener("keyup", (evt) => {
             switch(evt.key) {

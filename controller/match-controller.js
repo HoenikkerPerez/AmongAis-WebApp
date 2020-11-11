@@ -76,11 +76,59 @@ class MatchController {
         window.setTimeout(function(){ this.mapPoller() }.bind(this), timeframe);
     };
 
-    getStatusHandler(event) {}
+
+    getStatusHandler(evt){
+        let stat = evt.detail.slice(7).replace("«ENDOFSTATUS»",'').trim().split('\n');
+        let ga = {};
+        let ga_list = stat[0].slice(4).split(' ')
+        for(let j=0;j<ga_list.length;j++){
+            ga[ga_list[j].split('=')[0]] = ga_list[j].split('=')[1];
+        }
+
+        let me = {}
+        let me_list = stat[1].slice(4).split(' ');
+        for(let j=0;j<me_list.length;j++){
+            me[me_list[j].split('=')[0]] = me_list[j].split('=')[1];
+        }
+
+        let pls = [];
+        for(let i=2;i<stat.length;i++){
+            let pl = {};
+            let pl_list = stat[i].slice(4).split(' ')
+            for(let j=0;j<pl_list.length;j++){
+                pl[pl_list[j].split('=')[0]] = pl_list[j].split('=')[1];
+            }
+            pls.push(pl);
+        }
+
+        let status = {};
+        status.ga = ga.name;
+        status.state = ga.state;
+        status.size = ga.size;
+
+        status.me = me;
+        status.pl_list = pls;
+
+        model.setStatus(status);
+
+        // document.getElementById("hud").textContent = evt.detail;//"Status received";
+    };
+
+    statusPoller(){
+        console.debug("status poller run");
+        let gameName = model.status.ga;
+        console.debug("matchController: try to get status for " + gameName);
+        this._gameClient.getStatus(gameName)
+    };
 
     load() {
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", this.lookMapHandler, false);
-        document.addEventListener("miticoOggettoCheNonEsiste.STATUS", this.getStatusHandler, false);
+        
+        document.getElementById("statusButton").addEventListener("click", () => {
+            this.statusPoller();
+        });
+        document.addEventListener("STATUS", this.getStatusHandler, false);
+
         // document.addEventListener("MODEL_SETGAMENAME", this.init, false);
         document.addEventListener("MODEL_SETGAMEACTIVE", () => {
             // Init human commands
