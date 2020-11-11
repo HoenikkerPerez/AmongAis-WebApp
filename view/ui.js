@@ -23,6 +23,7 @@ class Ui {
         // Start canvas
         let context = document.getElementById("canvas").getContext("2d");
         let worldui = new WorldUi(context);
+        let hudui = new HudUi();
         // Game.start(model.status.ga, context); // read only model
         
     };
