@@ -1,17 +1,17 @@
-//const { match } = require("assert"); // can we delete this? what is this for?
-//const { default: SessionController } = require("./session-controller"); // same as above
-
-//session;
-//match;
-//chat;
-// league;
-
 // Controller
-
 window.onload = function () {
+   // Loading session
    console.debug("Controller: loading GameClient...");
    let gameClient = new GameClient();
    console.debug("Controller: loading SessionController...");
    this.session = new SessionController(gameClient);
+   // Loading match
    this.match = new MatchController(gameClient);
+   // Loading chat
+   console.debug("Controller loading ChatController...");
+   // let chatClient = new ChatClient();
+   // this.chat = new ChatController(chatClient);
+   // Loading league
+   //console.debug("Controller: loading LeagueController...");
+   // ...
 };
