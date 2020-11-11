@@ -30,10 +30,16 @@ class GameClient {
 
         this._wsQueue = [];
         this._ws.onmessage = function(evt) {
-            console.debug("Game Client received a message - " + evt.data);
+            let msg = evt.data;
+            console.debug("Game Client received a message - " + msg);
             let msgtag = this._wsQueue.pop()
             console.debug("Game Client: Dispatching event" + msgtag);
             document.dispatchEvent(new CustomEvent(msgtag, {detail: evt.data }));
+            // Check too fast error
+            if(msg.data == "ERROR 401 Too fast") {
+                alert("Connection closed by the server - too fast.");
+                console.error("Too fast :(");
+            }
         }.bind(this)
     }
 
