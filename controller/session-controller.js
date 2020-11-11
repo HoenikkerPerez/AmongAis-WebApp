@@ -9,10 +9,6 @@ class SessionController {
 
         console.debug("SessionController: loading the listeners for UI events...");
 
-        document.addEventListener("STATUS", () => {
-            
-        });
-
         console.debug("SessionController: ready!");
     };
 
@@ -56,14 +52,7 @@ class SessionController {
             }
         });
 
-        document.getElementById("statusButton").addEventListener("click", () => {
-            console.debug("StatusButton has been clicked!");
-            let gameName = document.getElementById("gameNameInput").value;
-            let username = document.getElementById("usernameInput").value;
-            console.debug("SessionController: try to get status for " + gameName);
-            this._gameClient.getStatus(username)
-        });
-        
+
         // Leave game
         document.addEventListener("keyup", (evt) => {
             switch(evt.key) {
