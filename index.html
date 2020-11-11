@@ -40,6 +40,7 @@
         <script src="view/ui.js"></script>
         <script src="view/loader.js"></script>
         <script src="view/world.js"></script>
+        <script src="view/hud.js"></script>
         <script src="view/gui.js"></script>
 
     </head>
@@ -61,14 +62,13 @@
             </div>
         </div>
 
-        <div class="hud" id="hud">
+        <div class="canvas_wrapper">
+            <canvas id="canvas" width="512" height="512"></canvas>    
         </div>
+        <div class="hud" id="hud", style="white-space: pre;"></div>
         <form name="statusForm" id="statusForm" action="">Action get status:<br>
             <input type="button" id="statusButton" name="statusButton" value="STATUS">
         </form>
 
-        <div class="canvas_wrapper">
-            <canvas id="canvas" width="512" height="512"></canvas>    
-        </div>
     </body>
 </html>

@@ -50,6 +50,10 @@ class MatchController {
     lookMapHandler(evt) {
         //LOOK MAP save to model
         console.debug("LOOKMAPHANDLER " + evt.detail);
+        let msgOk = evt.detail.startsWith("OK");
+        if(!msgOk){
+            return;
+        }
         // parse map
         let map = evt.detail;
         let parsed_map = map.slice(7).replace('«ENDOFMAP»', '').replace(/\n/g, '').split('');
@@ -78,6 +82,13 @@ class MatchController {
 
 
     getStatusHandler(evt){
+        console.debug("getStatusHandler: " + evt.detail);
+        let msgOk = evt.detail.startsWith("OK");
+        if(!msgOk){
+            // alert("HUD[!]" + evt.detail);
+            return;
+        }
+
         let stat = evt.detail.slice(7).replace("«ENDOFSTATUS»",'').trim().split('\n');
         let ga = {};
         let ga_list = stat[0].slice(4).split(' ')
@@ -111,7 +122,6 @@ class MatchController {
 
         model.setStatus(status);
 
-        // document.getElementById("hud").textContent = evt.detail;//"Status received";
     };
 
     statusPoller(){
