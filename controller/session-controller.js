@@ -8,20 +8,11 @@ class SessionController {
         this._load();
 
         console.debug("SessionController: loading the listeners for UI events...");
-        // document.getElementById("joinButton").addEventListener("click", this.handlers.joinButton);
-
-        // document.addEventListener(miticoOggettoCheNonEsiste.GAME_JOINED, () => {
-        //     // ...
-        // });
 
         document.addEventListener("STATUS", () => {
             
         });
 
-        /*joinButton (form) {
-            let val = document.forms[0].nameGame.value;
-            ...
-        }*/
         console.debug("SessionController: ready!");
     };
 
@@ -36,13 +27,23 @@ class SessionController {
 
     _loadUI() {
         // Create game
-        document.getElementById("startButton").addEventListener("click", () => {
+        document.getElementById("createButton").addEventListener("click", () => {
             let gameName = document.getElementById("gameNameInput").value;
-            console.debug("SessionController: starting a name called " + gameName);
+            console.debug("SessionController: creating a name called " + gameName);
             this._gameClient.createGame(gameName);
         });
         // Join game
-        //document.getElementById("joinButton").addEventListener("click", TODO);
+        document.getElementById("joinButton").addEventListener("click", () => {
+            let gameName = document.getElementById("gameNameInput").value;
+            let username = model.username;
+            console.debug("SessionController: joining a name called " + gameName + " as " + username);
+            this._gameClient.joinGame(gameName, username);
+        });
+        // Start game
+        document.getElementById("startButton").addEventListener("click", () => {
+            console.debug("SessionController: starting the joined game");
+            this._gameClient.startGame();
+        });
         // Login
         document.getElementById("loginButton").addEventListener("click", () => {
             console.debug("LoginButton has been clicked!");
@@ -62,6 +63,22 @@ class SessionController {
             console.debug("SessionController: try to get status for " + gameName);
             this._gameClient.getStatus(username)
         });
+        
+        // Leave game
+        document.addEventListener("keyup", (evt) => {
+            switch(evt.key) {
+                case "Escape":
+                    console.debug("SessionController retrieved an escape keyup and something is going to happen!");
+                    if(model.status.gameActive){
+                        // LEAVE
+                        console.debug("SessionController is asking the game client to LEAVE.");
+                        this._gameClient.leave();
+                    }
+                    break;
+                default:
+                    console.debug("SessionController retrieved a keyup, but nothing happened.");
+            }
+        });
     }
 
     _loadWsMessages() {
@@ -72,6 +89,36 @@ class SessionController {
             else
                 alert("Game creation failed.");
         }, false);
+
+        document.addEventListener("miticoOggettoCheNonEsiste.JOIN_GAME", (evt) => {
+            console.debug("SessionController has received a JOIN_GAME response from WS. " + evt.detail);
+            console.debug(evt);
+            let msg = evt.detail;
+            let msgOk= msg.startsWith("OK");
+
+            if(msgOk) {
+                // Enable START button
+                document.getElementById("startButton").disabled = false;
+            }
+        }, false);
+
+        document.addEventListener("miticoOggettoCheNonEsiste.START_GAME", (evt) => {
+            console.debug("SessionController has received a START_GAME response from WS. " + evt.detail);
+            console.debug(evt);
+            let msg = evt.detail;
+            let msgOk= msg.startsWith("OK");
+
+            if(msgOk) {
+                // Remove home UI elements
+                model.setGameActive(true);
+            }
+        }, false);
+
+        document.addEventListener("miticoOggettoCheNonEsiste.LEAVE", (evt) => {
+            console.debug("SessionController has received a LEAVE response from WS.");
+            alert("This has been so refreshing!");
+            location.reload(); 
+        });
     }
 
 }
