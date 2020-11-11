@@ -1,3 +1,4 @@
+import time
 import websockets as ws
 import asyncio
 import telnetlib
@@ -25,6 +26,7 @@ with telnetlib.Telnet(TCP_IP, TCP_PORT, TIMEOUT) as tn:
                 resp = tn.read_some()
             print("Response is: ", resp)
             await websocket.send(resp.decode())
+            time.sleep(0.5)
 
     asyncio.get_event_loop().run_until_complete(
         ws.serve(echo, '127.0.0.1', 8765))

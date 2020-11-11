@@ -35,11 +35,6 @@ class SessionController {
             console.debug("SessionController: joining a name called " + gameName + " as " + username);
             this._gameClient.joinGame(gameName, username);
         });
-        // Start game
-        document.getElementById("startButton").addEventListener("click", () => {
-            console.debug("SessionController: starting the joined game");
-            this._gameClient.startGame();
-        });
         // Login
         document.getElementById("loginButton").addEventListener("click", () => {
             console.debug("LoginButton has been clicked!");
@@ -51,16 +46,19 @@ class SessionController {
                 document.getElementById("loginForm").style.display="none"
             }
         });
-
-
-        // Leave game
+     
+        // Session-related commands during the match (keys)
         document.addEventListener("keyup", (evt) => {
             switch(evt.key) {
+                case "Enter":
+                    // START
+                    console.debug("SessionController is asking the game client to START the joined game after the ENTER key.");
+                    this._gameClient.startGame();
+                    break;
                 case "Escape":
-                    console.debug("SessionController retrieved an escape keyup and something is going to happen!");
+                    // LEAVE
                     if(model.status.gameActive){
-                        // LEAVE
-                        console.debug("SessionController is asking the game client to LEAVE.");
+                        console.debug("SessionController is asking the game client to LEAVE after the ESCAPE key.");
                         this._gameClient.leave();
                     }
                     break;
@@ -86,8 +84,8 @@ class SessionController {
             let msgOk= msg.startsWith("OK");
 
             if(msgOk) {
-                // Enable START button
-                document.getElementById("startButton").disabled = false;
+                // Remove home UI elements
+                model.setGameActive(true);
             }
         }, false);
 
@@ -98,8 +96,7 @@ class SessionController {
             let msgOk= msg.startsWith("OK");
 
             if(msgOk) {
-                // Remove home UI elements
-                model.setGameActive(true);
+                alert("You started the game!");
             }
         }, false);
 
