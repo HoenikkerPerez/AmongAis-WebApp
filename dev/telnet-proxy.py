@@ -26,6 +26,7 @@ async def echo(websocket, path):
             tn.write(encoded)
             print("Waiting for response...")
 
+            close = False
             while (receiving):
                 resp_tmp = tn.read_some()
                 resp += resp_tmp
@@ -33,6 +34,9 @@ async def echo(websocket, path):
                 if resp.decode().startswith('ERROR'):
                     print("ERROR!!!")
                     receiving = False
+                    if resp.decode().startswith('ERROR 401'):
+                        print("ERROR 401")
+                        close = True
                 elif tokens[1] == "LOOK":
                     # print("Look Token")
                     if resp.endswith(ENDOFMAP):  #  or (resp == b'')
@@ -50,6 +54,8 @@ async def echo(websocket, path):
                 await websocket.send(resp.decode())
             else:
                 print("HERE")
+            if close:
+                return
 
 
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
