@@ -95,8 +95,10 @@ class SessionController {
             if(msgOk) {
                 // Remove home UI elements
                 model.setGameActive(true);
+            } else if (msg.includes("410")) {
+                alert("PLAYER NAME ALREADY TAKEN IN THIS GAME");
             } else {
-                alert("GAME NOT EXIST")
+                alert("GAME NOT EXIST");
             }
         }, false);
 
