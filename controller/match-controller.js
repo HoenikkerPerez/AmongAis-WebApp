@@ -71,13 +71,11 @@ class MatchController {
     };
 
     mapPoller() {
-        let timeframe = model.timeframe;
         console.debug("Polling map")
         let gameName = model.status.ga;
         
         this._gameClient.lookMap(gameName);
         // setMap()
-        window.setTimeout(function(){ this.mapPoller() }.bind(this), timeframe);
     };
 
 
@@ -139,12 +137,21 @@ class MatchController {
         this._gameClient.getStatus(gameName)
     };
 
+    poller(){
+        let timeframe = model.timeframe;
+        this.mapPoller();
+        this.statusPoller();
+        window.setTimeout(function(){ this.poller() }.bind(this), timeframe);
+    }
+
     load() {
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", this.lookMapHandler, false);
         
-        document.getElementById("statusButton").addEventListener("click", () => {
-            this.statusPoller();
-        });
+        // DEBUG: Status button
+        // document.getElementById("statusButton").addEventListener("click", () => {
+        //     this.statusPoller();
+        // });
+
         document.addEventListener("STATUS", this.getStatusHandler, false);
 
         // document.addEventListener("MODEL_SETGAMENAME", this.init, false);
@@ -152,8 +159,7 @@ class MatchController {
             // Init human commands
             document.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
             // Init map polling
-            let timeframe = model.timeframe;
-            window.setTimeout(function(){ this.mapPoller(); }.bind(this), timeframe);
+            this.poller()
         }, false);
     };
     
