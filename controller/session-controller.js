@@ -38,10 +38,11 @@ class SessionController {
         // Spectate game
         document.getElementById("spectateButton").addEventListener("click", () => {
             let gameName = document.getElementById("gameNameInput").value;
-            
             model.status.ga = gameName;
             // Remove home UI elements
-            model.setGameActive(true);
+            console.debug("SessionController: spectating a name called " + gameName);
+            //model.setGameActive(true);
+            this._gameClient.spectateGame(gameName);
         });
         // Login
         document.getElementById("loginButton").addEventListener("click", () => {
@@ -94,6 +95,24 @@ class SessionController {
             if(msgOk) {
                 // Remove home UI elements
                 model.setGameActive(true);
+            } else if (msg.includes("410")) {
+                alert("PLAYER NAME ALREADY TAKEN IN THIS GAME");
+            } else {
+                alert("GAME NOT EXIST");
+            }
+        }, false);
+
+        document.addEventListener("miticoOggettoCheNonEsiste.SPECTATE_GAME", (evt) => {
+            console.debug("SessionController has received a SPECTATE_GAME response from WS. " + evt.detail);
+            console.debug(evt);
+            let msg = evt.detail;
+            let msgOk= msg.startsWith("OK");
+
+            if(msgOk) {
+                // Remove home UI elements
+                model.setGameActive(true);
+            } else {
+                alert("GAME NOT EXIST")
             }
         }, false);
 
@@ -105,6 +124,10 @@ class SessionController {
 
             if(msgOk) {
                 alert("You started the game!");
+            } else if(msg.includes("501 Only")) {
+                alert("Only creator can start a game");
+            } else if (msg.includes("501 Need")) {
+                alert("Need two non-empty teams to start");
             }
         }, false);
 

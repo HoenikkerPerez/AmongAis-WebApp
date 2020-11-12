@@ -14,20 +14,22 @@
 // RECHARGE: [0,0],
 // BARRIER: [0,0]
 const Terrain = {
-    GRASS: [0,1],
+    GRASS: [1,2],
     WALL: [3,3],
     RIVER: [3,21],
     OCEAN: [5,21],
-    TRAP: [10,3],
-    FLAG: [0,11],
-    RECHARGE: [21,8],
+    TRAP: [0, 9],
+    FLAG_BLUE: [0, 10],
+    FLAG_RED: [1, 10],
+    RECHARGE: [1,9],
     BARRIER: [21,3],
-    PLAYER: [7, 1]
+    PLAYER_BLUE: [0, 8],
+    PLAYER_RED: [1, 8]
 }
 
 class WorldUi {
 
-    imgTileSet = './assets/32x32_map_tile.png'    
+    imgTileSet = './assets/mod32x32_map_tile.png'    
     
     N = 32 // map size NxN
 
@@ -56,20 +58,22 @@ class WorldUi {
         let tile;
         let team = -1;
         let xcode = x.charCodeAt(0);
-        if (xcode == 88) { // X: team A flag
-            tile = Terrain.FLAG;
+        if (xcode == 88) { // X: team RED flag (A)
+            tile = Terrain.FLAG_RED;
             team = 0;
+            x = "0";
         }
-        else if (xcode == 120) { // x: team B flag
-            tile = Terrain.FLAG;
+        else if (xcode == 120) { // x: team BLUE flag (B)
+            tile = Terrain.FLAG_BLUE;
             team = 1;
+            x = "0";
         }        
         else if(xcode >= 65 && xcode <= 84) {  // uppercase letter team 0
-            tile = Terrain.PLAYER;
+            tile = Terrain.PLAYER_RED;
             team = 0;
         }
         else if (xcode >= 97 && xcode <= 116) {// lowecase letter team 1
-            tile = Terrain.PLAYER;
+            tile = Terrain.PLAYER_BLUE;
             team = 1;
         }
         else { // terrains
@@ -107,6 +111,16 @@ class WorldUi {
 
 
     renderMap() {
+        // Lookup the size the browser is displaying the canvas.
+        let displayWidth  = window.innerWidth*0.9;
+        let displayHeight = window.innerHeight*0.9;
+        
+        if (this.ctx.canvas.width  != displayWidth ||
+            this.ctx.canvas.height != displayHeight) {
+            // Make the canvas the same size
+            this.ctx.canvas.width  = displayWidth;
+            this.ctx.canvas.height = displayHeight;
+        }
         console.debug("Rendering MAP");
         let map = model._map;
         let tsizeMap = this.ctx.canvas.height / this.N
@@ -115,20 +129,6 @@ class WorldUi {
                 let [tile, x, team] = this._getTile(c, r);
                 if (tile !== (0,0)) { // 0 => empty tile
                     // draw backroung character:
-                    if (team == 0) {
-                        this.ctx.fillStyle = "#FF0000";
-                        this.ctx.fillRect(c * tsizeMap, 
-                            r * tsizeMap,
-                            tsizeMap,
-                            tsizeMap);
-                    }
-                    else if (team == 1) {
-                        this.ctx.fillStyle = "#0000ff";
-                        this.ctx.fillRect(c * tsizeMap, 
-                            r * tsizeMap,
-                            tsizeMap,
-                            tsizeMap);
-                    }
                     this.ctx.drawImage(
                         this.tileAtlas, // image
                         tile[0] * map.tsize, // source x
@@ -141,8 +141,28 @@ class WorldUi {
                         tsizeMap // target height
                     );
                     if (x !== "0") {
-                        this.ctx.fillText(x, c * tsizeMap + 5, r * tsizeMap + 12);
-                    }
+                        let me = model.status.me.symbol; // undefined in case of specator
+                        if (team == 0) {
+                            if (typeof me !== 'undefined' && model.status.me.symbol.localeCompare(x) == 0) {
+                                this.ctx.font = '15px Arial'
+                                this.ctx.fillStyle = "#FFFFFF";
+                            } else {
+                                this.ctx.font = '10px Arial'
+                                this.ctx.fillStyle = "#ff0000";
+                            }
+                        } else {
+                            if (typeof me !== 'undefined' && model.status.me.symbol.localeCompare(x) == 0) {
+                                this.ctx.font = '15px Arial'
+                                this.ctx.fillStyle = "#FFFFFF";
+                            } else {
+                                this.ctx.font = '10px Arial'
+                                this.ctx.fillStyle = "#0000FF";
+                            }
+                        }
+                        this.ctx.textAlign = "center";
+                        this.ctx.textBaseline = "bottom";
+                        this.ctx.fillText(x, c * tsizeMap + 8, r * tsizeMap);
+                    } 
                 }
             }
         }

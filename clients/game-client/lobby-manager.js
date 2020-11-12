@@ -15,6 +15,12 @@ class LobbyManager {
         return msg;
     }
 
+    spectateGame(gameName) {
+        let msg = gameName + " LOOK"
+        console.debug("LobbyManager built " + msg);
+        return msg;
+    }
+
     startGame(gameName) {
         let msg = gameName + " START";
         console.debug("LobbyManager built " + msg);

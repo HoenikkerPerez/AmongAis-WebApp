@@ -95,6 +95,14 @@ class GameClient {
         let msg = this._lobby.joinGame(gameName, characterName);
         this._send("miticoOggettoCheNonEsiste.JOIN_GAME", msg);
     }
+    
+    spectateGame(gameName) {
+        console.debug("Game Client is joining game named " + gameName);
+        
+        model.status.ga = gameName;
+        let msg = this._lobby.spectateGame(gameName);
+        this._send("miticoOggettoCheNonEsiste.SPECTATE_GAME", msg);
+    }
 
     startGame() {
         console.debug("Game Client is starting the current game.");
