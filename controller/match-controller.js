@@ -69,7 +69,38 @@ class MatchController {
         // send notification to render component
 
     };
-
+onwheelHandler = function (event){
+        event.preventDefault();
+        // Get mouse offset.
+        var mousex = event.clientX - canvas.offsetLeft;
+        var mousey = event.clientY - canvas.offsetTop;
+        // Normalize wheel to +1 or -1.
+        var wheel = event.deltaY < 0 ? 1 : -1;
+    
+        // Compute zoom factor.
+        var zoom = Math.exp(wheel*zoomIntensity);
+        
+        // Translate so the visible origin is at the context's origin.
+        context.translate(originx, originy);
+      
+        // Compute the new visible origin. Originally the mouse is at a
+        // distance mouse/scale from the corner, we want the point under
+        // the mouse to remain in the same place after the zoom, but this
+        // is at mouse/new_scale away from the corner. Therefore we need to
+        // shift the origin (coordinates of the corner) to account for this.
+        originx -= mousex/(scale*zoom) - mousex/scale;
+        originy -= mousey/(scale*zoom) - mousey/scale;
+        
+        // Scale it (centered around the origin due to the trasnslate above).
+        context.scale(zoom, zoom);
+        // Offset the visible origin to it's proper position.
+        context.translate(-originx, -originy);
+    
+        // Update scale and others.
+        scale *= zoom;
+        visibleWidth = width / scale;
+        visibleHeight = height / scale;
+    }
     mapPoller() {
         console.debug("Polling map")
         let gameName = model.status.ga;
