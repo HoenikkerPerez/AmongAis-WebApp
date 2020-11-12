@@ -1,6 +1,3 @@
-import pathlib
-import ssl
-
 import websockets as ws
 import asyncio
 import telnetlib
@@ -28,22 +25,17 @@ async def echo(websocket, path):
 
             while (receiving):
                 resp_tmp = tn.read_some()
-                resp += resp_tmp
-
-                if resp.decode().startswith('ERROR'):
-                    print("ERROR!!!")
+                if resp_tmp.decode().startswith('ERROR'):
                     receiving = False
                 elif tokens[1] == "LOOK":
-                    # print("Look Token")
-                    if resp.endswith(ENDOFMAP):  #  or (resp == b'')
+                    if resp_tmp.endswith(ENDOFMAP):
                         receiving = False
                 elif tokens[1] == "STATUS":
-                    # print(resp.decode())
-                    if resp.endswith(ENDOFSTATUS): #  or (resp == b'')
-                        print("EndOfStatus Token")
+                    if resp_tmp.endswith(ENDOFSTATUS):
                         receiving = False
                 else:
                     receiving = False
+                resp += resp_tmp
 
             print("Response is: ", resp)
             if resp != b'':
@@ -52,13 +44,6 @@ async def echo(websocket, path):
                 print("HERE")
 
 
-ssl_context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-localhost_pem = pathlib.Path(__file__).with_name("cert.pem")
-key_pem = pathlib.Path(__file__).with_name("key.pem")
-ssl_context.load_cert_chain(localhost_pem, keyfile=key_pem)
-
-# webss = ws.serve(echo, '0.0.0.0', 8765, ssl=ssl_context)
-webs = ws.serve(echo, '0.0.0.0', 8765)
-
-asyncio.get_event_loop().run_until_complete(webs)
+asyncio.get_event_loop().run_until_complete(
+    ws.serve(echo, '127.0.0.1', 8765))
 asyncio.get_event_loop().run_forever()
