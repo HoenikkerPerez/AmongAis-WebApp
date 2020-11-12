@@ -28,11 +28,19 @@ class Ui {
         
     };
 
+    _gameEnded() {
+        alert("This is The END ... my only frien, the END! (DOORS) \n to Restart, Refresh page.")
+    }
+
     _loadWsMessages() {
         console.debug("UI: _loadWsMessages");
 
         document.addEventListener("MODEL_SETGAMEACTIVE", () => {
             this._gameActivated();
+        }, false);
+
+        document.addEventListener("MODEL_ENDGAME", () => {
+            this._gameEnded();
         }, false);
     }
 
