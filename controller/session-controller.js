@@ -124,6 +124,10 @@ class SessionController {
 
             if(msgOk) {
                 alert("You started the game!");
+            } else if(msg.includes("501 Only")) {
+                alert("Only creator can start a game");
+            } else if (msg.includes("501 Need")) {
+                alert("Need two non-empty teams to start");
             }
         }, false);
 
