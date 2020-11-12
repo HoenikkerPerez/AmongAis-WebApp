@@ -40,6 +40,13 @@ var model = {
     
     setStatus: function(status) {
         // preprocess status
+        if(status.state =="END"){
+            if(this.status.state != status.state){
+                this.status = status;
+                document.dispatchEvent(new CustomEvent("MODEL_ENDGAME", {detail: {status:status}}));
+            }
+            return;
+        }
         this.status = status;
         document.dispatchEvent(new CustomEvent("MODEL_SETSTATUS", {detail: {status:status}}));
     },
