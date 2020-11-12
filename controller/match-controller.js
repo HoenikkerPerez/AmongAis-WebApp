@@ -96,14 +96,22 @@ class MatchController {
             ga[ga_list[j].split('=')[0]] = ga_list[j].split('=')[1];
         }
 
+        
         let me = {}
-        let me_list = stat[1].slice(4).split(' ');
-        for(let j=0;j<me_list.length;j++){
-            me[me_list[j].split('=')[0]] = me_list[j].split('=')[1];
+        let pl_start=2;
+        if(stat[1].startsWith("ME:")){
+            let me_list = stat[1].slice(4).split(' ');
+            for(let j=0;j<me_list.length;j++){
+                me[me_list[j].split('=')[0]] = me_list[j].split('=')[1];
+            }
         }
-
+        else{
+            pl_start=1;
+        }
+        
+        
         let pls = [];
-        for(let i=2;i<stat.length;i++){
+        for(let i=pl_start;i<stat.length;i++){
             let pl = {};
             let pl_list = stat[i].slice(4).split(' ')
             for(let j=0;j<pl_list.length;j++){
@@ -145,7 +153,7 @@ class MatchController {
             document.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
             // Init map polling
             let timeframe = model.timeframe;
-            window.setTimeout(function(){ this.mapPoller() }.bind(this), timeframe);
+            window.setTimeout(function(){ this.mapPoller(); }.bind(this), timeframe);
         }, false);
     };
     
