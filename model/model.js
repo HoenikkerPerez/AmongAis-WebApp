@@ -7,7 +7,7 @@ var model = {
             ws: "ws://93.150.215.219:8765"
         },
         chat: {
-            ws: "ws://margot.di.unipi.it:8522"
+            ws: "ws://localhost:8522"//ws: "ws://margot.di.unipi.it:8522"
         }
 }   ,
     status: {
@@ -23,6 +23,9 @@ var model = {
             score:0
         },
         pl_list:[]
+    },
+    chat: {
+        messages:[] //{user: string, message: string}
     },
     username: "",
 
@@ -55,6 +58,12 @@ var model = {
         // preprocess status
         this.gameActive = gameActive;
         document.dispatchEvent(new CustomEvent("MODEL_SETGAMEACTIVE", {detail:gameActive}));
+    },
+
+    addMessageChat: function(message) {
+        // preprocess message
+        this.chat.messages.push({user: "TEMP", message: message});
+        document.dispatchEvent(new CustomEvent("MODEL_SETCHAT"));
     }
 };
 

@@ -18,6 +18,7 @@ class ChatClient {
             console.debug("Chat Client received message: " + msg);
             // parse msg
             // dispatch chat customevent
+            model.addMessageChat(msg); // event?
         }
     }
 
@@ -28,6 +29,11 @@ class ChatClient {
 
     login(username) {
         this._send("NAME " + username);
+    }
+
+    sendMessage(message) {
+        console.debug("sendMessage: " + message);
+        this._send(message);
     }
 
 }

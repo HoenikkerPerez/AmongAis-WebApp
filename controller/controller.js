@@ -9,8 +9,8 @@ window.onload = function () {
    this.match = new MatchController(gameClient);
    // Loading chat
    console.debug("Controller loading ChatController...");
-   // let chatClient = new ChatClient();
-   // this.chat = new ChatController(chatClient);
+   let chatClient = new ChatClient();
+   this.chat = new ChatController(chatClient);
    // Loading league
    //console.debug("Controller: loading LeagueController...");
    // ...

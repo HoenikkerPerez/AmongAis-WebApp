@@ -41,7 +41,6 @@
         <script src="controller/controller.js"></script>
         <!-- View -->
         <script src="view/ui.js"></script>
-        <script src="view/loader.js"></script>
         <script src="view/world.js"></script>
         <script src="view/hud.js"></script>
         <script src="view/gui.js"></script>
@@ -74,6 +73,15 @@
                     </div>                </td>
                 <td>
                     <div class="hud" id="hud", style="white-space: pre;"></div>
+                </td>
+                <td>
+                    <div class="chat_wrapper">
+                        <form name="chatForm" id="chatForm" action="">CHAT:<br>
+                            <input type="text" id="chatSendInput" name="chatSendInput" value=""><P>
+                                <input type="button" id="submitmsg" name="submitmsg" value="SEND">
+                            <div id="messageList"></div>
+                        </form>
+                    </div>
                 </td>
             </tr>
         </table>
