@@ -1,13 +1,13 @@
 var model = {
     _map: [],
     timeframe: 2000, // Map polling rate
-    connectionTimeframe: 200, // Minimum delay between requests
+    connectionTimeframe: 1000, // Minimum delay between requests
     net: {
         game: {
             ws: "ws://93.150.215.219:8765"
         },
         chat: {
-            ws: "ws://localhost:8766"
+            ws: "ws://margot.di.unipi.it:8522"
         }
 }   ,
     status: {
