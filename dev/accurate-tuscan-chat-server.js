@@ -6,7 +6,7 @@ const WebSocket = require(MODULES_FOLDER + 'ws');
 
 const FAKE_CHANNEL = "tuscany";
 const FAKE_NAME = "average-tuscan";
-const SPAM_RATE = 500;
+const SPAM_RATE = 5000;
 console.debug("Message rate set to " + SPAM_RATE + "ms.");
 
 console.debug("Opening WebSocket...");

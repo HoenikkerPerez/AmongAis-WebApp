@@ -36,16 +36,25 @@ class WorldUi {
     images = {}
 
     _rendering = false
+    
+    dragStart=null
+    dragged
+    scaleFactor = 1.01
 
     constructor(ctx) {
-        this._load();
         this.ctx = ctx;
-        var p = this._loads();
+        let p = this._loads();
         Promise.all(p).then(function (loaded) {
             this.tileAtlas = this._getImage('tiles');
         }.bind(this));
+        
+        let canvas = document.getElementById("canvas");
+        this.initCanvasSize();
 
-        // this.map = new Map(this, model.map_name);
+        this.trackTransforms(this.ctx)
+
+        this._load();
+
     };
 
     _load() {
@@ -111,8 +120,7 @@ class WorldUi {
         return [tile, x, team]
     };
 
-
-    renderMap() {
+    initCanvasSize() {
         // Lookup the size the browser is displaying the canvas.
         let displayWidth  = window.innerWidth*0.9;
         let displayHeight = window.innerHeight*0.9;
@@ -127,11 +135,21 @@ class WorldUi {
             this.ctx.canvas.width  = displayWidth;
             this.ctx.canvas.height = displayHeight;
         }
+        this.lastX = canvas.width/2
+        this.lastX  = canvas.height/2
+    }
+
+    renderMap() {
+
         // clear canvas
-        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.ctx.save();
+        this.ctx.setTransform(1,0,0,1,0,0);
+        this.ctx.clearRect(0,0,canvas.width,canvas.height);
+        this.ctx.restore();
+
 
         let map = model._map;
-        let tsizeMap = this.ctx.canvas.height / this.N
+        let tsizeMap = Math.floor(this.ctx.canvas.height / this.N)
         for (let c = 0; c < map.cols; c++) {
             for (let r = 0; r < map.rows; r++) {
                 let [tile, x, team] = this._getTile(c, r);
@@ -191,6 +209,32 @@ class WorldUi {
         //     window.requestAnimationFrame(this.renderMap());
         // }, false);
 
+        let canvas = document.getElementById("canvas");
+        canvas.addEventListener('mousedown',function(evt){
+            // canvas.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
+            this.lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
+            this.lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
+            this.dragStart = this.ctx.transformedPoint(this.lastX,this.lastY);
+            this.dragged = false;
+        }.bind(this),false);
+
+        canvas.addEventListener('mousemove',function(evt){
+            this.lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
+            this.lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
+            this.dragged = true;
+            if (this.dragStart){
+              let pt = this.ctx.transformedPoint(this.lastX,this.lastY);
+              this.ctx.translate(pt.x-this.dragStart.x,pt.y-this.dragStart.y);
+            }
+        }.bind(this),false);
+        
+        canvas.addEventListener('mouseup',function(evt){
+            this.dragStart = null;
+            if (!this.dragged) this.zoom(evt.shiftKey ? -1 : 1 );
+        }.bind(this),false);
+
+        canvas.addEventListener('DOMMouseScroll',this.handleScroll.bind(this),false);
+        canvas.addEventListener('mousewheel',this.handleScroll.bind(this),false);
     }
 
     
@@ -221,4 +265,87 @@ class WorldUi {
             this._loadImage('tiles', this.imgTileSet)
         ];
     }.bind(this);
+
+
+
+
+    zoom = function(clicks){
+        let pt = this.ctx.transformedPoint(this.lastX,this.lastY);
+        this.ctx.translate(pt.x,pt.y);
+        let factor = Math.pow(this.scaleFactor,clicks);
+        this.ctx.scale(factor,factor);
+        this.ctx.translate(-pt.x,-pt.y);
+    }
+
+    handleScroll = function(evt){
+        let delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
+        if (delta) this.zoom(delta);
+        return evt.preventDefault() && false;
+    };
+    
+
+    // Adds ctx.getTransform() - returns an SVGMatrix
+    // Adds ctx.transformedPoint(x,y) - returns an SVGPoint
+    trackTransforms = function(ctx) {
+        let svg = document.createElementNS("http://www.w3.org/2000/svg",'svg');
+        let xform = svg.createSVGMatrix();
+        ctx.getTransform = function(){ return xform; };
+        
+        let savedTransforms = [];
+        let save = ctx.save;
+        ctx.save = function(){
+            savedTransforms.push(xform.translate(0,0));
+            return save.call(ctx);
+        };
+        
+        let restore = ctx.restore;
+        ctx.restore = function(){
+        xform = savedTransforms.pop();
+        return restore.call(ctx);
+                };
+        
+        let scale = ctx.scale;
+        ctx.scale = function(sx,sy){
+        xform = xform.scaleNonUniform(sx,sy);
+        return scale.call(ctx,sx,sy);
+                };
+        
+        let rotate = ctx.rotate;
+        ctx.rotate = function(radians){
+            xform = xform.rotate(radians*180/Math.PI);
+            return rotate.call(ctx,radians);
+        };
+        
+        let translate = ctx.translate;
+        ctx.translate = function(dx,dy){
+            xform = xform.translate(dx,dy);
+            return translate.call(ctx,dx,dy);
+        };
+        
+        let transform = ctx.transform;
+        ctx.transform = function(a,b,c,d,e,f){
+            let m2 = svg.createSVGMatrix();
+            m2.a=a; m2.b=b; m2.c=c; m2.d=d; m2.e=e; m2.f=f;
+            xform = xform.multiply(m2);
+            return transform.call(ctx,a,b,c,d,e,f);
+        };
+        
+        let setTransform = ctx.setTransform;
+        ctx.setTransform = function(a,b,c,d,e,f){
+            xform.a = a;
+            xform.b = b;
+            xform.c = c;
+            xform.d = d;
+            xform.e = e;
+            xform.f = f;
+            return setTransform.call(ctx,a,b,c,d,e,f);
+        };
+        
+        let pt  = svg.createSVGPoint();
+        ctx.transformedPoint = function(x,y){
+            pt.x=x; pt.y=y;
+            return pt.matrixTransform(xform.inverse());
+        }
+    }.bind(this)
 };
+
