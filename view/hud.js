@@ -69,7 +69,7 @@ class HudUi {
             me.textContent = "Player"
             
             let player = document.createElement("li");
-            player.innerHTML = model.status.me.name+" [" + model.status.me.symbol + "]";
+            player.innerHTML = model.status.me.name; // +" [" + model.status.me.symbol + "]"
             let teamLoy = document.createElement("li");
             teamLoy.innerHTML = "team/loyalty: " + model.status.me.team + "/" + model.status.me.loyalty;
             let energy = document.createElement("li");
@@ -94,12 +94,24 @@ class HudUi {
             let _p = model.status.pl_list[i]; 
             let p = document.createElement("li");
 
-            p.innerHTML = "["+_p.symbol+"] " + _p.name + "   (" + _p.team + ")";
+            p.innerHTML = _p.name + "   (" + _p.team + ")"; // "["+_p.symbol+"] " + 
             // let team = document.createElement("li");
             // team.innerHTML = "T: " + _p.team;
             
             // p.appendChild(team);
             pl.appendChild(p);
+            if(model.status.me != {} && model.status.me.team == _p.team && model.status.me.symbol != _p.symbol){ // && model.status.me.symbol != _p.symbol
+                let accuse_button = document.createElement("button");
+                accuse_button.innerText = "Accuse!"
+                accuse_button.className = "accuse-button";
+                accuse_button.onclick= () => {
+                    document.dispatchEvent(new CustomEvent("ACCUSE", {detail: _p.name }));
+                    let allb = document.getElementsByClassName("accuse-button");
+                    // TODO: to be continued ...
+                };
+                p.appendChild(accuse_button);
+            }
+            
         }
         root.appendChild(pl);
 

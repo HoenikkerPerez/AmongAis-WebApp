@@ -109,6 +109,11 @@ onwheelHandler = function (event){
         // setMap()
     };
 
+    accuseHandler(evt, gameClient){
+        let teammate = evt.detail;
+        gameClient.accuse(teammate);
+    };
+
 
     getStatusHandler(evt){
         console.debug("getStatusHandler: " + evt.detail);
@@ -184,14 +189,17 @@ onwheelHandler = function (event){
         // });
 
         document.addEventListener("STATUS", this.getStatusHandler, false);
+        // document.addEventListener("ACCUSE", (evt) => {this.accuseHandler(this._gameClient)}, false);
 
         // document.addEventListener("MODEL_SETGAMENAME", this.init, false);
         document.addEventListener("MODEL_SETGAMEACTIVE", () => {
             // Init human commands
             document.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
             // Init map polling
+            document.addEventListener("ACCUSE", (evt) => {this.accuseHandler(evt, this._gameClient)}, false);
             this.poller()
         }, false);
+
     };
     
 };
