@@ -35,6 +35,8 @@ class WorldUi {
 
     images = {}
 
+    _rendering = false
+
     constructor(ctx) {
         this._load();
         this.ctx = ctx;
@@ -125,7 +127,9 @@ class WorldUi {
             this.ctx.canvas.width  = displayWidth;
             this.ctx.canvas.height = displayHeight;
         }
-        console.debug("Rendering MAP");
+        // clear canvas
+        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
         let map = model._map;
         let tsizeMap = this.ctx.canvas.height / this.N
         for (let c = 0; c < map.cols; c++) {
@@ -170,17 +174,21 @@ class WorldUi {
                 }
             }
         }
+        window.requestAnimationFrame(this.renderMap.bind(this));
     };
 
 
     _loadWsMessages() {
         document.addEventListener("MODEL_SETMAP", () => {
-            this.renderMap()
+            if (!this._rendering) {
+                window.requestAnimationFrame(this.renderMap.bind(this));    
+                this._rendering = true;
+            }
         }, false);
 
         // document.addEventListener("MODEL_SETGAMEACTIVE", () => {
-        //     console.debug("MODEL_SETGAMEACTIVE")
-        //     this.renderMap()
+        //     console.debug("WORLD MODEL_SETGAMEACTIVE")
+        //     window.requestAnimationFrame(this.renderMap());
         // }, false);
 
     }
@@ -214,64 +222,3 @@ class WorldUi {
         ];
     }.bind(this);
 };
-
-
-
-
-
-
-
-
-
-// const terrainSet = [GRASS, WALL, RIVER, OCEAN, TRAP];
-// const mapSymbols = ["A", "a", "b", "c", "x", "X", ".", "@", "#", "~", "!"];
-// var map = {
-//     cols: N,
-//     rows: N,
-//     tsize: 32,
-//     tiles: Array.from({length:N*N}, () => mapSymbols[Math.floor(Math.random() * mapSymbols.length)]),
-// };
-
-
-
-// Game.start = function (gameName, context) {
-//     this.gameName = gameName
-//     this.ctx = context;
-//     this._startTime = new Date();
-//     console.debug("RENDER STARTED");
-//     var p = this.load();
-//     Promise.all(p).then(function (loaded) {
-//         this.init();
-//         Game.loop()
-//     }.bind(this));
-// };
-
-
-// Game.load = function () {
-//     return [
-//         Loader.loadImage('tiles', imgTileSet)
-//     ];
-// }.bind(this);
-
-// Game.init = function () {
-//     this.tileAtlas = Loader.getImage('tiles');
-//     this.map = new Map(this, model.map_name);
-// };
-
-
-// Game.updatedMapHandler = function(evt) {
-//     // On map update -> rerender the map
-//     this.render
-//     // parse map
-//     // update model
-// }.bind(this);
-
-
-// //
-// // start up function
-// //
-
-// // window.onload = function () {
-// //     var context = document.getElementById('canvas').getContext('2d');
-// //     Game.start(context);
-// // };

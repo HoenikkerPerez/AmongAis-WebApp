@@ -1,6 +1,6 @@
 var model = {
     _map: [],
-    timeframe: 2000, // Map polling rate
+    timeframe: 1000, // Map polling rate
     connectionTimeframe: 1000, // Minimum delay between requests
     net: {
         game: {
