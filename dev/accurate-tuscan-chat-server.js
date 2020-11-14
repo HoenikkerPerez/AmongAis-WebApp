@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 console.debug("Loading 'ws' module...");
-const MODULES_FOLDER = '/home/meek/.npm-global/lib/node_modules/';
+const MODULES_FOLDER = 'C:\\Program Files\\nodejs\\node_modules\\npm\\node_modules\\'
+//const MODULES_FOLDER = '/home/meek/.npm-global/lib/node_modules/';
 const WebSocket = require(MODULES_FOLDER + 'ws');
 
 const FAKE_CHANNEL = "tuscany";

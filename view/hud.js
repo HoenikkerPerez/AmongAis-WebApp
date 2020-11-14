@@ -14,6 +14,11 @@ class HudUi {
         document.addEventListener("MODEL_SETSTATUS", () => {
             this.renderHud();
         }, false);
+
+        document.addEventListener("MODEL_SETCHAT", () => {
+            console.log("Rendering chat")
+            this.renderChat();
+        }, false);
     };
 
 
@@ -100,4 +105,27 @@ class HudUi {
 
     }
     
+    renderChat() {
+        let div = document.getElementById("messageList");
+        div.innerHTML="";
+
+        let messages = document.createElement("ul");
+        messages.textContent="MESSAGES";
+        let model_messages = model.chat.messages
+        for (let i=0; i<model_messages.length; i++) {
+            let box = document.createElement("ul");
+            box.textContent = "MESSAGE"
+            let user = document.createElement("li");
+            user.innerHTML = model_messages[i].user;
+            box.appendChild(user);
+
+            let message = document.createElement("li");
+            message.innerHTML = model_messages[i].message;
+            box.appendChild(message);
+
+            messages.appendChild(box);
+        }
+        div.appendChild(messages)
+    }   
+
 };
