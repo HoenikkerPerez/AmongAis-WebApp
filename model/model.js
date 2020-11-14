@@ -20,7 +20,11 @@ var model = {
             team: 0,
             loyalty:0,
             energy:256,
-            score:0
+            score:0,
+            position: { // (0,0) is North West corner
+                x: 0,
+                y: 0
+            }
         },
         pl_list:[]
     },

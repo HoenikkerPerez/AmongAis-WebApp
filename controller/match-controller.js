@@ -69,7 +69,46 @@ class MatchController {
         // send notification to render component
 
     };
-onwheelHandler = function (event){
+
+
+    stopsBullet(tile) {
+        if(tile === Terrain.BARRIER) return true;
+        if(tile === Terrain.WALL) return true;
+        return false;
+    }
+
+    computeShootOnMap(map, shooterPosition, direction) {
+        // TODO mettere deltas | let incX, incY;
+        let incN = (direction === "N") ? 1 : 0;
+        let incS = (direction === "S") ? 1 : 0;
+        let incW = (direction === "W") ? 1 : 0;
+        let incE = (direction === "E") ? 1 : 0;
+        let firstX = shooterPosition.x + incN + incS + incW + incE;
+        let firstY = shooterPosition.y + incN + incS + incW + incE;
+        let limitX = map[0].length;
+        let limitY = map.length;
+        for(
+            i = firstX, j = firstY;
+
+            i < limitX && j < limitY &&
+            i >= 0 && j >= 0 &&
+            !this.isSolid(map[i][j]);
+
+            i += incN, i += incS, j += incW, j += incE
+        ) {
+            map[i][j] = "*";
+        }
+        return map;
+    }
+
+    shootHandler(evt) {
+        let direction = undefined; // TODO parse evt.data
+        // I'll avoid making a copy of the whole map...
+        this.computeShootOnMap(model._map, model.status.me.position, direction);
+        model.setMap(model._map);
+    }
+
+    onwheelHandler = function (event){
         event.preventDefault();
         // Get mouse offset.
         var mousex = event.clientX - canvas.offsetLeft;

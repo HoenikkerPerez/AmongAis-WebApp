@@ -24,7 +24,8 @@ const Terrain = {
     RECHARGE: [1,9],
     BARRIER: [21,3],
     PLAYER_BLUE: [0, 8],
-    PLAYER_RED: [1, 8]
+    PLAYER_RED: [1, 8],
+    BULLET: [5,21] //TODO laser tile
 }
 
 class WorldUi {
@@ -76,6 +77,9 @@ class WorldUi {
             tile = Terrain.PLAYER_BLUE;
             team = 1;
         }
+        else if (xcode == 42) {
+            tile = Terrain.BULLET;
+        }
         else { // terrains
             switch(x) {
                 case ".":
@@ -108,7 +112,6 @@ class WorldUi {
         // return correct position in tilemap and the atlas
         return [tile, x, team]
     };
-
 
     renderMap() {
         // Lookup the size the browser is displaying the canvas.
