@@ -4,7 +4,7 @@ var model = {
     connectionTimeframe: 1000, // Minimum delay between requests
     net: {
         game: {
-            ws: "ws://93.150.215.219:8765"
+            ws: "ws://93.150.215.219:8765"//ws: "ws://margot.di.unipi.it:8521"
         },
         chat: {
             ws: "ws://localhost:8522"//ws: "ws://margot.di.unipi.it:8522"
