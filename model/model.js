@@ -1,10 +1,11 @@
 var model = {
     _map: [],
-    timeframe: 2000, // Map polling rate
+    timeframe: 1000, // Map polling rate
     connectionTimeframe: 1000, // Minimum delay between requests
     net: {
         game: {
-            ws: "ws://93.150.215.219:8765"//ws: "ws://margot.di.unipi.it:8521"
+            ws: "ws://localhost:8765"
+            //ws: "ws://93.150.215.219:8765"//ws: "ws://margot.di.unipi.it:8521"
         },
         chat: {
             ws: "ws://localhost:8522"//ws: "ws://margot.di.unipi.it:8522"
@@ -64,6 +65,10 @@ var model = {
         // preprocess message
         this.chat.messages.push({user: "TEMP", message: message});
         document.dispatchEvent(new CustomEvent("MODEL_SETCHAT"));
+    },
+
+    findPlayerBySymbol: function(symb) {
+        return this.status.pl_list.find(o => o.symbol === symb);
     }
 };
 
