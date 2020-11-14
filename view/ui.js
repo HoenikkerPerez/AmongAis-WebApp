@@ -24,7 +24,7 @@ class Ui {
         let context = document.getElementById("canvas").getContext("2d");
         
         // create table for WORLD | HUD | CHAT
-        document.getElementById("console").style.display = "block";
+        document.getElementById("console").style.display = "";
         let worldui = new WorldUi(context);
         let hudui = new HudUi();
         

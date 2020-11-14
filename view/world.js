@@ -41,6 +41,8 @@ class WorldUi {
     dragged
     scaleFactor = 1.01
 
+    tmp_players = []
+
     constructor(ctx) {
         this.ctx = ctx;
         let p = this._loads();
@@ -65,30 +67,33 @@ class WorldUi {
     _getTile(col, row) {
         let map = model._map;
         let idx = row * map.cols + col;
-        let x = map.tiles[idx];
+        let symbol = map.tiles[idx];
         let tile;
         let team = -1;
-        let xcode = x.charCodeAt(0);
-        if (xcode == 88) { // X: team RED flag (A)
+        let type = "";
+        let symbol_code = symbol.charCodeAt(0);
+        if (symbol_code == 88) { // X: team RED flag (A)
             tile = Terrain.FLAG_RED;
             team = 0;
-            x = "0";
+            type = "flag";
         }
-        else if (xcode == 120) { // x: team BLUE flag (B)
+        else if (symbol_code == 120) { // x: team BLUE flag (B)
             tile = Terrain.FLAG_BLUE;
             team = 1;
-            x = "0";
+            type = "flag";
         }        
-        else if(xcode >= 65 && xcode <= 84) {  // uppercase letter team 0
+        else if(symbol_code >= 65 && symbol_code <= 84) {  // uppercase letter team 0
             tile = Terrain.PLAYER_RED;
             team = 0;
+            type = "player";
         }
-        else if (xcode >= 97 && xcode <= 116) {// lowecase letter team 1
+        else if (symbol_code >= 97 && symbol_code <= 116) {// lowecase letter team 1
             tile = Terrain.PLAYER_BLUE;
             team = 1;
+            type = "player";
         }
         else { // terrains
-            switch(x) {
+            switch(symbol) {
                 case ".":
                     tile = Terrain.GRASS;
                     break;
@@ -114,10 +119,10 @@ class WorldUi {
                     console.debug("ERROR map symbol: " + x)
                     break;
             }
-            x = "0";
+            type = "terrain";
         }
         // return correct position in tilemap and the atlas
-        return [tile, x, team]
+        return [tile, symbol, team, type]
     };
 
     initCanvasSize() {
@@ -140,21 +145,28 @@ class WorldUi {
     }
 
     renderMap() {
+        this._clearCanvas();
+        this._drawMap();
+        this._drawPlayerNames();
+        window.requestAnimationFrame(this.renderMap.bind(this));
+    };
 
+    _clearCanvas() {
         // clear canvas
         this.ctx.save();
         this.ctx.setTransform(1,0,0,1,0,0);
         this.ctx.clearRect(0,0,canvas.width,canvas.height);
         this.ctx.restore();
+    }
 
-
+    _drawMap() {
         let map = model._map;
         let tsizeMap = Math.floor(this.ctx.canvas.height / this.N)
+        this.tmp_players = [];
         for (let c = 0; c < map.cols; c++) {
             for (let r = 0; r < map.rows; r++) {
-                let [tile, x, team] = this._getTile(c, r);
+                let [tile, symbol, team, type] = this._getTile(c, r);
                 if (tile !== (0,0)) { // 0 => empty tile
-                    // draw backroung character:
                     this.ctx.drawImage(
                         this.tileAtlas, // image
                         tile[0] * map.tsize, // source x
@@ -166,35 +178,45 @@ class WorldUi {
                         tsizeMap, // target width
                         tsizeMap // target height
                     );
-                    if (x !== "0") {
-                        let me = model.status.me.symbol; // undefined in case of specator
-                        if (team == 0) {
-                            if (typeof me !== 'undefined' && model.status.me.symbol.localeCompare(x) == 0) {
-                                this.ctx.font = '15px Arial'
-                                this.ctx.fillStyle = "#FFFFFF";
-                            } else {
-                                this.ctx.font = '10px Arial'
-                                this.ctx.fillStyle = "#ff0000";
-                            }
-                        } else {
-                            if (typeof me !== 'undefined' && model.status.me.symbol.localeCompare(x) == 0) {
-                                this.ctx.font = '15px Arial'
-                                this.ctx.fillStyle = "#FFFFFF";
-                            } else {
-                                this.ctx.font = '10px Arial'
-                                this.ctx.fillStyle = "#0000FF";
-                            }
-                        }
-                        this.ctx.textAlign = "center";
-                        this.ctx.textBaseline = "bottom";
-                        this.ctx.fillText(x, c * tsizeMap + 8, r * tsizeMap);
-                    } 
+                    if (type === "player") {
+                        this.tmp_players.push([symbol, team, c, r]);
+                    }
                 }
             }
         }
-        window.requestAnimationFrame(this.renderMap.bind(this));
-    };
+    }
 
+    _drawPlayerNames() {
+        for (let i=0; i<this.tmp_players.length; i++) {
+            let [symbol, team, c, r] = this.tmp_players[i];
+            let tsizeMap = Math.floor(this.ctx.canvas.height / this.N)
+
+            let player = model.findPlayerBySymbol(symbol);
+            if (typeof player !== 'undefined') {
+                // draw backroung character:
+                if (team == 0) {
+                    if (typeof me_symbol !== 'undefined' && model.status.me.symbol.localeCompare(symbol) == 0) {
+                        this.ctx.font = '12px Arial'
+                        this.ctx.fillStyle = "#FFFFFF";
+                    } else {
+                        this.ctx.font = '8px Arial'
+                        this.ctx.fillStyle = "#ff0000";
+                    }
+                } else {
+                    if (typeof me_symbol !== 'undefined' && model.status.me.symbol.localeCompare(symbol) == 0) {
+                        this.ctx.font = '12px Arial'
+                        this.ctx.fillStyle = "#FFFFFF";
+                    } else {
+                        this.ctx.font = '8px Arial'
+                        this.ctx.fillStyle = "#0000FF";
+                    }
+                }
+                this.ctx.textAlign = "center";
+                this.ctx.textBaseline = "bottom";
+                this.ctx.fillText(player.name, c * tsizeMap + Math.floor(tsizeMap/2), r * tsizeMap);
+            }
+        }        
+    }
 
     _loadWsMessages() {
         document.addEventListener("MODEL_SETMAP", () => {
