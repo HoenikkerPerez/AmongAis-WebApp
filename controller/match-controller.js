@@ -129,11 +129,14 @@ class MatchController {
     }
 
     eventualConsistentShot(direction) {
-        // I'll avoid making a copy of the whole map...
-        let position = model.local.me.position;
-        this.computeShootOnMap(position, direction);
-        console.debug("Match Controller computed the map with the shot and is going to set the new map in the model.");
-        model.setMap(model._map); // horrible
+        if(!model.local.shot) {
+            // I'll avoid making a copy of the whole map...
+            let position = model.local.me.position;
+            this.computeShootOnMap(position, direction);
+            console.debug("Match Controller computed the map with the shot and is going to set the new map in the model.");
+            model.setMap(model._map); // horrible
+            model.local.shot = true;
+        }
     }
 
     // Map view management

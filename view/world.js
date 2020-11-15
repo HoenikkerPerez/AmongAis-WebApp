@@ -25,7 +25,7 @@ const Terrain = {
     BARRIER: [21,3],
     PLAYER_BLUE: [0, 8],
     PLAYER_RED: [1, 8],
-    BULLET: [5,21] //TODO laser tile
+    BULLET: [21,21] //TODO laser tile
 }
 
 class WorldUi {
@@ -77,9 +77,6 @@ class WorldUi {
             tile = Terrain.PLAYER_BLUE;
             team = 1;
         }
-        else if (xcode == 42) {
-            tile = Terrain.BULLET;
-        }
         else { // terrains
             switch(x) {
                 case ".":
@@ -102,6 +99,9 @@ class WorldUi {
                     break;
                 case "&":
                     tile = Terrain.BARRIER;
+                    break;
+                case "*":
+                    tile = Terrain.BULLET;
                     break;
                 default:
                     console.debug("ERROR map symbol: " + x)

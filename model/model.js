@@ -32,7 +32,8 @@ var model = {
                 x: 0,
                 y: 0
             }
-        }
+        },
+        shot: false
     },
     chat: {
         messages:[] //{user: string, message: string}
@@ -49,6 +50,8 @@ var model = {
         // preprocess map
         this._map = map;
         document.dispatchEvent(new CustomEvent("MODEL_SETMAP", {detail: {map:map}}));
+        // Reset laser presence
+        this.local.shot = false;
     },
     
     setStatus: function(status) {
