@@ -43,6 +43,14 @@ var model = {
     login: false,
     ingamename:"",
     gameActive: false,
+
+    teamColors : {
+        teamA: "#ff0000",
+        teamB: "#0000FF",
+        mePlayer: "#FFFFFF"
+    },
+
+
     setLogin: function(lg) {this.login=lg},
     setUsername(uName){this.username=uName},
 

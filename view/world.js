@@ -204,18 +204,18 @@ class WorldUi {
                 if (team == 0) {
                     if (typeof me_symbol !== 'undefined' && model.status.me.symbol.localeCompare(symbol) == 0) {
                         this.ctx.font = '12px Arial'
-                        this.ctx.fillStyle = "#FFFFFF";
+                        this.ctx.fillStyle = model.teamColors.mePlayer;
                     } else {
                         this.ctx.font = '8px Arial'
-                        this.ctx.fillStyle = "#ff0000";
+                        this.ctx.fillStyle = model.teamColors.teamA;
                     }
                 } else {
                     if (typeof me_symbol !== 'undefined' && model.status.me.symbol.localeCompare(symbol) == 0) {
                         this.ctx.font = '12px Arial'
-                        this.ctx.fillStyle = "#FFFFFF";
+                        this.ctx.fillStyle = model.teamColors.mePlayer;
                     } else {
                         this.ctx.font = '8px Arial'
-                        this.ctx.fillStyle = "#0000FF";
+                        this.ctx.fillStyle = model.teamColors.teamB;
                     }
                 }
                 this.ctx.textAlign = "center";

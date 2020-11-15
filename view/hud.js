@@ -94,7 +94,12 @@ class HudUi {
             let _p = model.status.pl_list[i]; 
             let p = document.createElement("li");
 
-            p.innerHTML = _p.name + "   (" + _p.team + ")"; // "["+_p.symbol+"] " + 
+            p.innerHTML = _p.name; //+ "   (" + _p.team + ")"; // "["+_p.symbol+"] " + 
+            if (_p.team == 0) {
+                p.style.color = model.teamColors.teamA;
+            } else if (_p.team == 1) {
+                p.style.color = model.teamColors.teamB;
+            }
             // let team = document.createElement("li");
             // team.innerHTML = "T: " + _p.team;
             
