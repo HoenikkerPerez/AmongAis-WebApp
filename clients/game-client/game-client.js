@@ -159,4 +159,9 @@ class GameClient {
         let msg = this._sync.shoot(model.status.ga, direction);
         this._send("miticoOggettoCheNonEsiste.SHOOT", msg);
     }
+
+    accuse(teammateName) {
+        console.debug("Game Client is requesting a vote of no confidence for teammate: " + teammateName);
+        alert("A vote of no confidence for teammate: " + teammateName);
+    }
 }
