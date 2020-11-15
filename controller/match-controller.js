@@ -17,6 +17,7 @@ class MatchController {
                 // SHOOT
                 console.debug("MatchController is asking the game client to SHOOT in the last direction moved (" + lastDirection.direction + ").");
                 gameClient.shoot(lastDirection.direction);
+                this.eventualConsistentShot(lastDirection.direction);
                 break;
             default:
                 // MOVE. Moving also sets the lastDirection in which the player shoots.
@@ -69,7 +70,78 @@ class MatchController {
         // send notification to render component
 
     };
-onwheelHandler = function (event){
+
+    // Lasers
+
+    computeShootOnMap(shooterPosition, direction) {
+
+        let stopsBullet = (tile) => {
+            console.error("check &");
+            if(tile == "&") return true;
+            console.error("check #");
+            if(tile == "#") return true;
+            return false;
+        }
+
+        let deltaX = 0, deltaY = 0;
+        switch(direction) {
+            case GameClient.UP:
+                deltaY = -1;
+                break;
+            case GameClient.DOWN:
+                deltaY = 1;
+                break;
+            case GameClient.LEFT:
+                deltaX = -1;
+                break;
+            case GameClient.RIGHT:
+                deltaX = 1;
+                break;
+        }
+        let firstX = shooterPosition.x + deltaX;
+        console.error("firstX: " + firstX);
+        let firstY = shooterPosition.y + deltaY;
+        console.error("firstY: " + firstY);
+        let limitX = model._map.cols;
+        console.error("limitX: " + limitX);
+        let limitY = model._map.rows;
+        console.error("limitY: " + limitY);
+        let cells = 0;
+        let bulletStopped = false;
+        for(
+            let c = firstX, r = firstY;
+
+            c < limitX && r < limitY &&
+            r >= 0 && c >= 0 &&
+            !bulletStopped;
+
+            r += deltaY, c += deltaX
+        ) {
+            let idx = r * model._map.cols + c;
+            bulletStopped = stopsBullet(model._map.tiles[idx]);
+            console.error("bulletStopped: " + bulletStopped);
+            if(!bulletStopped) {
+                model._map.tiles[idx] = "*";
+                cells++;
+            }
+        }
+        console.error("Match Controller: shot over " + cells + " cells.");
+    }
+
+    eventualConsistentShot(direction) {
+        if(!model.local.shot) {
+            // I'll avoid making a copy of the whole map...
+            let position = model.local.me.position;
+            this.computeShootOnMap(position, direction);
+            console.debug("Match Controller computed the map with the shot and is going to set the new map in the model.");
+            model.setMap(model._map); // horrible
+            model.local.shot = true;
+        }
+    }
+
+    // Map view management
+
+    onwheelHandler = function (event){
         event.preventDefault();
         // Get mouse offset.
         var mousex = event.clientX - canvas.offsetLeft;

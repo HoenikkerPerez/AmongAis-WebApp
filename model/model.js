@@ -4,8 +4,9 @@ var model = {
     connectionTimeframe: 1000, // Minimum delay between requests
     net: {
         game: {
-            ws: "ws://localhost:8765"
-            //ws: "ws://93.150.215.219:8765"//ws: "ws://margot.di.unipi.it:8521"
+            ws: "ws://localhost:8421"
+            //ws: "ws://93.150.215.219:8765"
+            //ws: "ws://margot.di.unipi.it:8521"
         },
         chat: {
             ws: "ws://localhost:8522"//ws: "ws://margot.di.unipi.it:8522"
@@ -21,9 +22,18 @@ var model = {
             team: 0,
             loyalty:0,
             energy:256,
-            score:0
+            score:0,
         },
         pl_list:[]
+    },
+    local: {
+        me: {
+            position: { // (0,0) is North West corner
+                x: 0,
+                y: 0
+            }
+        },
+        shot: false
     },
     chat: {
         messages:[] //{user: string, message: string}
@@ -40,6 +50,8 @@ var model = {
         // preprocess map
         this._map = map;
         document.dispatchEvent(new CustomEvent("MODEL_SETMAP", {detail: {map:map}}));
+        // Reset laser presence
+        this.local.shot = false;
     },
     
     setStatus: function(status) {

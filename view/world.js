@@ -24,7 +24,8 @@ const Terrain = {
     RECHARGE: [1,9],
     BARRIER: [21,3],
     PLAYER_BLUE: [0, 8],
-    PLAYER_RED: [1, 8]
+    PLAYER_RED: [1, 8],
+    BULLET: [21,21] //TODO laser tile
 }
 
 class WorldUi {
@@ -115,6 +116,9 @@ class WorldUi {
                 case "&":
                     tile = Terrain.BARRIER;
                     break;
+                case "*":
+                    tile = Terrain.BULLET;
+                    break;
                 default:
                     console.debug("ERROR map symbol: " + x)
                     break;
@@ -179,6 +183,9 @@ class WorldUi {
                         tsizeMap // target height
                     );
                     if (type === "player") {
+                        // TODO ADD
+                        //  model.local.me.position.x = c; // This is BAD. Should be in controller
+                        //  model.local.me.position.y = r; // This is BAD. Should be in controller
                         this.tmp_players.push([symbol, team, c, r]);
                     }
                 }
