@@ -148,24 +148,18 @@ class WorldUi {
                         tsizeMap // target height
                     );
                     if (x !== "0") {
-                        let me = model.status.me.symbol; // undefined in case of specator
-                        if (team == 0) {
-                            if (typeof me !== 'undefined' && model.status.me.symbol.localeCompare(x) == 0) {
-                                this.ctx.font = '15px Arial'
-                                this.ctx.fillStyle = "#FFFFFF";
-                            } else {
+                        let me = model.status.me.symbol; // undefined in case of spectator
+                        if (typeof me !== 'undefined' && model.status.me.symbol.localeCompare(x) == 0) {
+                            this.ctx.font = '15px Arial'
+                            this.ctx.fillStyle = "#FFFFFF";
+                        } else
+                            if (team == 0) {
                                 this.ctx.font = '10px Arial'
                                 this.ctx.fillStyle = "#ff0000";
-                            }
-                        } else {
-                            if (typeof me !== 'undefined' && model.status.me.symbol.localeCompare(x) == 0) {
-                                this.ctx.font = '15px Arial'
-                                this.ctx.fillStyle = "#FFFFFF";
                             } else {
                                 this.ctx.font = '10px Arial'
                                 this.ctx.fillStyle = "#0000FF";
                             }
-                        }
                         this.ctx.textAlign = "center";
                         this.ctx.textBaseline = "bottom";
                         this.ctx.fillText(x, c * tsizeMap + 8, r * tsizeMap);
