@@ -152,6 +152,8 @@ class WorldUi {
                         if (typeof me !== 'undefined' && model.status.me.symbol.localeCompare(x) == 0) {
                             this.ctx.font = '15px Arial'
                             this.ctx.fillStyle = "#FFFFFF";
+                            model.local.me.position.x = c; // This is BAD. Should be in controller
+                            model.local.me.position.y = r; // This is BAD. Should be in controller
                         } else
                             if (team == 0) {
                                 this.ctx.font = '10px Arial'
