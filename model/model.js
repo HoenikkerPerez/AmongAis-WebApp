@@ -1,6 +1,6 @@
 var model = {
     _map: [],
-    timeframe: 2000, // Map polling rate
+    timeframe: 1000, // Map polling rate
     connectionTimeframe: 1000, // Minimum delay between requests
     net: {
         game: {
@@ -77,6 +77,10 @@ var model = {
         // preprocess message
         this.chat.messages.push({user: "TEMP", message: message});
         document.dispatchEvent(new CustomEvent("MODEL_SETCHAT"));
+    },
+
+    findPlayerBySymbol: function(symb) {
+        return this.status.pl_list.find(o => o.symbol === symb);
     }
 };
 

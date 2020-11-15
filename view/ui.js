@@ -22,9 +22,11 @@ class Ui {
         console.debug("UI: gameActivated");
         // Start canvas
         let context = document.getElementById("canvas").getContext("2d");
+        
+        // create table for WORLD | HUD | CHAT
+        document.getElementById("console").style.display = "";
         let worldui = new WorldUi(context);
         let hudui = new HudUi();
-        // Game.start(model.status.ga, context); // read only model
         
     };
 

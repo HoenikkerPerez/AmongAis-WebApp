@@ -50,8 +50,8 @@
         <div id="homeUI">
             <div class="login_wrapper">
                 <form name="loginForm" id="loginForm" action="">Login Credentials:<br>
-                    <input type="text" id="usernameInput" name="usernameInput" value="username"><P>
-                    <input type="text" id="ingamenameInput" name="ingamenameInput" value="in-game Name"><P>
+                    <input type="text" id="usernameInput" name="usernameInput" value="loginName"><P>
+                    <input type="text" id="ingamenameInput" name="ingamenameInput" value="noSpaceName"><P>
                     <input type="button" id="loginButton" name="loginButton" value="LOGIN">
                 </form>
             </div>
@@ -65,27 +65,28 @@
             </div>
         </div>
 
-        <table>
-            <tr>
-                <td>
-                    <div class="canvas_wrapper">
-                        <canvas id="canvas" width="512" height="512"></canvas>    
-                    </div>                </td>
-                <td>
-                    <div class="hud" id="hud", style="white-space: pre;"></div>
-                </td>
-                <td>
-                    <div class="chat_wrapper">
-                        <form name="chatForm" id="chatForm" action="">CHAT:<br>
-                            <input type="text" id="chatSendInput" name="chatSendInput" value=""><P>
+        <div id="console" style="display:none">
+            <table>
+                <tr>
+                    <td>
+                        <div class="canvas_wrapper">
+                            <canvas id="canvas" width="410" height="410"></canvas>    
+                        </div>                </td>
+                    <td>
+                        <div class="hud" id="hud", style="overflow:auto; max-height:100vh;"></div>
+                    </td>
+                    <td>
+                        <div class="chat_wrapper">
+                            <div id="messageList"  style="overflow:auto; max-height:80vh;"></div>
+                            <form name="chatForm" id="chatForm" action="">CHAT:<br>
+                                <input type="text" id="chatSendInput" name="chatSendInput" value="">
                                 <input type="button" id="submitmsg" name="submitmsg" value="SEND">
-                            <div id="messageList"></div>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-        </table>
-
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
         <!-- <form name="statusForm" id="statusForm" action="">Action get status:<br>
             <input type="button" id="statusButton" name="statusButton" value="STATUS">
