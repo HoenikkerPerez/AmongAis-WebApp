@@ -4,4 +4,3 @@
     console.debug("WorldUi: loading WorldUi...");
     // let worldui = new WorldUi();
 //  };
- 

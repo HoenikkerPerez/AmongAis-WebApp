@@ -14,6 +14,7 @@ class Ui {
     _load() {
         // Listeners for UI
         this._loadWsMessages();
+        this._loadUI();
     };
 
     _gameActivated() {
@@ -44,8 +45,11 @@ class Ui {
         document.addEventListener("MODEL_ENDGAME", () => {
             this._gameEnded();
         }, false);
-    }
 
-    
+    };
+
+     _loadUI() {
+
+    }
 }
 

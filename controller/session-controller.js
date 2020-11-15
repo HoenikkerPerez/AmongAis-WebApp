@@ -22,6 +22,10 @@ class SessionController {
     }
 
     _loadUI() {
+        // Game name
+        let gameNameInput = document.getElementById("gameNameInput");
+        gameNameInput.addEventListener("input", this._validateGameName);
+
         // Create game
         document.getElementById("createButton").addEventListener("click", () => {
             let gameName = document.getElementById("gameNameInput").value;
@@ -55,7 +59,14 @@ class SessionController {
                 document.getElementById("loginForm").style.display="none"
             }
         });
-     
+        
+        // validate Login using credential
+        let usernameInput = document.getElementById("usernameInput");
+        usernameInput.addEventListener("input", this._validateLogin);
+        let ingamenameInput = document.getElementById("ingamenameInput");
+        ingamenameInput.addEventListener("input", this._validateLogin);
+
+         
         // Session-related commands during the match (keys)
         document.addEventListener("keyup", (evt) => {
             switch(evt.key) {
@@ -137,5 +148,34 @@ class SessionController {
             location.reload(); 
         });
     }
+
+
+    _validateLogin() {
+        let usernameInput = document.getElementById("usernameInput");
+        let ingamenameInput = document.getElementById("ingamenameInput");
+        let loginButton = document.getElementById("loginButton");
+        if(usernameInput.value.length == 0 || ingamenameInput.value.length == 0) {
+                loginButton.disabled = true
+        } else {
+            loginButton.disabled = false
+        }
+    };
+    
+    _validateGameName() {
+        let gameNameInput = document.getElementById("gameNameInput");
+        let createButton = document.getElementById("createButton");
+        let joinButton = document.getElementById("joinButton");
+        let spectateButton = document.getElementById("spectateButton");
+        
+        if(gameNameInput.value.length == 0) {
+            createButton.disabled = true
+            joinButton.disabled = true
+            spectateButton.disabled = true
+        } else {
+            createButton.disabled = false
+            joinButton.disabled = false
+            spectateButton.disabled = false
+        }
+    };
 
 }
