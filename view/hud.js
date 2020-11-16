@@ -37,7 +37,7 @@ class HudUi {
         root.appendChild(match);
         div.appendChild(root);
 
-        if(typeof model.status.me.name !== 'undefined'){
+        if(model.status.me != {} && (typeof model.status.me.name !== 'undefined')){
             let me = document.createElement("ul");
             me.textContent = "Player"
             
