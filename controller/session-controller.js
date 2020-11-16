@@ -39,7 +39,8 @@ class SessionController {
         // Join game
         document.getElementById("joinButton").addEventListener("click", () => {
             let gameName = document.getElementById("gameNameInput").value;
-            let inGameName = model.inGameName;
+            let inGameName = document.getElementById("ingamenameInput").value;
+            model.inGameName = inGameName;
             console.debug("SessionController: joining a name called " + gameName + " as " + inGameName);
             this._gameClient.joinGame(gameName, inGameName);
         });
@@ -107,7 +108,6 @@ class SessionController {
             console.debug(evt);
             let msg = evt.detail;
             let msgOk= msg.startsWith("OK");
-
             if(msgOk) {
                 // Remove home UI elements
                 model.setGameActive(true);
@@ -168,39 +168,22 @@ class SessionController {
     _validateCreateJoin() {
         let ingamenameInput = document.getElementById("ingamenameInput");
         let gameNameInput = document.getElementById("gameNameInput");
+
         let createButton = document.getElementById("createButton");
         let joinButton = document.getElementById("joinButton");
         let spectateButton = document.getElementById("spectateButton");
         
         if(gameNameInput.value.length == 0 || ingamenameInput.value.length == 0) {
-            createButton.disabled = true
             joinButton.disabled = true
-            // spectateButton.disabled = true
         } else {
-            createButton.disabled = false
             joinButton.disabled = false
-            // spectateButton.disabled = false
         }
         if(gameNameInput.value.length == 0) {
+            createButton.disabled = true
             spectateButton.disabled = true
         } else {
+            createButton.disabled = false
             spectateButton.disabled = false
         }
     };
-
-    _validateSpectateGame() {
-        let gameNameInput = document.getElementById("gameNameInput");
-        let spectateButton = document.getElementById("spectateButton");
-        
-        if(gameNameInput.value.length == 0) {
-            // createButton.disabled = true
-            // joinButton.disabled = true
-            spectateButton.disabled = true
-        } else {
-            // createButton.disabled = false
-            // joinButton.disabled = false
-            spectateButton.disabled = false
-        }
-    }
-
 }
