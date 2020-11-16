@@ -4,8 +4,8 @@ var model = {
     connectionTimeframe: 1000, // Minimum delay between requests
     net: {
         game: {
-            // ws: "ws://localhost:8765"
-            ws: "ws://93.150.215.219:8765"
+            ws: "ws://localhost:8765"
+            // ws: "ws://93.150.215.219:8765"
             //ws: "ws://margot.di.unipi.it:8521"
         },
         chat: {
@@ -36,7 +36,7 @@ var model = {
         shot: false
     },
     chat: {
-        messages:[] //{user: string, message: string}
+        messages:[] //{channel: string, user: string, message: string}
     },
     username: "",
 
@@ -49,7 +49,7 @@ var model = {
         teamB: "#0000FF",
         mePlayer: "#FFFFFF"
     },
-
+    chatSubscribedChannels: [],
 
     setLogin: function(lg) {this.login=lg},
     setUsername(uName){this.username=uName},
@@ -81,9 +81,11 @@ var model = {
         document.dispatchEvent(new CustomEvent("MODEL_SETGAMEACTIVE", {detail:gameActive}));
     },
 
-    addMessageChat: function(message) {
+    addMessageChat: function(channel, user, message) {
         // preprocess message
-        this.chat.messages.push({user: "TEMP", message: message});
+        this.chat.messages.push({channel: channel,
+                                 user: user, 
+                                 message: message});
         document.dispatchEvent(new CustomEvent("MODEL_SETCHAT"));
     },
 
