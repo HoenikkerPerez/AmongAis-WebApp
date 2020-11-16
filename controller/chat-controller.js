@@ -30,11 +30,15 @@ class ChatController {
         let channel = document.getElementById("chatSendChannelInput").value
         let message = document.getElementById("chatSendMessageInput").value
         this._chat_client.sendMessage(channel, message);
+        // update model
+        model.addMessageChat(channel, "ME", message);
     }
     
     _subscribeChatChannel() {
         let channel = document.getElementById("chatChannelInput").value
         this._chat_client.sendMessage(channel);
+        //update model
+        model.addSubscribedChannel(channel);
     }
 
     load() {

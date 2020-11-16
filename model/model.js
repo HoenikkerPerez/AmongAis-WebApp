@@ -36,7 +36,8 @@ var model = {
         shot: false
     },
     chat: {
-        messages:[] //{channel: string, user: string, message: string}
+        messages:[], //{channel: string, user: string, message: string}
+        chatSubscribedChannels: []
     },
     username: "",
 
@@ -49,7 +50,6 @@ var model = {
         teamB: "#0000FF",
         mePlayer: "#FFFFFF"
     },
-    chatSubscribedChannels: [],
 
     setLogin: function(lg) {this.login=lg},
     setUsername(uName){this.username=uName},
@@ -87,6 +87,14 @@ var model = {
                                  user: user, 
                                  message: message});
         document.dispatchEvent(new CustomEvent("MODEL_SETCHAT"));
+    },
+
+    addSubscribedChannel: function(channel) {
+        this.chat.chatSubscribedChannels.push({channel: channel});
+    },
+
+    removeSubscribedChannel: function(channel) {
+        // TODO
     },
 
     findPlayerBySymbol: function(symb) {
