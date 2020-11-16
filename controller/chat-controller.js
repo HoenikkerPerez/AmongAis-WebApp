@@ -1,5 +1,6 @@
 class ChatController {
     _chat_client
+    _username
 
     constructor(chat_client) {
         this._chat_client = chat_client;
@@ -32,12 +33,12 @@ class ChatController {
         let message = document.getElementById("chatSendMessageInput").value
         this._chat_client.sendMessage(channel, message);
         // update model
-        model.addMessageChat(channel, "ME", message);
+        model.addMessageChat(channel, this._username, message);
     }
     
     _subscribeChatChannel() {
         let channel = document.getElementById("chatChannelInput").value
-        this._chat_client.sendMessage(channel);
+        this._chat_client.subscribeChannel(channel);
         //update model
         model.addSubscribedChannel(channel);
     }
@@ -61,8 +62,9 @@ class ChatController {
 
         document.addEventListener("MODEL_SETGAMEACTIVE", () => {
             // JOIN chat with login name
-            let username = model.username
-            this._chat_client.loginChat(username);
+            console.debug("chat-controller USERNAME SET")
+            this._username = model.username
+            this._chat_client.loginChat(this._username);
         }, false);
 
 
