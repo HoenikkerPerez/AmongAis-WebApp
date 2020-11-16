@@ -50,16 +50,16 @@
     </head>
     <body>
         <div id="homeUI">
-            <div class="login_wrapper">
+            <div class="login_wrapper" id="login-form-wrapper">
                 <form name="loginForm" id="loginForm" action="">Login Credentials:<br>
                     <input type="text" id="usernameInput" name="usernameInput" placeholder="loginName"><P>
-                    <input type="text" id="ingamenameInput" name="ingamenameInput" placeholder="noSpaceName"><P>
                     <input type="button" id="loginButton" name="loginButton" value="LOGIN" disabled>
                 </form>
             </div>
-            <div class="startgame_wrapper">
+            <div class="startgame_wrapper" id="startgame-form-wrapper" style="display: none;">
                 <form name="startGameForm" id="startGameForm" action="">Enter game name:<br>
-                    <input type="text" id="gameNameInput" name="gameNameInput"  placeholder="gameName" value=""><P>
+                    <input type="text" id="ingamenameInput" name="ingamenameInput" placeholder="username"><P>
+                    <input type="text" id="gameNameInput" name="gameNameInput"  placeholder="matchname" value=""><P>
                     <input type="button" id="createButton" name="createButton" value="CREATE" disabled>
                     <input type="button" id="joinButton" name="joinButton" value="JOIN" disabled>
                     <input type="button" id="spectateButton" name="spectateButton" value="SPECTATE" disabled>
@@ -88,6 +88,7 @@
                                 <div id="chatChannelBlock">
                                     <input type="text" id="chatChannelInput" name="chatChannelInput" placeholder="channel" value="">
                                     <input type="button" id="chatChannelButton" name="chatChannelButton" value="SUBSCRIBE" disabled>
+                                    <span id="subscribedChannels"> </span>
                                 </div>
                                 <div id="chatSendMessageBlock">
                                     <input type="text" id="chatSendChannelInput" name="chatSendChannelInput" placeholder="channel" value="">

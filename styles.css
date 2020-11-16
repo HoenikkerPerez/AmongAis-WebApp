@@ -3,6 +3,11 @@
     margin-top: 5%;
 }
 
+#loginUI {
+    text-align:center;
+    margin-top: 5%;
+}
+
 #canvas{
     outline: black 3px solid;
 }

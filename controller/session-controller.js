@@ -24,7 +24,11 @@ class SessionController {
     _loadUI() {
         // Game name
         let gameNameInput = document.getElementById("gameNameInput");
-        gameNameInput.addEventListener("input", this._validateGameName);
+        gameNameInput.addEventListener("input", this._validateCreateJoin);
+        
+        // InGame name
+        let ingamenameInput = document.getElementById("ingamenameInput");
+        ingamenameInput.addEventListener("input", this._validateCreateJoin)
 
         // Create game
         document.getElementById("createButton").addEventListener("click", () => {
@@ -55,16 +59,17 @@ class SessionController {
             console.debug("LoginController: try to login for " + username);
             if(this._gameClient.login(username)){
                 model.username = username;
-                model.inGameName = document.getElementById("ingamenameInput").value;
-                document.getElementById("loginForm").style.display="none"
+                // model.inGameName = document.getElementById("ingamenameInput").value;
+                document.getElementById("login-form-wrapper").style.display="none";
+                document.getElementById("startgame-form-wrapper").style.display="";
             }
         });
         
         // validate Login using credential
         let usernameInput = document.getElementById("usernameInput");
         usernameInput.addEventListener("input", this._validateLogin);
-        let ingamenameInput = document.getElementById("ingamenameInput");
-        ingamenameInput.addEventListener("input", this._validateLogin);
+        // let ingamenameInput = document.getElementById("ingamenameInput");
+        // ingamenameInput.addEventListener("input", this._validateLogin);
 
          
         // Session-related commands during the match (keys)
@@ -152,30 +157,50 @@ class SessionController {
 
     _validateLogin() {
         let usernameInput = document.getElementById("usernameInput");
-        let ingamenameInput = document.getElementById("ingamenameInput");
         let loginButton = document.getElementById("loginButton");
-        if(usernameInput.value.length == 0 || ingamenameInput.value.length == 0) {
+        if(usernameInput.value.length == 0) {
                 loginButton.disabled = true
         } else {
             loginButton.disabled = false
         }
     };
     
-    _validateGameName() {
+    _validateCreateJoin() {
+        let ingamenameInput = document.getElementById("ingamenameInput");
         let gameNameInput = document.getElementById("gameNameInput");
         let createButton = document.getElementById("createButton");
         let joinButton = document.getElementById("joinButton");
         let spectateButton = document.getElementById("spectateButton");
         
-        if(gameNameInput.value.length == 0) {
+        if(gameNameInput.value.length == 0 || ingamenameInput.value.length == 0) {
             createButton.disabled = true
             joinButton.disabled = true
-            spectateButton.disabled = true
+            // spectateButton.disabled = true
         } else {
             createButton.disabled = false
             joinButton.disabled = false
+            // spectateButton.disabled = false
+        }
+        if(gameNameInput.value.length == 0) {
+            spectateButton.disabled = true
+        } else {
             spectateButton.disabled = false
         }
     };
+
+    _validateSpectateGame() {
+        let gameNameInput = document.getElementById("gameNameInput");
+        let spectateButton = document.getElementById("spectateButton");
+        
+        if(gameNameInput.value.length == 0) {
+            // createButton.disabled = true
+            // joinButton.disabled = true
+            spectateButton.disabled = true
+        } else {
+            // createButton.disabled = false
+            // joinButton.disabled = false
+            spectateButton.disabled = false
+        }
+    }
 
 }
