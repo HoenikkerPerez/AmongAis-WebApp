@@ -3,8 +3,9 @@ class ChatController {
 
     constructor(chat_client) {
         this._chat_client = chat_client;
-        this._chat_client.onMessage((evt) => {
-            let msg = evt.data;
+        this._chat_client.onMessage(async (evt) => {
+            let msg = await evt.data.text();
+            
             console.debug("Chat Client received message: " + msg);
             // <channel> <name> <text>
             let spltmsg = msg.split(" ")
