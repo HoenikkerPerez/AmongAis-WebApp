@@ -64,12 +64,17 @@ var model = {
     
     setStatus: function(status) {
         // preprocess status
-        if(status.state =="FINISHED"){
-            if(this.status.state != status.state){
-                this.status = status;
-                document.dispatchEvent(new CustomEvent("MODEL_ENDGAME", {detail: {status:status}}));
-            }
-            return;
+        // if(status.state =="FINISHED"){
+        //     if(this.status.state != status.state){
+        //         this.status = status;
+        //         document.dispatchEvent(new CustomEvent("MODEL_ENDGAME", {detail: {status:status}}));
+        //     }
+        //     return;
+        // }
+        if(this.status.state != status.state){
+            let newstate_tag = "MODEL_MATCH_STATUS_"+status.state; // LOBBY, ACTIVE, FINISHED
+            this.status = status;
+            document.dispatchEvent(new CustomEvent(newstate_tag, {detail: {status:status}}));
         }
         this.status = status;
         document.dispatchEvent(new CustomEvent("MODEL_SETSTATUS", {detail: {status:status}}));
