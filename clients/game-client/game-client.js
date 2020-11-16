@@ -26,18 +26,18 @@ class GameClient {
 
     _connect() {
         console.debug("Game Client is connecting...");
-        this._ws = new WebSocket(model.net.game.ws);
+        this._ws = new WebSocket(model.net.game.ws, ['binary', 'base64']);
         this._ws.onopen = function(evt) { console.debug("Game Client opened the WebSocket.") };
         this._ws.onclose = function(evt) { console.debug("Game Client closed the connection.") };
         this._ws.onerror = function(evt) { console.error("Game Client error: " + evt.data) };
 
         this._wsQueue = [];
-        this._ws.onmessage = function(evt) {
-            let msg = evt.data;
+        this._ws.onmessage = async function(evt) {
+            let msg = await evt.data.text();
             console.debug("Game Client received a message - " + msg);
             let msgtag = this._wsQueue.shift()
             console.debug("Game Client: Dispatching event" + msgtag);
-            document.dispatchEvent(new CustomEvent(msgtag, {detail: evt.data }));
+            document.dispatchEvent(new CustomEvent(msgtag, {detail: msg }));
             // Check too fast error
             if(msg.data == "ERROR 401 Too fast") {
                 alert("Connection closed by the server - too fast.");
@@ -60,19 +60,19 @@ class GameClient {
 
     // _requestHandler is called the timer to avoid sending messages too fast
     _requestHandler() {
-        console.debug("Game Client is going to send a message to the server, the clock tick'd!");
+        //console.debug("Game Client is going to send a message to the server, the clock tick'd!");
         if(this._wsRequests.length > 0) {
-            console.debug("Game Client's request queue is not empty.");
+            //console.debug("Game Client's request queue is not empty.");
             let msg = this._wsRequests.shift();
-            console.debug("Game Client is going to actually send the message " + msg);
+            //console.debug("Game Client is going to actually send the message " + msg);
             this._ws.send(msg + "\n");
-            console.debug("Game Client actually sent " + msg);
+            //console.debug("Game Client actually sent " + msg);
         }
         // Repeat endlessly
         let timeframe = model.connectionTimeframe;
-        console.debug("Game Client is going to set the timer to fire again in " + timeframe + "ms.");
+        //console.debug("Game Client is going to set the timer to fire again in " + timeframe + "ms.");
         window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
-        console.debug("Game Client has set the timer for its queue.");
+        //console.debug("Game Client has set the timer for its queue.");
     }
 
     _close() {
