@@ -211,6 +211,7 @@ class MatchController {
         let msgOk = evt.detail.startsWith("OK");
         if(!msgOk){
             // alert("HUD[!]" + evt.detail);
+            popupMsg("[!] getStatusHandler" + evt.detail, "danger");
             return;
         }
         let status = {};

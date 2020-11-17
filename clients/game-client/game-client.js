@@ -40,7 +40,8 @@ class GameClient {
             document.dispatchEvent(new CustomEvent(msgtag, {detail: msg }));
             // Check too fast error
             if(msg.data == "ERROR 401 Too fast") {
-                alert("Connection closed by the server - too fast.");
+                // alert("Connection closed by the server - too fast.");
+                popupMsg("Connection closed by the server - too fast.","danger")
                 console.error("Too fast :(");
             }
         }.bind(this)
@@ -162,6 +163,8 @@ class GameClient {
 
     accuse(teammateName) {
         console.debug("Game Client is requesting a vote of no confidence for teammate: " + teammateName);
-        alert("A vote of no confidence for teammate: " + teammateName);
+        // alert("A vote of no confidence for teammate: " + teammateName);
+        popupMsg("A vote of no confidence for teammate: " + teammateName,"warning");
+
     }
 }
