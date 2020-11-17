@@ -14,6 +14,7 @@ class GameClient {
 
     // Queue for message requests to send to the server.
     _wsRequests;
+    _noRequestsCount = 0;
 
     constructor() {
         this._connect();
@@ -67,12 +68,16 @@ class GameClient {
             let msg = this._wsRequests.shift();
             //console.debug("Game Client is going to actually send the message " + msg);
             this._ws.send(msg + "\n");
+            this._noRequestsCount = 0;
             console.debug("Game Client actually sent " + msg);
         }
         // SEND NOP EACH 20 seconds
         else {
-            this._wsQueue.push("NOPtag");
-            this._ws.send("NOP \n"); // TODO
+            this._noRequestsCount++;
+            if(this._noRequestsCount >= 30) {
+                this._noRequestsCount = 0;
+                this.nop(); // TODO gamename nop
+            }
         }
         // Repeat endlessly
         let timeframe = model.connectionTimeframe;
@@ -169,5 +174,11 @@ class GameClient {
     accuse(teammateName) {
         console.debug("Game Client is requesting a vote of no confidence for teammate: " + teammateName);
         alert("A vote of no confidence for teammate: " + teammateName);
+    }
+
+    nop() {
+        console.debug("Game Client is requesting a nop");
+        let msg = this._sync.nop(model.status.ga);
+        this._send("miticoOggettoCheNonEsiste.NOP", msg);
     }
 }
