@@ -30,7 +30,7 @@ const Terrain = {
 
 class WorldUi {
 
-    imgTileSet = './assets/mod32x32_map_tile.png'    
+    imgTileSet = './assets/mod32x32_map_tilev2.png'    
     
     N = 32 // map size NxN
 
