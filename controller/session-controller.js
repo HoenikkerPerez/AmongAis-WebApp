@@ -105,7 +105,7 @@ class SessionController {
 
             if(msgOk) {
                 // Remove home UI elements
-                model.setGameActive(true);
+                model.setRunningGame(true);
             } else if (msg.includes("410")) {
                 alert("PLAYER NAME ALREADY TAKEN IN THIS GAME");
             } else {
@@ -121,7 +121,7 @@ class SessionController {
 
             if(msgOk) {
                 // Remove home UI elements
-                model.setGameActive(true);
+                model.setRunningGame(true);
             } else {
                 alert("GAME NOT EXIST")
             }

@@ -43,7 +43,8 @@ var model = {
 
     login: false,
     ingamename:"",
-    gameActive: false,
+    userType: "", // player/spectator
+    isRunning: false,
 
     teamColors : {
         teamA: "#ff0000",
@@ -71,19 +72,20 @@ var model = {
         //     }
         //     return;
         // }
-        if(this.status.state != status.state){
+        let old = this.status.state;
+        this.status = status;
+        if(this.status.state != old){
             let newstate_tag = "MODEL_MATCH_STATUS_"+status.state; // LOBBY, ACTIVE, FINISHED
-            this.status = status;
             document.dispatchEvent(new CustomEvent(newstate_tag, {detail: {status:status}}));
         }
-        this.status = status;
         document.dispatchEvent(new CustomEvent("MODEL_SETSTATUS", {detail: {status:status}}));
     },
 
-    setGameActive: function(gameActive) {
+    // enter into the match: players & spectators
+    setRunningGame: function(isRunning) {
         // preprocess status
-        this.gameActive = gameActive;
-        document.dispatchEvent(new CustomEvent("MODEL_SETGAMEACTIVE", {detail:gameActive}));
+        this.isRunning = isRunning;
+        document.dispatchEvent(new CustomEvent("MODEL_RUN_GAME", {detail:isRunning}));
     },
 
     addMessageChat: function(channel, user, message) {

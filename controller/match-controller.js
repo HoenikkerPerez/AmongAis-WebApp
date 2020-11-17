@@ -264,12 +264,17 @@ class MatchController {
         // document.addEventListener("ACCUSE", (evt) => {this.accuseHandler(this._gameClient)}, false);
 
         // document.addEventListener("MODEL_SETGAMENAME", this.init, false);
-        document.addEventListener("MODEL_SETGAMEACTIVE", () => {
+        document.addEventListener("MODEL_RUN_GAME", () => {
+            // Init human commands
+            // TODO: add "start action"
+            // Init map polling
+            this.poller()
+        }, false);
+
+        document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
             // Init human commands
             document.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
-            // Init map polling
             document.addEventListener("ACCUSE", (evt) => {this.accuseHandler(evt, this._gameClient)}, false);
-            this.poller()
         }, false);
 
     };
