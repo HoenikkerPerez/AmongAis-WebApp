@@ -10,6 +10,7 @@ var model = {
         },
         chat: {
             ws: "ws://margot.di.unipi.it:8522"//ws: "ws://margot.di.unipi.it:8522"
+            // ws: "ws://localhost:8522"//ws: "ws://margot.di.unipi.it:8522"
         }
 }   ,
     status: {
@@ -97,11 +98,25 @@ var model = {
     },
 
     addSubscribedChannel: function(channel) {
-        this.chat.chatSubscribedChannels.push({channel: channel});
+        // todo check if already exists
+        let find = this.chat.chatSubscribedChannels.find(o => o.channel === channel);
+        if (find == undefined) {
+            this.chat.chatSubscribedChannels.push({channel: channel});
+            document.dispatchEvent(new CustomEvent("MODEL_SETCHAT"));
+            console.debug("chat addSubscribedChannel: " + channel)
+        }
     },
 
     removeSubscribedChannel: function(channel) {
-        // TODO
+        // TODO 
+        let findidx = this.chat.chatSubscribedChannels.findIndex(o => o.channel === channel);
+        if (findidx != -1) {
+            console.debug(find);
+            this.chat.chatSubscribedChannels.splice(findidx)
+            document.dispatchEvent(new CustomEvent("MODEL_SETCHAT"));
+            console.debug("chat removeSubscribedChannel: " + channel)
+        }
+
     },
 
     findPlayerBySymbol: function(symb) {
