@@ -194,48 +194,48 @@ class MatchController {
             // alert("HUD[!]" + evt.detail);
             return;
         }
+        let status = {};
+        let ga = {};
+        let me = {}
+        status.pl_list = [];        
+
 
         let stat = evt.detail.slice(7).replace("«ENDOFSTATUS»",'').trim().split('\n');
-        let ga = {};
         let ga_list = stat[0].slice(4).split(' ')
         for(let j=0;j<ga_list.length;j++){
             ga[ga_list[j].split('=')[0]] = ga_list[j].split('=')[1];
         }
-
-        
-        let me = {}
-        let pl_start=2;
-        if(stat[1].startsWith("ME:")){
-            let me_list = stat[1].slice(4).split(' ');
-            for(let j=0;j<me_list.length;j++){
-                me[me_list[j].split('=')[0]] = me_list[j].split('=')[1];
-            }
-        }
-        else{
-            pl_start=1;
-        }
-        
-        
-        let pls = [];
-        for(let i=pl_start;i<stat.length;i++){
-            let pl = {};
-            let pl_list = stat[i].slice(4).split(' ')
-            for(let j=0;j<pl_list.length;j++){
-                pl[pl_list[j].split('=')[0]] = pl_list[j].split('=')[1];
-            }
-            pls.push(pl);
-        }
-
-        let status = {};
         status.ga = ga.name;
         status.state = ga.state;
         status.size = ga.size;
-
         status.me = me;
-        status.pl_list = pls;
+
+        if(stat.length>1){
+            let pl_start=2;
+            if(stat[1].startsWith("ME:")){
+                let me_list = stat[1].slice(4).split(' ');
+                for(let j=0;j<me_list.length;j++){
+                    me[me_list[j].split('=')[0]] = me_list[j].split('=')[1];
+                }
+            }
+            else{
+                pl_start=1;
+            }
+            
+            let pls = [];
+            for(let i=pl_start;i<stat.length;i++){
+                let pl = {};
+                let pl_list = stat[i].slice(4).split(' ')
+                for(let j=0;j<pl_list.length;j++){
+                    pl[pl_list[j].split('=')[0]] = pl_list[j].split('=')[1];
+                }
+                pls.push(pl);
+            }
+            status.me = me;
+            status.pl_list = pls;        
+        }
 
         model.setStatus(status);
-
     };
 
     statusPoller(){
