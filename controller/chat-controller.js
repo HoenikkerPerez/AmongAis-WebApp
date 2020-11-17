@@ -60,7 +60,7 @@ class ChatController {
             this._sendChatMessage();
         });
 
-        document.addEventListener("MODEL_SETGAMEACTIVE", () => {
+        document.addEventListener("MODEL_RUN_GAME", () => {
             // JOIN chat with login name
             console.debug("chat-controller USERNAME SET")
             this._username = model.username

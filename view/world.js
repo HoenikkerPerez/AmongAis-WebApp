@@ -237,10 +237,6 @@ class WorldUi {
             }
         }, false);
 
-        // document.addEventListener("MODEL_SETGAMEACTIVE", () => {
-        //     console.debug("WORLD MODEL_SETGAMEACTIVE")
-        //     window.requestAnimationFrame(this.renderMap());
-        // }, false);
 
         let canvas = document.getElementById("canvas");
         canvas.addEventListener('mousedown',function(evt){

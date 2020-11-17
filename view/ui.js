@@ -32,17 +32,17 @@ class Ui {
     };
 
     _gameEnded() {
-        alert("This is The END ... my only frien, the END! (DOORS) \n to Restart, Refresh page.")
+        alert("This is The END ... my only frien, the END! (DOORS) \n to Restart, Refresh page. (I can't do all stuff for you!)");
     }
 
     _loadWsMessages() {
         console.debug("UI: _loadWsMessages");
 
-        document.addEventListener("MODEL_SETGAMEACTIVE", () => {
+        document.addEventListener("MODEL_RUN_GAME", () => {
             this._gameActivated();
         }, false);
 
-        document.addEventListener("MODEL_ENDGAME", () => {
+        document.addEventListener("MODEL_MATCH_STATUS_FINISHED", () => {
             this._gameEnded();
         }, false);
 

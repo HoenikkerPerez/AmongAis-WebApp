@@ -186,6 +186,25 @@ class MatchController {
         gameClient.accuse(teammate);
     };
 
+    startHandler = function (evt) {
+        switch(evt.key) {
+            case "Enter":
+                // START
+                console.debug("MatchController is asking the game client to START the joined game after the ENTER key.");
+                this._gameClient.startGame();
+                break;
+            case "Escape":
+                // LEAVE
+                if(model.status.gameActive){
+                    console.debug("MatchController is asking the game client to LEAVE after the ESCAPE key.");
+                    this._gameClient.leave();
+                }
+                break;
+            default:
+                console.debug("MatchController retrieved a keyup, but nothing happened.");
+        }
+    };
+
 
     getStatusHandler(evt){
         console.debug("getStatusHandler: " + evt.detail);
@@ -264,12 +283,19 @@ class MatchController {
         // document.addEventListener("ACCUSE", (evt) => {this.accuseHandler(this._gameClient)}, false);
 
         // document.addEventListener("MODEL_SETGAMENAME", this.init, false);
-        document.addEventListener("MODEL_SETGAMEACTIVE", () => {
+        document.addEventListener("MODEL_RUN_GAME", () => {
+            // Init human commands
+            // TODO: add "start action"
+            // Session-related commands during the match (keys)
+            document.addEventListener("keyup", this.startHandler.bind(this), false);
+            // Init map polling
+            this.poller()
+        }, false);
+
+        document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
             // Init human commands
             document.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
-            // Init map polling
             document.addEventListener("ACCUSE", (evt) => {this.accuseHandler(evt, this._gameClient)}, false);
-            this.poller()
         }, false);
 
     };

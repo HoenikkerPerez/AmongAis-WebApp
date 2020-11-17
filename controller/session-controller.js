@@ -72,26 +72,6 @@ class SessionController {
         // let ingamenameInput = document.getElementById("ingamenameInput");
         // ingamenameInput.addEventListener("input", this._validateLogin);
 
-         
-        // Session-related commands during the match (keys)
-        document.addEventListener("keyup", (evt) => {
-            switch(evt.key) {
-                case "Enter":
-                    // START
-                    console.debug("SessionController is asking the game client to START the joined game after the ENTER key.");
-                    this._gameClient.startGame();
-                    break;
-                case "Escape":
-                    // LEAVE
-                    if(model.status.gameActive){
-                        console.debug("SessionController is asking the game client to LEAVE after the ESCAPE key.");
-                        this._gameClient.leave();
-                    }
-                    break;
-                default:
-                    console.debug("SessionController retrieved a keyup, but nothing happened.");
-            }
-        });
     }
 
     _loadWsMessages() {
@@ -110,7 +90,7 @@ class SessionController {
             let msgOk= msg.startsWith("OK");
             if(msgOk) {
                 // Remove home UI elements
-                model.setGameActive(true);
+                model.setRunningGame(true);
             } else if (msg.includes("410")) {
                 alert("PLAYER NAME ALREADY TAKEN IN THIS GAME");
             } else {
@@ -126,7 +106,7 @@ class SessionController {
 
             if(msgOk) {
                 // Remove home UI elements
-                model.setGameActive(true);
+                model.setRunningGame(true);
             } else {
                 alert("GAME NOT EXIST")
             }
