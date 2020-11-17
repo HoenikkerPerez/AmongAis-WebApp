@@ -222,7 +222,9 @@ class MatchController {
         let stat = evt.detail.slice(7).replace("«ENDOFSTATUS»",'').trim().split('\n');
         let ga_list = stat[0].slice(4).split(' ')
         for(let j=0;j<ga_list.length;j++){
-            ga[ga_list[j].split('=')[0]] = ga_list[j].split('=')[1];
+            let key = ga_list[j].split('=')[0]
+            let value = ga_list[j].substring(ga_list[j].indexOf('=')+1);
+            ga[key] = value
         }
         status.ga = ga.name;
         status.state = ga.state;
@@ -234,7 +236,9 @@ class MatchController {
             if(stat[1].startsWith("ME:")){
                 let me_list = stat[1].slice(4).split(' ');
                 for(let j=0;j<me_list.length;j++){
-                    me[me_list[j].split('=')[0]] = me_list[j].split('=')[1];
+                    let key =me_list[j].split('=')[0]
+                    let value =  me_list[j].substring( me_list[j].indexOf('=')+1);
+                    me[key] = value
                 }
             }
             else{
@@ -246,7 +250,9 @@ class MatchController {
                 let pl = {};
                 let pl_list = stat[i].slice(4).split(' ')
                 for(let j=0;j<pl_list.length;j++){
-                    pl[pl_list[j].split('=')[0]] = pl_list[j].split('=')[1];
+                    let key = pl_list[j].split('=')[0]
+                    let value =  pl_list[j].substring( pl_list[j].indexOf('=')+1);
+                    pl[key] = value
                 }
                 pls.push(pl);
             }
