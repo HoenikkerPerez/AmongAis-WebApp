@@ -60,19 +60,25 @@ class GameClient {
 
     // _requestHandler is called the timer to avoid sending messages too fast
     _requestHandler() {
-        console.debug("Game Client is going to send a message to the server, the clock tick'd!");
+        
+        //console.debug("Game Client is going to send a message to the server, the clock tick'd!");
         if(this._wsRequests.length > 0) {
-            console.debug("Game Client's request queue is not empty.");
+            //console.debug("Game Client's request queue is not empty.");
             let msg = this._wsRequests.shift();
-            console.debug("Game Client is going to actually send the message " + msg);
+            //console.debug("Game Client is going to actually send the message " + msg);
             this._ws.send(msg + "\n");
             console.debug("Game Client actually sent " + msg);
         }
+        // SEND NOP EACH 20 seconds
+        else {
+            this._wsQueue.push("NOPtag");
+            this._ws.send("NOP \n"); // TODO
+        }
         // Repeat endlessly
         let timeframe = model.connectionTimeframe;
-        console.debug("Game Client is going to set the timer to fire again in " + timeframe + "ms.");
+        //console.debug("Game Client is going to set the timer to fire again in " + timeframe + "ms.");
         window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
-        console.debug("Game Client has set the timer for its queue.");
+        //console.debug("Game Client has set the timer for its queue.");
     }
 
     _close() {
