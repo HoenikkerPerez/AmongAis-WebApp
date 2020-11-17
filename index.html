@@ -81,7 +81,7 @@
                     <td>
                         <div class="chat_wrapper">
                             <div id="messageList"  style="overflow:auto; max-height:80vh;"></div>
-                            <form name="chatForm" id="chatForm" action=""><br>
+                            <!-- <form name="chatForm" id="chatForm" action=""><br> -->
                                 <div id="chatLoginBlock" style="display: none;">
                                     <input type="text" id="chatLoginInput" name="chatLoginInput" placeholder="username" value="">
                                     <input type="button" id="chatLoginButton" name="chatLoginButton" value="LOGIN" disabled>
@@ -96,8 +96,9 @@
                                     <input type="text" id="chatSendMessageInput" name="chatSendMessageInput" placeholder="message" value="">
                                     <input type="button" id="chatSendButton" name="chatSendButton" value="SEND" disabled>
                                 </div>
-
-                            </form>
+                                <div id="chatSubscribedChannelBlock">
+                                </div>
+                            <!-- </form> -->
                         </div>
                     </td>
                 </tr>

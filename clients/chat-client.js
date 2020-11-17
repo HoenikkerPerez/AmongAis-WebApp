@@ -22,7 +22,7 @@ class ChatClient {
 
     _send(msg) {
         console.debug("Chat Client is sending message: " + msg);
-        this._ws.send(msg);
+        this._ws.send(msg + "\n");
     }
 
     loginChat(username) {

@@ -1,12 +1,13 @@
 class ChatController {
     _chat_client
     _username
+    _gamename
 
     constructor(chat_client) {
         this._chat_client = chat_client;
         this._chat_client.onMessage(async (evt) => {
             let msg = await evt.data.text();
-            
+            // let msg = evt.data;
             console.debug("Chat Client received message: " + msg);
             // <channel> <name> <text>
             let spltmsg = msg.split(" ")
@@ -33,7 +34,7 @@ class ChatController {
         let message = document.getElementById("chatSendMessageInput").value
         this._chat_client.sendMessage(channel, message);
         // update model
-        model.addMessageChat(channel, this._username, message);
+        // model.addMessageChat(channel, this._username, message);
     }
     
     _subscribeChatChannel() {
@@ -65,6 +66,12 @@ class ChatController {
             console.debug("chat-controller USERNAME SET")
             this._username = model.username
             this._chat_client.loginChat(this._username);
+
+            // SUBSCRIBE to the game channel
+            this._gamename = model.status.ga;
+            this._chat_client.subscribeChannel(this._gamename);
+            //update model
+            model.addSubscribedChannel(this._gamename);
         }, false);
 
 
