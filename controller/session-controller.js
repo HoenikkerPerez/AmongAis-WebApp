@@ -80,7 +80,8 @@ class SessionController {
             if(msgOk)
                 alert("Game has been created!");
             else
-                alert("Game creation failed.");
+                // alert("Game creation failed.");
+                popupMsg("Game creation failed.","danger")
         }, false);
 
         document.addEventListener("miticoOggettoCheNonEsiste.JOIN_GAME", (evt) => {
