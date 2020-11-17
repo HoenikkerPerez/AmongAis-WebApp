@@ -16,35 +16,8 @@ class HudUi {
         }, false);
 
         document.addEventListener("MODEL_SETCHAT", () => {
-            console.log("Rendering chat")
             this.renderChat();
         }, false);
-    };
-
-
-    _renderHud() {
-        console.debug("Rendering HUD");
-        // document.getElementById("hud").textContent = evt.detail;
-        let status_str = "";
-        status_str += "Match Name: " + model.status.ga;
-        status_str += "  Match state: " + model.status.state;
-        status_str +="\r\n"
-        status_str += "My Name: " + model.status.me.name;
-        status_str += " [" + model.status.me.symbol + "]";
-        status_str += "  team/loyalty: " + model.status.me.team + "/" + model.status.me.loyalty;
-        status_str += "  Energy: " + model.status.me.energy;
-        status_str += "   Score: " + model.status.me.score;
-        status_str += "\r\nPlayers in Game: "
-        for(let i=0;i<model.status.pl_list.length;i++){
-            status_str += "\r\n"
-            let pl = model.status.pl_list[i];
-            // PL: symbol=A name=username3 team=0 x=7 y=26
-            status_str += "- " + pl.name +"["+pl.symbol+"]";
-            status_str += "  Team: " + pl.team;
-            // status_str += "  ("+pl.x+","+pl.y+")";
-        }
-
-        document.getElementById("hud").textContent = status_str;
     };
     
     renderHud() {
@@ -64,7 +37,7 @@ class HudUi {
         root.appendChild(match);
         div.appendChild(root);
 
-        if(typeof model.status.me.name !== 'undefined'){
+        if(model.status.me != {} && (typeof model.status.me.name !== 'undefined')){
             let me = document.createElement("ul");
             me.textContent = "Player"
             
@@ -94,7 +67,12 @@ class HudUi {
             let _p = model.status.pl_list[i]; 
             let p = document.createElement("li");
 
-            p.innerHTML = _p.name + "   (" + _p.team + ")"; // "["+_p.symbol+"] " + 
+            p.innerHTML = _p.name; //+ "   (" + _p.team + ")"; // "["+_p.symbol+"] " + 
+            if (_p.team == 0) {
+                p.style.color = model.teamColors.teamA;
+            } else if (_p.team == 1) {
+                p.style.color = model.teamColors.teamB;
+            }
             // let team = document.createElement("li");
             // team.innerHTML = "T: " + _p.team;
             
@@ -122,11 +100,15 @@ class HudUi {
         div.innerHTML="";
 
         let messages = document.createElement("ul");
-        messages.textContent="MESSAGES";
         let model_messages = model.chat.messages
         for (let i=0; i<model_messages.length; i++) {
             let box = document.createElement("ul");
-            box.textContent = "MESSAGE"
+            box.textContent = "---"
+
+            let channel = document.createElement("li");
+            channel.innerHTML = model_messages[i].channel;
+            box.appendChild(channel);
+
             let user = document.createElement("li");
             user.innerHTML = model_messages[i].user;
             box.appendChild(user);

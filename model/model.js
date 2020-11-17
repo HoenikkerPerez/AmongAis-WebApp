@@ -4,6 +4,7 @@ var model = {
     connectionTimeframe: 1000, // Minimum delay between requests
     net: {
         game: {
+<<<<<<< HEAD
             //ws: "ws://localhost:8421"
             //ws: "ws://93.150.215.219:8765"
             ws: "ws://margot.di.unipi.it:8521"
@@ -11,6 +12,14 @@ var model = {
         chat: {
             //ws: "ws://localhost:8522"
             ws: "ws://margot.di.unipi.it:8522"
+=======
+            // ws: "ws://localhost:8765"
+            // ws: "ws://93.150.215.219:8765"
+            ws: "ws://margot.di.unipi.it:8521"
+        },
+        chat: {
+            ws: "ws://margot.di.unipi.it:8522"//ws: "ws://margot.di.unipi.it:8522"
+>>>>>>> develop
         }
 }   ,
     status: {
@@ -37,13 +46,22 @@ var model = {
         shot: false
     },
     chat: {
-        messages:[] //{user: string, message: string}
+        messages:[], //{channel: string, user: string, message: string}
+        chatSubscribedChannels: []
     },
     username: "",
 
     login: false,
     ingamename:"",
-    gameActive: false,
+    userType: "", // player/spectator
+    isRunning: false,
+
+    teamColors : {
+        teamA: "#ff0000",
+        teamB: "#0000FF",
+        mePlayer: "#FFFFFF"
+    },
+
     setLogin: function(lg) {this.login=lg},
     setUsername(uName){this.username=uName},
 
@@ -57,27 +75,43 @@ var model = {
     
     setStatus: function(status) {
         // preprocess status
-        if(status.state =="FINISHED"){
-            if(this.status.state != status.state){
-                this.status = status;
-                document.dispatchEvent(new CustomEvent("MODEL_ENDGAME", {detail: {status:status}}));
-            }
-            return;
-        }
+        // if(status.state =="FINISHED"){
+        //     if(this.status.state != status.state){
+        //         this.status = status;
+        //         document.dispatchEvent(new CustomEvent("MODEL_ENDGAME", {detail: {status:status}}));
+        //     }
+        //     return;
+        // }
+        let old = this.status.state;
         this.status = status;
+        if(this.status.state != old){
+            let newstate_tag = "MODEL_MATCH_STATUS_"+status.state; // LOBBY, ACTIVE, FINISHED
+            document.dispatchEvent(new CustomEvent(newstate_tag, {detail: {status:status}}));
+        }
         document.dispatchEvent(new CustomEvent("MODEL_SETSTATUS", {detail: {status:status}}));
     },
 
-    setGameActive: function(gameActive) {
+    // enter into the match: players & spectators
+    setRunningGame: function(isRunning) {
         // preprocess status
-        this.gameActive = gameActive;
-        document.dispatchEvent(new CustomEvent("MODEL_SETGAMEACTIVE", {detail:gameActive}));
+        this.isRunning = isRunning;
+        document.dispatchEvent(new CustomEvent("MODEL_RUN_GAME", {detail:isRunning}));
     },
 
-    addMessageChat: function(message) {
+    addMessageChat: function(channel, user, message) {
         // preprocess message
-        this.chat.messages.push({user: "TEMP", message: message});
+        this.chat.messages.push({channel: channel,
+                                 user: user, 
+                                 message: message});
         document.dispatchEvent(new CustomEvent("MODEL_SETCHAT"));
+    },
+
+    addSubscribedChannel: function(channel) {
+        this.chat.chatSubscribedChannels.push({channel: channel});
+    },
+
+    removeSubscribedChannel: function(channel) {
+        // TODO
     },
 
     findPlayerBySymbol: function(symb) {

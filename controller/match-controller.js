@@ -186,6 +186,25 @@ class MatchController {
         gameClient.accuse(teammate);
     };
 
+    startHandler = function (evt) {
+        switch(evt.key) {
+            case "Enter":
+                // START
+                console.debug("MatchController is asking the game client to START the joined game after the ENTER key.");
+                this._gameClient.startGame();
+                break;
+            case "Escape":
+                // LEAVE
+                if(model.status.gameActive){
+                    console.debug("MatchController is asking the game client to LEAVE after the ESCAPE key.");
+                    this._gameClient.leave();
+                }
+                break;
+            default:
+                console.debug("MatchController retrieved a keyup, but nothing happened.");
+        }
+    };
+
 
     getStatusHandler(evt){
         console.debug("getStatusHandler: " + evt.detail);
@@ -194,48 +213,48 @@ class MatchController {
             // alert("HUD[!]" + evt.detail);
             return;
         }
+        let status = {};
+        let ga = {};
+        let me = {}
+        status.pl_list = [];        
+
 
         let stat = evt.detail.slice(7).replace("«ENDOFSTATUS»",'').trim().split('\n');
-        let ga = {};
         let ga_list = stat[0].slice(4).split(' ')
         for(let j=0;j<ga_list.length;j++){
             ga[ga_list[j].split('=')[0]] = ga_list[j].split('=')[1];
         }
-
-        
-        let me = {}
-        let pl_start=2;
-        if(stat[1].startsWith("ME:")){
-            let me_list = stat[1].slice(4).split(' ');
-            for(let j=0;j<me_list.length;j++){
-                me[me_list[j].split('=')[0]] = me_list[j].split('=')[1];
-            }
-        }
-        else{
-            pl_start=1;
-        }
-        
-        
-        let pls = [];
-        for(let i=pl_start;i<stat.length;i++){
-            let pl = {};
-            let pl_list = stat[i].slice(4).split(' ')
-            for(let j=0;j<pl_list.length;j++){
-                pl[pl_list[j].split('=')[0]] = pl_list[j].split('=')[1];
-            }
-            pls.push(pl);
-        }
-
-        let status = {};
         status.ga = ga.name;
         status.state = ga.state;
         status.size = ga.size;
-
         status.me = me;
-        status.pl_list = pls;
+
+        if(stat.length>1){
+            let pl_start=2;
+            if(stat[1].startsWith("ME:")){
+                let me_list = stat[1].slice(4).split(' ');
+                for(let j=0;j<me_list.length;j++){
+                    me[me_list[j].split('=')[0]] = me_list[j].split('=')[1];
+                }
+            }
+            else{
+                pl_start=1;
+            }
+            
+            let pls = [];
+            for(let i=pl_start;i<stat.length;i++){
+                let pl = {};
+                let pl_list = stat[i].slice(4).split(' ')
+                for(let j=0;j<pl_list.length;j++){
+                    pl[pl_list[j].split('=')[0]] = pl_list[j].split('=')[1];
+                }
+                pls.push(pl);
+            }
+            status.me = me;
+            status.pl_list = pls;        
+        }
 
         model.setStatus(status);
-
     };
 
     statusPoller(){
@@ -264,12 +283,19 @@ class MatchController {
         // document.addEventListener("ACCUSE", (evt) => {this.accuseHandler(this._gameClient)}, false);
 
         // document.addEventListener("MODEL_SETGAMENAME", this.init, false);
-        document.addEventListener("MODEL_SETGAMEACTIVE", () => {
+        document.addEventListener("MODEL_RUN_GAME", () => {
+            // Init human commands
+            // TODO: add "start action"
+            // Session-related commands during the match (keys)
+            document.addEventListener("keyup", this.startHandler.bind(this), false);
+            // Init map polling
+            this.poller()
+        }, false);
+
+        document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
             // Init human commands
             document.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
-            // Init map polling
             document.addEventListener("ACCUSE", (evt) => {this.accuseHandler(evt, this._gameClient)}, false);
-            this.poller()
         }, false);
 
     };

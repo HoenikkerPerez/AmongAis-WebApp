@@ -146,6 +146,10 @@ class WorldUi {
         }
         this.lastX = canvas.width/2
         this.lastX  = canvas.height/2
+        
+        this._tsizeMap = Math.floor(this.ctx.canvas.height / this.N)
+        this.ctx.canvas.width  = this._tsizeMap * this.N
+        this.ctx.canvas.height = this._tsizeMap * this.N
     }
 
     renderMap() {
@@ -165,7 +169,7 @@ class WorldUi {
 
     _drawMap() {
         let map = model._map;
-        let tsizeMap = Math.floor(this.ctx.canvas.height / this.N)
+        // let tsizeMap = Math.floor(this.ctx.canvas.height / this.N)
         this.tmp_players = [];
         for (let c = 0; c < map.cols; c++) {
             for (let r = 0; r < map.rows; r++) {
@@ -177,10 +181,10 @@ class WorldUi {
                         tile[1] * map.tsize, // source y
                         map.tsize, // source width
                         map.tsize, // source height
-                        c * tsizeMap,  // target x
-                        r * tsizeMap, // target y
-                        tsizeMap, // target width
-                        tsizeMap // target height
+                        c * this._tsizeMap,  // target x
+                        r * this._tsizeMap, // target y
+                        this._tsizeMap, // target width
+                        this._tsizeMap // target height
                     );
                     if (type === "player") {
                         // TODO ADD
@@ -196,7 +200,7 @@ class WorldUi {
     _drawPlayerNames() {
         for (let i=0; i<this.tmp_players.length; i++) {
             let [symbol, team, c, r] = this.tmp_players[i];
-            let tsizeMap = Math.floor(this.ctx.canvas.height / this.N)
+            // let this._tsizeMap = Math.floor(this.ctx.canvas.height / this.N)
 
             let player = model.findPlayerBySymbol(symbol);
             if (typeof player !== 'undefined') {
@@ -204,23 +208,23 @@ class WorldUi {
                 if (team == 0) {
                     if (typeof me_symbol !== 'undefined' && model.status.me.symbol.localeCompare(symbol) == 0) {
                         this.ctx.font = '12px Arial'
-                        this.ctx.fillStyle = "#FFFFFF";
+                        this.ctx.fillStyle = model.teamColors.mePlayer;
                     } else {
                         this.ctx.font = '8px Arial'
-                        this.ctx.fillStyle = "#ff0000";
+                        this.ctx.fillStyle = model.teamColors.teamA;
                     }
                 } else {
                     if (typeof me_symbol !== 'undefined' && model.status.me.symbol.localeCompare(symbol) == 0) {
                         this.ctx.font = '12px Arial'
-                        this.ctx.fillStyle = "#FFFFFF";
+                        this.ctx.fillStyle = model.teamColors.mePlayer;
                     } else {
                         this.ctx.font = '8px Arial'
-                        this.ctx.fillStyle = "#0000FF";
+                        this.ctx.fillStyle = model.teamColors.teamB;
                     }
                 }
                 this.ctx.textAlign = "center";
                 this.ctx.textBaseline = "bottom";
-                this.ctx.fillText(player.name, c * tsizeMap + Math.floor(tsizeMap/2), r * tsizeMap);
+                this.ctx.fillText(player.name, c * this._tsizeMap + Math.floor(this._tsizeMap/2), r * this._tsizeMap);
             }
         }        
     }
@@ -233,10 +237,6 @@ class WorldUi {
             }
         }, false);
 
-        // document.addEventListener("MODEL_SETGAMEACTIVE", () => {
-        //     console.debug("WORLD MODEL_SETGAMEACTIVE")
-        //     window.requestAnimationFrame(this.renderMap());
-        // }, false);
 
         let canvas = document.getElementById("canvas");
         canvas.addEventListener('mousedown',function(evt){
