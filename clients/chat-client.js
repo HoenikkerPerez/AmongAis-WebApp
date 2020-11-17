@@ -9,19 +9,6 @@ class ChatClient {
 
     _connect() {
         console.debug("Chat Client is connecting...");
-<<<<<<< HEAD
-        this._ws = new WebSocket(model.net.chat.ws, ['binary', 'base64']);
-        this._ws.onopen = function(evt) { console.debug("Chat Client opened the WebSocket.") };
-        this._ws.onclose = function(evt) { console.debug("Chat Client closed the connection.") };
-        this._ws.onerror = function(evt) { console.error("Chat Client error: " + evt.data) };
-        this._ws.onmessage = async function(evt) {
-            let msg = await evt.data.text();
-            console.debug("Chat Client received message: " + msg);
-            // parse msg
-            // dispatch chat customevent
-            model.addMessageChat(msg); // event?
-        }
-=======
         this._ws = new WebSocket(model.net.chat.ws, ['binary','base64']);
         this._ws.onopen = function(evt) { console.debug("Chat Client opened the WebSocket.") };
         this._ws.onclose = function(evt) { console.debug("Chat Client closed the connection.") };
@@ -31,7 +18,6 @@ class ChatClient {
 
     onMessage(callback) {
         this._ws.onmessage = callback;
->>>>>>> develop
     }
 
     _send(msg) {
