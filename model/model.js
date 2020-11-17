@@ -33,7 +33,6 @@ var model = {
                 y: 0
             }
         },
-        shot: false
     },
     chat: {
         messages:[], //{channel: string, user: string, message: string}

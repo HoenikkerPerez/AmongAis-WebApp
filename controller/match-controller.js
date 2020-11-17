@@ -17,7 +17,6 @@ class MatchController {
                 // SHOOT
                 console.debug("MatchController is asking the game client to SHOOT in the last direction moved (" + lastDirection.direction + ").");
                 gameClient.shoot(lastDirection.direction);
-                this.eventualConsistentShot(lastDirection.direction);
                 break;
             default:
                 // MOVE. Moving also sets the lastDirection in which the player shoots.
@@ -67,11 +66,42 @@ class MatchController {
         }
         // update model
         model.setMap(map_obj);
-        // send notification to render component
-
+        // extract local interesting information from the map
+        this.applyOnMapEntities([
+            [model.status.me.symbol,
+                (x,y) => { model.local.me.position = {x:x, y:y} }],
+            // [symbol, (x,y) => { handlers }],
+        ]);
     };
 
+    applyOnMapEntities(symbolFunctionList) {
+        let map = model._map;
+        // foreach element in map
+        for(let r = 0; r < map.rows; r++) {
+            for(let c = 0; c < map.cols; c++) {
+                // Compute cell index
+                let idx = r * map.cols + c;
+                // Check foreach symbol in the list
+                for(let sf of symbolFunctionList) if(map[idx] == sf[0]) sf[1](r,c);
+            }
+        }
+    }
+
     // Lasers
+
+    shootHandler(evt, direction) {
+        console.debug("Match Controller has received a SHOOT response.");
+        let msgOk = evt.detail.startsWith("OK");
+        if(msgOk) {
+            // I'll avoid making a copy of the whole map...
+            let position = model.local.me.position;
+            this.computeShootOnMap(position, direction);
+            console.debug("Match Controller computed the map with the shot and is going to set the new map in the model.");
+            model.setMap(model._map); // update needed to fire the rendering action
+        } else {
+            console.error("Match Controller retrieved an error from the server while shooting.");
+        }
+    }
 
     computeShootOnMap(shooterPosition, direction) {
 
@@ -126,17 +156,6 @@ class MatchController {
             }
         }
         console.error("Match Controller: shot over " + cells + " cells.");
-    }
-
-    eventualConsistentShot(direction) {
-        if(!model.local.shot) {
-            // I'll avoid making a copy of the whole map...
-            let position = model.local.me.position;
-            this.computeShootOnMap(position, direction);
-            console.debug("Match Controller computed the map with the shot and is going to set the new map in the model.");
-            model.setMap(model._map); // horrible
-            model.local.shot = true;
-        }
     }
 
     // Map view management
@@ -205,7 +224,6 @@ class MatchController {
         }
     };
 
-
     getStatusHandler(evt){
         console.debug("getStatusHandler: " + evt.detail);
         let msgOk = evt.detail.startsWith("OK");
@@ -273,7 +291,13 @@ class MatchController {
 
     load() {
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", this.lookMapHandler, false);
-        
+
+        // Shoot events
+        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:N", ((evt) => { this.shootHandler(evt, gameClient.UP) }).bind(this), false);
+        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:S", ((evt) => { this.shootHandler(evt, gameClient.DOWN) }).bind(this), false);
+        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:W", ((evt) => { this.shootHandler(evt, gameClient.LEFT) }).bind(this), false);
+        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:E", ((evt) => { this.shootHandler(evt, gameClient.RIGHT) }).bind(this), false);
+
         // DEBUG: Status button
         // document.getElementById("statusButton").addEventListener("click", () => {
         //     this.statusPoller();
