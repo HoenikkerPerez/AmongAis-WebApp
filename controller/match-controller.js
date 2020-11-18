@@ -281,9 +281,29 @@ class MatchController {
         this._pollOnce();
         window.setTimeout(function(){ this._poller() }.bind(this), timeframe);
     }
- 
+
+    
 
     load() {
+        // All listeners common to every kind of user
+        this._loadCommon();
+
+        switch(model.local.kind) {
+            case model.PLAYER:
+                this._loadPlayer();
+            break;
+            case model.SPECTATOR:
+                this._loadSpectator();
+            break;
+            default:
+                popupMsg("Are you a PLAYER or a SPECTATOR?", "danger");
+        }
+        if(model.local.kind == model.PLAYER){
+            this._loadPlayer();
+        } 
+    };
+
+    _loadCommon() {
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", this.lookMapHandler, false);
         
         // DEBUG: Status button
@@ -303,19 +323,34 @@ class MatchController {
             // Init map polling
             this._pollOnce();
         }, false);
+    }
 
+    // Player-specific listeners
+
+    _loadPlayer() {
         document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
             // Init human commands
             console.debug("match-controller catches MODEL_MATCH_STATUS_ACTIVE")
             document.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
             document.addEventListener("ACCUSE", (evt) => {this.accuseHandler(evt, this._gameClient)}, false);
+            model.timeframe = model.playerTimeframe;
             this._poller();
         }, false);
         
 
         document.addEventListener("MODEL_PLAYER_JOINED", () => {
-           this._pollOnce();
+        this._pollOnce();
         }, false);
-    };
+    }
+
+    // Spectator-specific listeners
+
+    _loadSpectator() {
+        document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
+            // Init human commands
+            model.timeframe = model.spectatorTimeframe;
+            this._poller();
+        }, false);
+    }
     
 };

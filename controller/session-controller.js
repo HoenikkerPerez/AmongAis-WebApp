@@ -92,7 +92,7 @@ class SessionController {
             let msgOk= msg.startsWith("OK");
             if(msgOk) {
                 // Remove home UI elements
-                model.setRunningGame(true);
+                model.setRunningGame(true, model.PLAYER);
             } else if (msg.includes("410")) {
                 // alert("PLAYER NAME ALREADY TAKEN IN THIS GAME");
                 popupMsg("PLAYER NAME ALREADY TAKEN IN THIS GAME","danger")
@@ -110,7 +110,7 @@ class SessionController {
 
             if(msgOk) {
                 // Remove home UI elements
-                model.setRunningGame(true);
+                model.setRunningGame(true, model.SPECTATOR);
             } else {
                 // alert("GAME NOT EXIST")
                 popupMsg("GAME NOT EXIST","danger")

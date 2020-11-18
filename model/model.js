@@ -27,6 +27,11 @@ var model = {
         },
         pl_list:[]
     },
+
+    NONE: "NONE",
+    PLAYER: "PLAYER",
+    SPECTATOR: "SPECTATOR",
+
     local: {
         me: {
             position: { // (0,0) is North West corner
@@ -34,7 +39,8 @@ var model = {
                 y: 0
             }
         },
-        shot: false
+        shot: false,
+        kind: this.NONE
     },
     chat: {
         messages:[], //{channel: string, user: string, message: string}
@@ -82,7 +88,9 @@ var model = {
         document.dispatchEvent(new CustomEvent("MODEL_SETSTATUS", {detail: {status:status}}));
     },
     // enter into the match: players & spectators
-    setRunningGame: function(isRunning) {
+    setRunningGame: function(isRunning, kindOfUser) {
+        // set user kind
+        this.local.kind = kindOfUser;
         // preprocess status
         this.isRunning = isRunning;
         document.dispatchEvent(new CustomEvent("MODEL_RUN_GAME", {detail:isRunning}));
