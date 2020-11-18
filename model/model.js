@@ -81,12 +81,20 @@ var model = {
         }
         document.dispatchEvent(new CustomEvent("MODEL_SETSTATUS", {detail: {status:status}}));
     },
-
     // enter into the match: players & spectators
     setRunningGame: function(isRunning) {
         // preprocess status
         this.isRunning = isRunning;
         document.dispatchEvent(new CustomEvent("MODEL_RUN_GAME", {detail:isRunning}));
+    },
+
+    setGameActive: function(){
+        this.status.state = "ACTIVE";
+        document.dispatchEvent(new CustomEvent("MODEL_MATCH_STATUS_ACTIVE"));
+    },
+
+    playerJoined: function() {
+        document.dispatchEvent(new CustomEvent("MODEL_PLAYER_JOINED"));
     },
 
     addMessageChat: function(channel, user, message) {

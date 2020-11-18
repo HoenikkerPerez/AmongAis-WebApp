@@ -271,12 +271,17 @@ class MatchController {
         this._gameClient.getStatus(gameName)
     };
 
-    poller(){
-        let timeframe = model.timeframe;
+    _pollOnce() {
         this.mapPoller();
         this.statusPoller();
-        window.setTimeout(function(){ this.poller() }.bind(this), timeframe);
+    };
+
+    _poller() {
+        let timeframe = model.timeframe;
+        this._pollOnce();
+        window.setTimeout(function(){ this._poller() }.bind(this), timeframe);
     }
+ 
 
     load() {
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", this.lookMapHandler, false);
@@ -296,15 +301,21 @@ class MatchController {
             // Session-related commands during the match (keys)
             document.addEventListener("keyup", this.startHandler.bind(this), false);
             // Init map polling
-            this.poller()
+            this._pollOnce();
         }, false);
 
         document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
             // Init human commands
+            console.debug("match-controller catches MODEL_MATCH_STATUS_ACTIVE")
             document.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
             document.addEventListener("ACCUSE", (evt) => {this.accuseHandler(evt, this._gameClient)}, false);
+            this._poller();
         }, false);
+        
 
+        document.addEventListener("MODEL_PLAYER_JOINED", () => {
+           this._pollOnce();
+        }, false);
     };
     
 };

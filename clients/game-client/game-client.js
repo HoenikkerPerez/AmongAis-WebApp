@@ -14,6 +14,7 @@ class GameClient {
 
     // Queue for message requests to send to the server.
     _wsRequests;
+    _noRequestsCount = 0;
 
     constructor() {
         this._connect();
@@ -61,19 +62,29 @@ class GameClient {
 
     // _requestHandler is called the timer to avoid sending messages too fast
     _requestHandler() {
-        console.debug("Game Client is going to send a message to the server, the clock tick'd!");
+        
+        //console.debug("Game Client is going to send a message to the server, the clock tick'd!");
         if(this._wsRequests.length > 0) {
-            console.debug("Game Client's request queue is not empty.");
+            //console.debug("Game Client's request queue is not empty.");
             let msg = this._wsRequests.shift();
-            console.debug("Game Client is going to actually send the message " + msg);
+            //console.debug("Game Client is going to actually send the message " + msg);
             this._ws.send(msg + "\n");
+            this._noRequestsCount = 0;
             console.debug("Game Client actually sent " + msg);
+        }
+        // SEND NOP EACH 20 seconds
+        else {
+            this._noRequestsCount++;
+            if(this._noRequestsCount >= 30) {
+                this._noRequestsCount = 0;
+                this.nop(); // TODO gamename nop
+            }
         }
         // Repeat endlessly
         let timeframe = model.connectionTimeframe;
-        console.debug("Game Client is going to set the timer to fire again in " + timeframe + "ms.");
+        //console.debug("Game Client is going to set the timer to fire again in " + timeframe + "ms.");
         window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
-        console.debug("Game Client has set the timer for its queue.");
+        //console.debug("Game Client has set the timer for its queue.");
     }
 
     _close() {
@@ -166,5 +177,11 @@ class GameClient {
         // alert("A vote of no confidence for teammate: " + teammateName);
         popupMsg("A vote of no confidence for teammate: " + teammateName,"warning");
 
+    }
+
+    nop() {
+        console.debug("Game Client is requesting a nop");
+        let msg = this._sync.nop(model.status.ga);
+        this._send("miticoOggettoCheNonEsiste.NOP", msg);
     }
 }

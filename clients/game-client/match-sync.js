@@ -19,5 +19,11 @@ class MatchSync {
         console.debug("MatchSync built " + msg);
         return msg;
     }
+
+    nop(gameName) {
+        let msg = gameName + " NOP";
+        console.debug("MatchSync built " + msg);
+        return msg;
+    }
 }
 
