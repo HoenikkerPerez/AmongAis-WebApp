@@ -54,7 +54,7 @@
         <link rel="stylesheet" href="styles.css" type="text/css">
 
     </head>
-    <body class="container p-3 my-3 bg-dark text-white">
+    <body class="container-fluid p-3 my-3 bg-dark text-white">
         <div id="alert-popup" class="modal fade" role="alert">
             <div class="modal-dialog">
                 <div id="alert-popup-msg" class="alert alert-warning" style="white-space: pre;">
@@ -88,41 +88,33 @@
             </div>
         </div>
 
-        <div id="console" style="display:none">
-            <table>
-                <tr>
-                    <td>
-                        <div class="canvas_wrapper">
-                            <canvas id="canvas" width="410" height="410"></canvas>    
-                        </div>                </td>
-                    <td>
-                        <div class="hud" id="hud", style="overflow:auto; max-height:100vh;"></div>
-                    </td>
-                    <td>
-                        <div class="chat_wrapper">
-                            <div id="messageList"  style="overflow:auto; max-height:80vh;"></div>
-                            <!-- <form name="chatForm" id="chatForm" action=""><br> -->
-                                <div id="chatLoginBlock" style="display: none;">
-                                    <input type="text" class="form-control my-3" id="chatLoginInput" name="chatLoginInput" placeholder="username" value="">
-                                    <input type="button" class="btn btn-primary" id="chatLoginButton" name="chatLoginButton" value="LOGIN" disabled>
-                                </div>
-                                <div id="chatChannelBlock">
-                                    <input type="text" class="form-control my-3" id="chatChannelInput" name="chatChannelInput" placeholder="channel" value="">
-                                    <input type="button" class="btn btn-primary" id="chatChannelButton" name="chatChannelButton" value="SUBSCRIBE" disabled>
-                                    <span id="subscribedChannels"> </span>
-                                </div>
-                                <div id="chatSendMessageBlock">
-                                    <input type="text" class="form-control my-3" id="chatSendChannelInput" name="chatSendChannelInput" placeholder="channel" value="">
-                                    <input type="text" class="form-control my-3" id="chatSendMessageInput" name="chatSendMessageInput" placeholder="message" value="">
-                                    <input type="button" class="btn btn-primary" id="chatSendButton" name="chatSendButton" value="SEND" disabled>
-                                </div>
-                                <div id="chatSubscribedChannelBlock">
-                                </div>
-                            <!-- </form> -->
-                        </div>
-                    </td>
-                </tr>
-            </table>
+        <div id="console" class="row" style="display:none">
+            <div id="hud" class="col-sm-2" style="overflow:auto; max-height:100vh;">
+            </div>
+            <div class="col">
+                <canvas id="canvas"></canvas>
+            </div>
+            <div class="col-sm-3">
+                <div id="messageList"  style="overflow:auto; max-height:60vh;"></div>
+                <form name="chatForm" id="chatForm" action=""><br>
+                    <div id="chatLoginBlock" style="display: none;">
+                        <input type="text"  id="chatLoginInput" name="chatLoginInput" placeholder="username" value="">
+                        <input type="button" id="chatLoginButton" name="chatLoginButton" value="LOGIN" disabled>
+                    </div>
+                    <div id="chatChannelBlock">
+                        <input type="text" id="chatChannelInput" name="chatChannelInput" placeholder="channel" value="">
+                        <input type="button" id="chatChannelButton" name="chatChannelButton" value="SUBSCRIBE" disabled>
+                        <span id="subscribedChannels"> </span>
+                    </div>
+                    <div id="chatSendMessageBlock">
+                        <input type="text"  id="chatSendChannelInput" name="chatSendChannelInput" placeholder="channel" value="">
+                        <input type="text"  id="chatSendMessageInput" name="chatSendMessageInput" placeholder="message" value="">
+                        <input type="button" id="chatSendButton" name="chatSendButton" value="SEND" disabled>
+                    </div>
+                    <div id="chatSubscribedChannelBlock">
+                    </div>
+                </form>
+            </div>
         </div>
 
 
