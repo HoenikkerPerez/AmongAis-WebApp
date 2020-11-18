@@ -286,24 +286,6 @@ class MatchController {
 
     load() {
         // All listeners common to every kind of user
-        this._loadCommon();
-
-        switch(model.local.kind) {
-            case model.PLAYER:
-                this._loadPlayer();
-            break;
-            case model.SPECTATOR:
-                this._loadSpectator();
-            break;
-            default:
-                popupMsg("Are you a PLAYER or a SPECTATOR?", "danger");
-        }
-        if(model.local.kind == model.PLAYER){
-            this._loadPlayer();
-        } 
-    };
-
-    _loadCommon() {
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", this.lookMapHandler, false);
         
         // DEBUG: Status button
@@ -322,12 +304,24 @@ class MatchController {
             document.addEventListener("keyup", this.startHandler.bind(this), false);
             // Init map polling
             this._pollOnce();
+            // Loads the specialized listeners
+            switch(model.local.kind) {
+                case model.PLAYER:
+                    this._loadPlayerOnRunGame();
+                break;
+                case model.SPECTATOR:
+                    this._loadSpectatorOnRunGame();
+                break;
+                default:
+                    console.error("Unable to retrieve user kind.");
+                    popupMsg("Are you a PLAYER or a SPECTATOR?", "danger");
+            }
         }, false);
-    }
+    };
 
     // Player-specific listeners
 
-    _loadPlayer() {
+    _loadPlayerOnRunGame() {
         document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
             // Init human commands
             console.debug("match-controller catches MODEL_MATCH_STATUS_ACTIVE")
@@ -337,7 +331,6 @@ class MatchController {
             this._poller();
         }, false);
         
-
         document.addEventListener("MODEL_PLAYER_JOINED", () => {
         this._pollOnce();
         }, false);
@@ -345,7 +338,7 @@ class MatchController {
 
     // Spectator-specific listeners
 
-    _loadSpectator() {
+    _loadSpectatorOnRunGame() {
         document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
             // Init human commands
             model.timeframe = model.spectatorTimeframe;
