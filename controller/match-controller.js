@@ -41,7 +41,7 @@ class MatchController {
                     break;
                 }
                 if(newDirection) {
-                    console.debug("MatchController is asking the game client to moove " + newDirection);
+                    console.debug("MatchController is asking the game client to move " + newDirection);
                     gameClient.move(newDirection);
                     lastDirection.direction = newDirection;
                 }
@@ -50,7 +50,7 @@ class MatchController {
 
     lookMapHandler(evt) {
         //LOOK MAP save to model
-        console.debug("LOOKMAPHANDLER " + evt.detail);
+        //console.debug("LOOKMAPHANDLER " + evt.detail);
         let msgOk = evt.detail.startsWith("OK");
         if(!msgOk){
             return;
@@ -174,7 +174,7 @@ class MatchController {
         visibleHeight = height / scale;
     }
     mapPoller() {
-        console.debug("Polling map")
+        //console.debug("Polling map")
         let gameName = model.status.ga;
         
         this._gameClient.lookMap(gameName);
@@ -200,14 +200,12 @@ class MatchController {
                     this._gameClient.leave();
                 }
                 break;
-            default:
-                console.debug("MatchController retrieved a keyup, but nothing happened.");
         }
     };
 
 
     getStatusHandler(evt){
-        console.debug("getStatusHandler: " + evt.detail);
+        //console.debug("getStatusHandler: " + evt.detail);
         let msgOk = evt.detail.startsWith("OK");
         if(!msgOk){
             // alert("HUD[!]" + evt.detail);
@@ -265,9 +263,9 @@ class MatchController {
     };
 
     statusPoller(){
-        console.debug("status poller run");
+        //console.debug("status poller run");
         let gameName = model.status.ga;
-        console.debug("matchController: try to get status for " + gameName);
+        //console.debug("matchController: try to get status for " + gameName);
         this._gameClient.getStatus(gameName)
     };
 
