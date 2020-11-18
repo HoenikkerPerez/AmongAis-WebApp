@@ -38,13 +38,12 @@ class GameClient {
         this._wsQueue = [];
         this._ws.onmessage = async function(evt) {
             let msg = await evt.data.text();
-            console.debug("Game Client received a message - " + msg);
+            //console.debug("Game Client received a message - " + msg);
             let msgtag = this._wsQueue.shift()
-            console.debug("Game Client: Dispatching event" + msgtag);
+            //console.debug("Game Client: Dispatching event" + msgtag);
             document.dispatchEvent(new CustomEvent(msgtag, {detail: msg }));
             // Check too fast error
             if(msg.data == "ERROR 401 Too fast") {
-                // alert("Connection closed by the server - too fast.");
                 popupMsg("Connection closed by the server - too fast.","danger")
                 console.error("Too fast :(");
             }
@@ -84,6 +83,7 @@ class GameClient {
             this._wsRequests.push(msg_tag);
         }
         window.setTimeout(function(){ this._requestCmdHandler() }.bind(this), 200);
+
     }
 
     // _requestHandler is called the timer to avoid sending messages too fast
@@ -96,7 +96,7 @@ class GameClient {
             this._ws.send(msg.msg + "\n");
             this._wsQueue.push(msg.tag);
             this._noRequestsCount = 0;
-            console.debug("Game Client actually sent " + msg);
+            //console.debug("Game Client actually sent " + msg);
         }
         // SEND NOP EACH 20 seconds
         else {
@@ -120,45 +120,40 @@ class GameClient {
     /* SESSION interface */
 
     createGame(gameName) {
-        console.debug("Game Client is requesting a game creation for " + gameName);
-
+        //console.debug("Game Client is requesting a game creation for " + gameName);
         let msg = this._lobby.createGame(gameName);
         this._send("miticoOggettoCheNonEsiste.CREATE_GAME", msg);
     }
 
     joinGame(gameName, characterName) {
-        console.debug("Game Client is joining game named " + gameName);
-        
+        //console.debug("Game Client is joining game named " + gameName);
         model.status.ga = gameName;
         let msg = this._lobby.joinGame(gameName, characterName);
         this._send("miticoOggettoCheNonEsiste.JOIN_GAME", msg);
     }
     
     spectateGame(gameName) {
-        console.debug("Game Client is joining game named " + gameName);
-        
+        //console.debug("Game Client is joining game named " + gameName);
         model.status.ga = gameName;
         let msg = this._lobby.spectateGame(gameName);
         this._send("miticoOggettoCheNonEsiste.SPECTATE_GAME", msg);
     }
 
     startGame() {
-        console.debug("Game Client is starting the current game.");
-        
+        //console.debug("Game Client is starting the current game.");
         let gameName = model.status.ga;
         let msg = this._lobby.startGame(gameName);
         this._send("miticoOggettoCheNonEsiste.START_GAME", msg);
     }
 
     leave() {
-        console.debug("Game Client is requesting to leave.");
-
+        //console.debug("Game Client is requesting to leave.");
         let msg = this._lobby.leave(model.status.ga);
         this._send("miticoOggettoCheNonEsiste.LEAVE", msg);
     }
 
     login(username){
-        console.debug("Game Client is requesting to login for user " + username);
+        //console.debug("Game Client is requesting to login for user " + username);
         let msg = this._auth.login(username);
         //this._send("miticoOggettoCheNonEsiste.LOGIN", msg);
         return true;
@@ -166,8 +161,7 @@ class GameClient {
     
     /* MATCH interface */
     getStatus(gameName){
-        console.debug("Game Client is requesting a game status for " + gameName);
-
+        //console.debug("Game Client is requesting a game status for " + gameName);
         let msg = this._sync.getStatus(gameName);
         this._send("STATUS", msg);
     }
@@ -178,22 +172,19 @@ class GameClient {
     static RIGHT = "E";
 
     lookMap(gameName) {
-        console.debug("Game Client is requesting a map for " + gameName);
-
+        //console.debug("Game Client is requesting a map for " + gameName);
         let msg = this._sync.lookMap(gameName);
         this._send("miticoOggettoCheNonEsiste.LOOK_MAP", msg);
     }
 
     move(direction) {
         console.debug ("Game Client is requesting a move to direction: " + direction);
-
         let msg = this._sync.move(model.status.ga, direction);
         this._send("miticoOggettoCheNonEsiste.MOVE", msg)
     }
 
     shoot(direction) {
         console.debug("Game Client is requesting a shoot to direction: " + direction);
-
         let msg = this._sync.shoot(model.status.ga, direction);
         this._send("miticoOggettoCheNonEsiste.SHOOT", msg);
     }
