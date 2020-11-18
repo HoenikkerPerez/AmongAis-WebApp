@@ -54,7 +54,7 @@
         <link rel="stylesheet" href="styles.css" type="text/css">
 
     </head>
-    <body>
+    <body class="container p-3 my-3 bg-dark text-white">
         <div id="alert-popup" class="modal fade" role="alert">
             <div class="modal-dialog">
                 <div id="alert-popup-msg" class="alert alert-warning" style="white-space: pre;">
@@ -66,23 +66,24 @@
             // $('#alert-popup').modal('show');
             // popupMsg("welcome to the jungle!", "warning");
             // popupMsg("welcome to the jungle!", "info");
-
         </script>
-        <div id="homeUI">
-            <div class="login_wrapper" id="login-form-wrapper">
-                <form name="loginForm" id="loginForm" action="">Login Credentials:<br>
-                    <input type="text" id="usernameInput" name="usernameInput" placeholder="loginName"><P>
-                        <input type="button" id="loginButton" name="loginButton" value="LOGIN" disabled>
-                        <div>For the moment you can use the username you want. [this is useless, we know how you are]</div>
+        <div id="homeUI" class="container p-3 my-3 bg-dark text-white">
+            <div class="form-group p-3 my-3" id="login-form-wrapper">
+                <form class="form" name="loginForm" for="email" id="loginForm"  action="">Login Credentials:
+                    <!-- <div class="col-sm-4"> . </div> -->
+                    <input type="email" id="usernameInput" name="usernameInput" class="form-control my-3" placeholder="loginName"> <!-- col-sm-4 -->
+                    <input type="button" class="btn btn-primary" id="loginButton" name="loginButton" value="LOGIN" disabled>
+                    <!-- <div class="col-sm-4"></div> -->
                 </form>
+                <div>For the moment you can use the username you want. [this is useless, we know how you are]</div>
             </div>
-            <div class="startgame_wrapper" id="startgame-form-wrapper" style="display: none;">
+            <div class="form-group" id="startgame-form-wrapper" style="display: none;">
                 <form name="startGameForm" id="startGameForm" action="">Enter game name:<br>
-                    <input type="text" id="ingamenameInput" name="ingamenameInput" placeholder="username"><P>
-                    <input type="text" id="gameNameInput" name="gameNameInput"  placeholder="matchname" value=""><P>
-                    <input type="button" id="createButton" name="createButton" value="CREATE" disabled>
-                    <input type="button" id="joinButton" name="joinButton" value="JOIN" disabled>
-                    <input type="button" id="spectateButton" name="spectateButton" value="SPECTATE" disabled>
+                    <input type="text" class="form-control my-3" id="ingamenameInput" name="ingamenameInput" placeholder="username"><P>
+                    <input type="text" class="form-control my-3" id="gameNameInput" name="gameNameInput"  placeholder="matchname" value=""><P>
+                    <input type="button" class="btn btn-primary" id="createButton" name="createButton" value="CREATE" disabled>
+                    <input type="button" class="btn btn-primary" id="joinButton" name="joinButton" value="JOIN" disabled>
+                    <input type="button" class="btn btn-secondary" id="spectateButton" name="spectateButton" value="SPECTATE" disabled>
                 </form>
             </div>
         </div>
@@ -102,18 +103,18 @@
                             <div id="messageList"  style="overflow:auto; max-height:80vh;"></div>
                             <!-- <form name="chatForm" id="chatForm" action=""><br> -->
                                 <div id="chatLoginBlock" style="display: none;">
-                                    <input type="text" id="chatLoginInput" name="chatLoginInput" placeholder="username" value="">
-                                    <input type="button" id="chatLoginButton" name="chatLoginButton" value="LOGIN" disabled>
+                                    <input type="text" class="form-control my-3" id="chatLoginInput" name="chatLoginInput" placeholder="username" value="">
+                                    <input type="button" class="btn btn-primary" id="chatLoginButton" name="chatLoginButton" value="LOGIN" disabled>
                                 </div>
                                 <div id="chatChannelBlock">
-                                    <input type="text" id="chatChannelInput" name="chatChannelInput" placeholder="channel" value="">
-                                    <input type="button" id="chatChannelButton" name="chatChannelButton" value="SUBSCRIBE" disabled>
+                                    <input type="text" class="form-control my-3" id="chatChannelInput" name="chatChannelInput" placeholder="channel" value="">
+                                    <input type="button" class="btn btn-primary" id="chatChannelButton" name="chatChannelButton" value="SUBSCRIBE" disabled>
                                     <span id="subscribedChannels"> </span>
                                 </div>
                                 <div id="chatSendMessageBlock">
-                                    <input type="text" id="chatSendChannelInput" name="chatSendChannelInput" placeholder="channel" value="">
-                                    <input type="text" id="chatSendMessageInput" name="chatSendMessageInput" placeholder="message" value="">
-                                    <input type="button" id="chatSendButton" name="chatSendButton" value="SEND" disabled>
+                                    <input type="text" class="form-control my-3" id="chatSendChannelInput" name="chatSendChannelInput" placeholder="channel" value="">
+                                    <input type="text" class="form-control my-3" id="chatSendMessageInput" name="chatSendMessageInput" placeholder="message" value="">
+                                    <input type="button" class="btn btn-primary" id="chatSendButton" name="chatSendButton" value="SEND" disabled>
                                 </div>
                                 <div id="chatSubscribedChannelBlock">
                                 </div>
