@@ -73,7 +73,7 @@
                 <form name="loginForm" id="loginForm" action="">Login Credentials:<br>
                     <input type="text" id="usernameInput" name="usernameInput" placeholder="loginName"><P>
                         <input type="button" id="loginButton" name="loginButton" value="LOGIN" disabled>
-                        <div>For the moment you can use the username you want. [this is useless, we know how you are]</div>
+                        <div>For the moment you can use the username you want. [this is useless, we know where you live]</div>
                 </form>
             </div>
             <div class="startgame_wrapper" id="startgame-form-wrapper" style="display: none;">
@@ -91,11 +91,12 @@
             <table>
                 <tr>
                     <td>
+                        <div class="hud" id="hud", style="overflow:auto; max-height:100vh;"></div>
+                    </td>
+                    <td>
                         <div class="canvas_wrapper">
                             <canvas id="canvas" width="410" height="410"></canvas>    
-                        </div>                </td>
-                    <td>
-                        <div class="hud" id="hud", style="overflow:auto; max-height:100vh;"></div>
+                        </div>     
                     </td>
                     <td>
                         <div class="chat_wrapper">
