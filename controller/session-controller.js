@@ -78,9 +78,11 @@ class SessionController {
         document.addEventListener("miticoOggettoCheNonEsiste.CREATE_GAME", (evt) => {
             let msgOk = evt.detail.startsWith("OK");
             if(msgOk)
-                alert("Game has been created!");
+                // alert("Game has been created!");
+                popupMsg("Game has been created!","success")
             else
-                alert("Game creation failed.");
+                // alert("Game creation failed.");
+                popupMsg("Game creation failed.","danger")
         }, false);
 
         document.addEventListener("miticoOggettoCheNonEsiste.JOIN_GAME", (evt) => {
@@ -92,9 +94,11 @@ class SessionController {
                 // Remove home UI elements
                 model.setRunningGame(true);
             } else if (msg.includes("410")) {
-                alert("PLAYER NAME ALREADY TAKEN IN THIS GAME");
+                // alert("PLAYER NAME ALREADY TAKEN IN THIS GAME");
+                popupMsg("PLAYER NAME ALREADY TAKEN IN THIS GAME","danger")
             } else {
-                alert("GAME NOT EXIST");
+                // alert("GAME NOT EXIST");
+                popupMsg("GAME NOT EXIST","danger")
             }
         }, false);
 
@@ -108,7 +112,8 @@ class SessionController {
                 // Remove home UI elements
                 model.setRunningGame(true);
             } else {
-                alert("GAME NOT EXIST")
+                // alert("GAME NOT EXIST")
+                popupMsg("GAME NOT EXIST","danger")
             }
         }, false);
 
@@ -119,11 +124,15 @@ class SessionController {
             let msgOk= msg.startsWith("OK");
 
             if(msgOk) {
-                alert("You started the game!");
+                // alert("You started the game!");
+                popupMsg("You started the game!","success")
             } else if(msg.includes("501 Only")) {
-                alert("Only creator can start a game");
+                // alert("Only creator can start a game");
+                popupMsg("Only creator can start a game","danger")
             } else if (msg.includes("501 Need")) {
-                alert("Need two non-empty teams to start");
+                // alert("Need two non-empty teams to start");
+                popupMsg("Need two non-empty teams to start","danger")
+
             }
         }, false);
 
