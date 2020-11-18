@@ -89,6 +89,7 @@ class GameClient {
     // _requestHandler is called the timer to avoid sending messages too fast
     _requestHandler() {
         //console.debug("Game Client is going to send a message to the server, the clock tick'd!");
+        console.debug("_requestHandler Time: " + new Date());
         let timeframe = model.connectionTimeframe;
         if(this.isOdd(this._schedulerCounter) ){
             if(this._wsRequests_cmd.length > 0) {
