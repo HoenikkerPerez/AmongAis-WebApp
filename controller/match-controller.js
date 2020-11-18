@@ -41,7 +41,7 @@ class MatchController {
                     break;
                 }
                 if(newDirection) {
-                    console.debug("MatchController is asking the game client to moove " + newDirection);
+                    console.debug("MatchController is asking the game client to move " + newDirection);
                     gameClient.move(newDirection);
                     lastDirection.direction = newDirection;
                 }
@@ -50,7 +50,7 @@ class MatchController {
 
     lookMapHandler(evt) {
         //LOOK MAP save to model
-        console.debug("LOOKMAPHANDLER " + evt.detail);
+        //console.debug("LOOKMAPHANDLER " + evt.detail);
         let msgOk = evt.detail.startsWith("OK");
         if(!msgOk){
             return;
@@ -174,7 +174,7 @@ class MatchController {
         visibleHeight = height / scale;
     }
     mapPoller() {
-        console.debug("Polling map")
+        //console.debug("Polling map")
         let gameName = model.status.ga;
         
         this._gameClient.lookMap(gameName);
@@ -200,14 +200,12 @@ class MatchController {
                     this._gameClient.leave();
                 }
                 break;
-            default:
-                console.debug("MatchController retrieved a keyup, but nothing happened.");
         }
     };
 
 
     getStatusHandler(evt){
-        console.debug("getStatusHandler: " + evt.detail);
+        //console.debug("getStatusHandler: " + evt.detail);
         let msgOk = evt.detail.startsWith("OK");
         if(!msgOk){
             // alert("HUD[!]" + evt.detail);
@@ -265,9 +263,9 @@ class MatchController {
     };
 
     statusPoller(){
-        console.debug("status poller run");
+        //console.debug("status poller run");
         let gameName = model.status.ga;
-        console.debug("matchController: try to get status for " + gameName);
+        //console.debug("matchController: try to get status for " + gameName);
         this._gameClient.getStatus(gameName)
     };
 
@@ -281,9 +279,11 @@ class MatchController {
         this._pollOnce();
         window.setTimeout(function(){ this._poller() }.bind(this), timeframe);
     }
- 
+
+    
 
     load() {
+        // All listeners common to every kind of user
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", this.lookMapHandler, false);
         
         // DEBUG: Status button
@@ -302,20 +302,46 @@ class MatchController {
             document.addEventListener("keyup", this.startHandler.bind(this), false);
             // Init map polling
             this._pollOnce();
+            // Loads the specialized listeners
+            switch(model.local.kind) {
+                case model.PLAYER:
+                    this._loadPlayerOnRunGame();
+                break;
+                case model.SPECTATOR:
+                    this._loadSpectatorOnRunGame();
+                break;
+                default:
+                    console.error("Unable to retrieve user kind.");
+                    popupMsg("Are you a PLAYER or a SPECTATOR?", "danger");
+            }
         }, false);
+    };
 
+    // Player-specific listeners
+
+    _loadPlayerOnRunGame() {
         document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
             // Init human commands
             console.debug("match-controller catches MODEL_MATCH_STATUS_ACTIVE")
             document.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
             document.addEventListener("ACCUSE", (evt) => {this.accuseHandler(evt, this._gameClient)}, false);
+            model.timeframe = model.playerTimeframe;
             this._poller();
         }, false);
         
-
         document.addEventListener("MODEL_PLAYER_JOINED", () => {
-           this._pollOnce();
+        this._pollOnce();
         }, false);
-    };
+    }
+
+    // Spectator-specific listeners
+
+    _loadSpectatorOnRunGame() {
+        document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
+            // Init human commands
+            model.timeframe = model.spectatorTimeframe;
+            this._poller();
+        }, false);
+    }
     
 };
