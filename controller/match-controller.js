@@ -297,8 +297,7 @@ class MatchController {
         // document.addEventListener("MODEL_SETGAMENAME", this.init, false);
         document.addEventListener("MODEL_RUN_GAME", () => {
             // Init human commands
-            // TODO: add "start action"
-            // Session-related commands during the match (keys)
+            // Session-related commands during the lobby (keys)
             document.addEventListener("keyup", this.startHandler.bind(this), false);
             // Init map polling
             this._pollOnce();
