@@ -13,7 +13,10 @@ class GameClient {
     _wsQueue;
 
     // Queue for message requests to send to the server.
-    _wsRequests;
+    _wsReqLastSent = 0;
+    _wsRequests = [];
+    _wsRequests_look = [];
+    _wsRequests_cmd = [];
     _noRequestsCount = 0;
 
     constructor() {
@@ -49,25 +52,49 @@ class GameClient {
         console.debug("Game Client is initializing the request queue.");
         this._wsRequests = [];
         window.setTimeout(function(){ this._requestHandler() }.bind(this), model.connectionTimeframe);
+        window.setTimeout(function(){ this._requestCmdHandler() }.bind(this), model.connectionTimeframe);
+        window.setTimeout(function(){ this._requestLookHandler() }.bind(this), model.connectionTimeframe);
+
     }
 
     // _send is called by the other methods of the client to send a message
     _send(msgtag, msg) {
-        //console.debug("Game Client pushing response tag " + msgtag);
-        this._wsQueue.push(msgtag);
-        //console.debug("Game Client pushing request message " + msg);
-        this._wsRequests.push(msg);
+        console.debug("Game Client pushing response tag " + msgtag);
+        // this._wsQueue.push(msgtag);
+        console.debug("Game Client pushing request message " + msg);
+        if(msgtag==="STATUS" || msgtag==="miticoOggettoCheNonEsiste.SPECTATE_GAME" || msgtag==="miticoOggettoCheNonEsiste.LOOK_MAP"){
+            this._wsRequests_look.push({tag:msgtag, msg:msg});
+        } else {
+            this._wsRequests_cmd.push({tag:msgtag, msg:msg});
+        }
+    }
+
+    _requestLookHandler () {
+        if(this._wsRequests_look.length>0){
+            let msg_tag = this._wsRequests_look.shift();
+            this._wsRequests.push(msg_tag);
+        }
+        window.setTimeout(function(){ this._requestLookHandler() }.bind(this), 1000);
+    }
+
+    _requestCmdHandler () {
+        if(this._wsRequests_cmd.length>0){
+            let msg_tag = this._wsRequests_cmd.shift();
+            this._wsRequests.push(msg_tag);
+        }
+        window.setTimeout(function(){ this._requestCmdHandler() }.bind(this), 200);
+
     }
 
     // _requestHandler is called the timer to avoid sending messages too fast
     _requestHandler() {
-        
         //console.debug("Game Client is going to send a message to the server, the clock tick'd!");
         if(this._wsRequests.length > 0) {
             //console.debug("Game Client's request queue is not empty.");
             let msg = this._wsRequests.shift();
             //console.debug("Game Client is going to actually send the message " + msg);
-            this._ws.send(msg + "\n");
+            this._ws.send(msg.msg + "\n");
+            this._wsQueue.push(msg.tag);
             this._noRequestsCount = 0;
             //console.debug("Game Client actually sent " + msg);
         }
