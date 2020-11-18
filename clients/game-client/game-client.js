@@ -13,7 +13,7 @@ class GameClient {
     _wsQueue;
 
     // Queue for message requests to send to the server.
-    _wsReqLastSent = 0;
+    _schedulerCounter = 0;
     _wsRequests = [];
     _wsRequests_look = [];
     _wsRequests_cmd = [];
@@ -52,8 +52,8 @@ class GameClient {
         console.debug("Game Client is initializing the request queue.");
         this._wsRequests = [];
         window.setTimeout(function(){ this._requestHandler() }.bind(this), model.connectionTimeframe);
-        window.setTimeout(function(){ this._requestCmdHandler() }.bind(this), model.connectionTimeframe);
-        window.setTimeout(function(){ this._requestLookHandler() }.bind(this), model.connectionTimeframe);
+        // window.setTimeout(function(){ this._requestCmdHandler() }.bind(this), model.connectionTimeframe);
+        // window.setTimeout(function(){ this._requestLookHandler() }.bind(this), model.connectionTimeframe);
 
     }
 
@@ -69,45 +69,85 @@ class GameClient {
         }
     }
 
-    _requestLookHandler () {
-        if(this._wsRequests_look.length>0){
-            let msg_tag = this._wsRequests_look.shift();
-            this._wsRequests.push(msg_tag);
-        }
-        window.setTimeout(function(){ this._requestLookHandler() }.bind(this), 1000);
-    }
+    // _requestLookHandler () {
+    //     if(this._wsRequests_look.length>0){
+    //         let msg_tag = this._wsRequests_look.shift();
+    //         this._wsRequests.push(msg_tag);
+    //     }
+    //     window.setTimeout(function(){ this._requestLookHandler() }.bind(this), 1000);
+    // }
 
-    _requestCmdHandler () {
-        if(this._wsRequests_cmd.length>0){
-            let msg_tag = this._wsRequests_cmd.shift();
-            this._wsRequests.push(msg_tag);
-        }
-        window.setTimeout(function(){ this._requestCmdHandler() }.bind(this), 200);
+    // _requestCmdHandler () {
+    //     if(this._wsRequests_cmd.length>0){
+    //         let msg_tag = this._wsRequests_cmd.shift();
+    //         this._wsRequests.push(msg_tag);
+    //     }
+    //     window.setTimeout(function(){ this._requestCmdHandler() }.bind(this), 200);
 
-    }
-
+    // }
+    isOdd(num) { return num % 2;}
     // _requestHandler is called the timer to avoid sending messages too fast
     _requestHandler() {
         //console.debug("Game Client is going to send a message to the server, the clock tick'd!");
-        if(this._wsRequests.length > 0) {
-            //console.debug("Game Client's request queue is not empty.");
-            let msg = this._wsRequests.shift();
-            //console.debug("Game Client is going to actually send the message " + msg);
-            this._ws.send(msg.msg + "\n");
-            this._wsQueue.push(msg.tag);
-            this._noRequestsCount = 0;
-            //console.debug("Game Client actually sent " + msg);
-        }
-        // SEND NOP EACH 20 seconds
-        else {
-            this._noRequestsCount++;
-            if(this._noRequestsCount >= 30) {
+        let timeframe = model.connectionTimeframe;
+        if(this.isOdd(this._schedulerCounter) ){
+            if(this._wsRequests_cmd.length > 0) {
+                //console.debug("Game Client's request queue is not empty.");
+                let msg = this._wsRequests_cmd.shift();
+                console.debug("_requestHandler isOdd && CMD");
+                this._ws.send(msg.msg + "\n");
+                this._wsQueue.push(msg.tag);
                 this._noRequestsCount = 0;
-                this.nop(); // TODO gamename nop
+                this._schedulerCounter++;
+                //console.debug("Game Client actually sent " + msg);
+            } else if(this._wsRequests_look.length > 0) {
+                    //console.debug("Game Client's request queue is not empty.");
+                    let msg = this._wsRequests_look.shift();
+                    console.debug("_requestHandler isOdd && LOOK");
+                    this._ws.send(msg.msg + "\n");
+                    this._wsQueue.push(msg.tag);
+                    this._noRequestsCount = 0;
+                    //console.debug("Game Client actually sent " + msg);
+            } else {
+                timeframe = 100;
+                this._noRequestsCount++;
+                if(this._noRequestsCount >= 300) {
+                    console.debug("_requestHandler isOdd && NOP");
+                    this._noRequestsCount = 0;
+                    this.nop(); // TODO gamename nop
+                    timeframe = model.connectionTimeframe;
+                }
+            }
+        } else {
+            if(this._wsRequests_look.length > 0) {
+                //console.debug("Game Client's request queue is not empty.");
+                let msg = this._wsRequests_look.shift();
+                console.debug("_requestHandler isEven && LOOK");
+                this._ws.send(msg.msg + "\n");
+                this._wsQueue.push(msg.tag);
+                this._noRequestsCount = 0;
+                this._schedulerCounter++;
+                //console.debug("Game Client actually sent " + msg);
+            } else if(this._wsRequests_cmd.length > 0) {
+                console.debug("_requestHandler isEven && CMD");
+                let msg = this._wsRequests_cmd.shift();
+                //console.debug("Game Client is going to actually send the message " + msg);
+                this._ws.send(msg.msg + "\n");
+                this._wsQueue.push(msg.tag);
+                this._noRequestsCount = 0;
+                //console.debug("Game Client actually sent " + msg);
+            } else {
+                timeframe = 100;
+                this._noRequestsCount++;
+                if(this._noRequestsCount >= 300) {
+                    this._noRequestsCount = 0;
+                    this.nop(); // TODO gamename nop
+                    console.debug("_requestHandler isEven && NOP");
+                    timeframe = model.connectionTimeframe;
+                }
             }
         }
         // Repeat endlessly
-        let timeframe = model.connectionTimeframe;
         //console.debug("Game Client is going to set the timer to fire again in " + timeframe + "ms.");
         window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
         //console.debug("Game Client has set the timer for its queue.");
