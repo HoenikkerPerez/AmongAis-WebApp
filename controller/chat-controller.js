@@ -16,10 +16,22 @@ class ChatController {
             let text = spltmsg.join(' ');;
 
             model.addMessageChat(channel, name, text);
-
+            
+            if(name.startsWith("@") && (channel == model.status.ga)) {
+                this._parseSystemMessage(text);
+            }
         });
         this.load();
     }
+
+    _parseSystemMessage(msg) {
+        if(msg == "Now starting!\n") {  // STARTED GAME
+            model.setGameActive();
+        } else if (msg.split(" ")[1] == "joined") { // JOINED PLAYER
+            model.playerJoined(msg.split(" ")[0]);
+        }           // TODO LEAVING PLAYER
+    }
+
 
     _loginChat() {
         let username = document.getElementById("chatLoginInput").value
@@ -74,7 +86,12 @@ class ChatController {
             model.addSubscribedChannel(this._gamename);
         }, false);
 
-
+        document.addEventListener("BUTTON_UNSUBSRIBECHANNEL", (evt) => {
+            let channel = evt.detail.channel;
+            this._chat_client.leaveChannel(channel);
+            popupMsg("Channel " + channel + " left", "success");
+            model.removeSubscribedChannel(channel);
+        });
 
     };
     
