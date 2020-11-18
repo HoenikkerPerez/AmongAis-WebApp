@@ -86,7 +86,12 @@ class ChatController {
             model.addSubscribedChannel(this._gamename);
         }, false);
 
-
+        document.addEventListener("BUTTON_UNSUBSRIBECHANNEL", (evt) => {
+            let channel = evt.detail.channel;
+            this._chat_client.leaveChannel(channel);
+            popupMsg("Channel " + channel + " left", "success");
+            model.removeSubscribedChannel(channel);
+        });
 
     };
     
