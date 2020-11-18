@@ -4,6 +4,7 @@ var model = {
     spectatorTimeframe: 1000, // Spectator's map polling rate
     playerTimeframe: 1000, // Player's map polling rate
     connectionTimeframe: 600, // Minimum delay between requests
+    connectionFreeTimeframe: 100, // Minimum delay between requests
     net: {
         game: {
             // ws: "ws://localhost:8765"

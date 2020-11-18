@@ -14,6 +14,8 @@ class GameClient {
 
     // Queue for message requests to send to the server.
     _schedulerCounter = 0;
+    _start = new Date();
+
     _wsRequests = [];
     _wsRequests_look = [];
     _wsRequests_cmd = [];
@@ -89,17 +91,23 @@ class GameClient {
     // _requestHandler is called the timer to avoid sending messages too fast
     _requestHandler() {
         //console.debug("Game Client is going to send a message to the server, the clock tick'd!");
-        let timeframe = model.connectionTimeframe;
+        let timeframe = model.connectionFreeTimeframe;
         if(this.isOdd(this._schedulerCounter) ){
             if(this._wsRequests_cmd.length > 0) {
-                //console.debug("Game Client's request queue is not empty.");
-                let msg = this._wsRequests_cmd.shift();
-                console.debug("_requestHandler isOdd && CMD");
-                this._ws.send(msg.msg + "\n");
-                this._wsQueue.push(msg.tag);
-                this._noRequestsCount = 0;
-                this._schedulerCounter++;
-                //console.debug("Game Client actually sent " + msg);
+                let end = new Date();
+                if(end-this._start>model.connectionTimeframe){
+                    //console.debug("Game Client's request queue is not empty.");
+                    let msg = this._wsRequests_cmd.shift();
+                    console.debug("_requestHandler isOdd && CMD");
+                    this._ws.send(msg.msg + "\n");
+                    this._wsQueue.push(msg.tag);
+                    this._noRequestsCount = 0;
+                    this._schedulerCounter++;
+                    this._start = new Date();
+                    //console.debug("Game Client actually sent " + msg);
+                } else {
+                    this._schedulerCounter++;
+                }
             } else if(this._wsRequests_look.length > 0) {
                     //console.debug("Game Client's request queue is not empty.");
                     let msg = this._wsRequests_look.shift();
@@ -129,13 +137,18 @@ class GameClient {
                 this._schedulerCounter++;
                 //console.debug("Game Client actually sent " + msg);
             } else if(this._wsRequests_cmd.length > 0) {
-                console.debug("_requestHandler isEven && CMD");
-                let msg = this._wsRequests_cmd.shift();
-                //console.debug("Game Client is going to actually send the message " + msg);
-                this._ws.send(msg.msg + "\n");
-                this._wsQueue.push(msg.tag);
-                this._noRequestsCount = 0;
-                //console.debug("Game Client actually sent " + msg);
+                let end = new Date();
+                if(end-this._start>model.connectionTimeframe){
+                    console.debug("_requestHandler isEven && CMD");
+                    let msg = this._wsRequests_cmd.shift();
+                    //console.debug("Game Client is going to actually send the message " + msg);
+                    this._ws.send(msg.msg + "\n");
+                    this._wsQueue.push(msg.tag);
+                    this._noRequestsCount = 0;
+                    this._start = new Date();
+                    //console.debug("Game Client actually sent " + msg);
+                }
+                
             } else {
                 timeframe = 100;
                 this._noRequestsCount++;
