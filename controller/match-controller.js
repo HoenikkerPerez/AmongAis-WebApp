@@ -307,9 +307,11 @@ class MatchController {
             // Loads the specialized listeners
             switch(model.local.kind) {
                 case model.PLAYER:
+                    console.debug("Match Controller is loading the player listeners...");
                     this._loadPlayerOnRunGame();
                 break;
                 case model.SPECTATOR:
+                    console.debug("Match Controller is loading the spectator listeners...");
                     this._loadSpectatorOnRunGame();
                 break;
                 default:
