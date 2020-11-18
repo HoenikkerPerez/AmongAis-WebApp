@@ -13,7 +13,9 @@ class GameClient {
     _wsQueue;
 
     // Queue for message requests to send to the server.
-    _wsRequests;
+    // _wsRequests;
+    _wsRequests_look; // {tag: .., msg: ...}
+    _wsRequests_cmd;
     _noRequestsCount = 0;
 
     constructor() {
