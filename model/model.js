@@ -110,7 +110,7 @@ var model = {
         let find = this.chat.chatSubscribedChannels.find(o => o.channel === channel);
         if (find == undefined) {
             this.chat.chatSubscribedChannels.push({channel: channel});
-            document.dispatchEvent(new CustomEvent("MODEL_SETCHAT"));
+            document.dispatchEvent(new CustomEvent("MODEL_SUBSCRIBEDCHANNEL")); // for the HUD
             console.debug("chat addSubscribedChannel: " + channel)
         }
     },
@@ -121,7 +121,7 @@ var model = {
         if (findidx != -1) {
             console.debug(find);
             this.chat.chatSubscribedChannels.splice(findidx)
-            document.dispatchEvent(new CustomEvent("MODEL_SETCHAT"));
+            document.dispatchEvent(new CustomEvent("MODEL_UNSUBSCRIBEDCHANNEL")); // for the HUD
             console.debug("chat removeSubscribedChannel: " + channel)
         }
 
