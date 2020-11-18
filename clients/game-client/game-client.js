@@ -59,13 +59,6 @@ class GameClient {
         this._wsRequests.push(msg);
     }
 
-    _sendNow(msgtag, msg) {
-        //console.debug("Game Client pushing response tag " + msgtag);
-        this._wsQueue.push(msgtag);
-        //console.debug("Game Client pushing request message " + msg);
-        this._wsRequests.push(msg);
-    }
-
     // _requestHandler is called the timer to avoid sending messages too fast
     _requestHandler() {
         
