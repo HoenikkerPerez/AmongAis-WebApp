@@ -53,8 +53,8 @@ class GameClient {
         console.debug("Game Client is initializing the request queue.");
         this._wsRequests = [];
         window.setTimeout(function(){ this._requestHandler() }.bind(this), model.connectionTimeframe);
-        // window.setTimeout(function(){ this._requestCmdHandler() }.bind(this), model.connectionTimeframe);
-        // window.setTimeout(function(){ this._requestLookHandler() }.bind(this), model.connectionTimeframe);
+        window.setTimeout(function(){ this._requestCmdHandler() }.bind(this), model.connectionTimeframe);
+        window.setTimeout(function(){ this._requestLookHandler() }.bind(this), model.connectionTimeframe);
 
     }
 
