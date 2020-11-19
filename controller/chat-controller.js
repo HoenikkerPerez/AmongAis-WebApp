@@ -84,6 +84,10 @@ class ChatController {
             this._chat_client.subscribeChannel(this._gamename);
             //update model
             model.addSubscribedChannel(this._gamename);
+            document.getElementById("chatSendChannelInput").value = this._gamename;
+
+            // set default channel
+
         }, false);
 
         document.addEventListener("BUTTON_UNSUBSRIBECHANNEL", (evt) => {
