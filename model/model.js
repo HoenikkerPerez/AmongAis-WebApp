@@ -31,7 +31,7 @@ var model = {
         //     pl_list: (2) […]
             //     0: {…}
                 //     name: "undesiderable1"
-                //     state: "KILLED"
+                //     state: "LOBBYOWNER" / "LOBBYGUEST" / "ACTIVE" / "KILLED"
                 //     symbol: "A"
                 //     team: "0"
                 //     x: "13"
