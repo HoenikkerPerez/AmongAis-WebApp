@@ -28,6 +28,14 @@ var model = {
             score:0,
         },
         pl_list:[]
+        //     pl_list: (2) […]
+            //     0: {…}
+                //     name: "undesiderable1"
+                //     state: "KILLED"
+                //     symbol: "A"
+                //     team: "0"
+                //     x: "13"
+                //     y: "25"
     },
 
     NONE: "NONE",
