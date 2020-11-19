@@ -24,11 +24,11 @@ class SessionController {
     _loadUI() {
         // Game name
         let gameNameInput = document.getElementById("gameNameInput");
-        gameNameInput.addEventListener("input", this._validateCreateJoin);
+        gameNameInput.addEventListener("input", this._validateInput);
         
         // InGame name
         let ingamenameInput = document.getElementById("ingamenameInput");
-        ingamenameInput.addEventListener("input", this._validateCreateJoin)
+        ingamenameInput.addEventListener("input", this._validateInput)
 
         // Create game
         document.getElementById("createButton").addEventListener("click", () => {
@@ -43,6 +43,12 @@ class SessionController {
             model.inGameName = inGameName;
             console.debug("SessionController: joining a name called " + gameName + " as " + inGameName);
             this._gameClient.joinGame(gameName, inGameName);
+        });
+        // start game no join
+        document.getElementById("startButtonNoJoin").addEventListener("click", () => {
+            let gameName = document.getElementById("gameNameInput").value;
+            console.debug("SessionController: start game " + gameName + " without joining it");
+            this._gameClient.startGame(gameName);
         });
         // Spectate game
         document.getElementById("spectateButton").addEventListener("click", () => {
@@ -147,25 +153,28 @@ class SessionController {
         }
     };
     
-    _validateCreateJoin() {
+    _validateInput() {
         let ingamenameInput = document.getElementById("ingamenameInput");
         let gameNameInput = document.getElementById("gameNameInput");
 
         let createButton = document.getElementById("createButton");
         let joinButton = document.getElementById("joinButton");
         let spectateButton = document.getElementById("spectateButton");
+        let startButtonNoJoin = document.getElementById("startButtonNoJoin");
         
         if(gameNameInput.value.length == 0 || ingamenameInput.value.length == 0) {
-            joinButton.disabled = true
+            joinButton.disabled = true;
         } else {
-            joinButton.disabled = false
+            joinButton.disabled = false;
         }
         if(gameNameInput.value.length == 0) {
-            createButton.disabled = true
-            spectateButton.disabled = true
+            createButton.disabled = true;
+            spectateButton.disabled = true;
+            startButtonNoJoin.disabled = true;
         } else {
-            createButton.disabled = false
-            spectateButton.disabled = false
+            createButton.disabled = false;
+            spectateButton.disabled = false;
+            startButtonNoJoin.disabled = false;
         }
     };
 }

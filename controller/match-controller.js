@@ -335,7 +335,7 @@ class MatchController {
 
             document.getElementById("start-button").addEventListener("click", () => {
                 console.debug("MatchController is asking the game client to START the joined game");
-                this._gameClient.startGame();
+                this._gameClient.startGame(model.status.ga);
             });
         
             document.addEventListener("keyup", this.startHandler.bind(this), false);
