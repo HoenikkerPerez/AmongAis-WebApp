@@ -116,7 +116,7 @@ class WorldUi {
                 case "&":
                     tile = Terrain.BARRIER;
                     break;
-                case "*":
+                case "*": // not a terrain, actually
                     tile = Terrain.BULLET;
                     break;
                 default:
@@ -187,9 +187,6 @@ class WorldUi {
                         this._tsizeMap // target height
                     );
                     if (type === "player") {
-                        // TODO ADD
-                        //  model.local.me.position.x = c; // This is BAD. Should be in controller
-                        //  model.local.me.position.y = r; // This is BAD. Should be in controller
                         this.tmp_players.push([symbol, team, c, r]);
                     }
                 }
