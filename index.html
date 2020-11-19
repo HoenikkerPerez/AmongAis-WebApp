@@ -95,20 +95,28 @@
             <div class="col">
                 <canvas id="canvas"></canvas>
             </div>
-            <div class="col-sm-2">
-                <div id="messageList"  style="overflow:auto; max-height:60vh;"></div>
-                <div name="chatForm" id="chatForm" action=""><br>
-                    <div id="chatChannelBlock">
-                        <input type="text" class="form-control" id="chatChannelInput" name="chatChannelInput" placeholder="channel" value="">
-                        <input type="button" class="btn btn-primary" id="chatChannelButton" name="chatChannelButton" value="SUBSCRIBE" disabled>
-                        <span id="subscribedChannels"> </span>
-                    </div>
-                    <div id="chatSendMessageBlock">
-                        <input type="text"  class="form-control" id="chatSendChannelInput" name="chatSendChannelInput" placeholder="channel" value="">
-                        <input type="text"  class="form-control" id="chatSendMessageInput" name="chatSendMessageInput" placeholder="message" value="">
-                        <input type="button" class="btn btn-primary" id="chatSendButton" name="chatSendButton" value="SEND" disabled>
-                    </div>
-                    <div id="chatSubscribedChannelBlock">
+            <!-- chat -->
+            <div class="col-sm-2"> 
+                <div class="form-group"> 
+
+                    <div name="chatForm" id="chatForm"><br>
+                        <div id="chatChannelBlock" class="form-row mb-2">
+                            <input type="text" class="form-control col-8 mr-1" id="chatChannelInput" name="chatChannelInput" placeholder="channel" value="">
+                            <input type="button" class="btn btn-primary col-3" id="chatChannelButton" name="chatChannelButton" value="SUBS" disabled>
+                            <span id="subscribedChannels"> </span>
+                        </div>
+                        <div id="chatSendMessageBlock" class="form-row mb-1">
+                            <div class="col-8 mr-1">
+                                <div class="form-row">
+                                    <input type="text"  class="form-control col mr-1" id="chatSendChannelInput" name="chatSendChannelInput" placeholder="channel" value="">
+                                    <input type="text"  class="form-control col" id="chatSendMessageInput" name="chatSendMessageInput" placeholder="message" value="">
+                                </div>
+                            </div>
+                            <input type="button" class="btn btn-primary col-3" id="chatSendButton" name="chatSendButton" value="SEND" disabled>
+                            
+                        </div>
+                        <div id="messageList" style="overflow:auto; max-height:50vh;"></div>
+                        <div id="chatSubscribedChannelBlock" class="chatSubscribedChannelBlock"></div>
                     </div>
                 </div>
             </div>
