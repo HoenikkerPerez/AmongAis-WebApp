@@ -334,7 +334,7 @@ class MatchController {
             // Session-related commands during the lobby (keys)
             document.addEventListener("keyup", this.startHandler.bind(this), false);
             // Init map polling
-            this._pollOnce();
+            this._poller(); // TODO this._pollOnce();
             // Loads the specialized listeners
             switch(model.local.kind) {
                 case model.PLAYER:
@@ -365,7 +365,7 @@ class MatchController {
         }, false);
         
         document.addEventListener("MODEL_PLAYER_JOINED", () => {
-            this._pollOnce();
+            this._poller(); // TODO this._pollOnce();
         }, false);
     }
 
