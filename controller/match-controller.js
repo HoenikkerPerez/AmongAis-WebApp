@@ -81,8 +81,15 @@ class MatchController {
             for(let c = 0; c < map.cols; c++) {
                 // Compute cell index
                 let idx = r * map.cols + c;
+                let tile = map.tiles[idx];
                 // Check foreach symbol in the list
-                for(let sf of symbolFunctionList) if(map[idx] == sf[0]) sf[1](r,c);
+                for(let sf of symbolFunctionList) {
+                    //console.debug(map[idx] + "=?=" + sf[0]);
+                    if(tile == sf[0]) {
+                        console.debug("Match Controller found " + sf[0] + " AT " + c + "," + r + " in map. Applying now " + sf[1] + " on that position.");
+                        sf[1](c,r);
+                    }
+                }
             }
         }
     }
@@ -90,7 +97,7 @@ class MatchController {
     // Lasers
 
     shootHandler(evt, direction) {
-        console.debug("Match Controller has received a SHOOT response.");
+        console.debug("Match Controller has received a SHOOT response. Direction: " + direction);
         let msgOk = evt.detail.startsWith("OK");
         if(msgOk) {
             // I'll avoid making a copy of the whole map...
@@ -104,11 +111,12 @@ class MatchController {
     }
 
     computeShootOnMap(shooterPosition, direction) {
-
+        console.debug("Match Controller is computing SHOOT in direction " + direction + " from position: " + shooterPosition.x + "," + shooterPosition.y);
+        
         let stopsBullet = (tile) => {
-            console.error("check &");
+            //console.debug("check &");
             if(tile == "&") return true;
-            console.error("check #");
+            //console.error("check #");
             if(tile == "#") return true;
             return false;
         }
@@ -129,13 +137,13 @@ class MatchController {
                 break;
         }
         let firstX = shooterPosition.x + deltaX;
-        console.error("firstX: " + firstX);
+        //console.debug("firstX: " + firstX);
         let firstY = shooterPosition.y + deltaY;
-        console.error("firstY: " + firstY);
+        //console.debug("firstY: " + firstY);
         let limitX = model._map.cols;
-        console.error("limitX: " + limitX);
+        //console.debug("limitX: " + limitX);
         let limitY = model._map.rows;
-        console.error("limitY: " + limitY);
+        //console.debug("limitY: " + limitY);
         let cells = 0;
         let bulletStopped = false;
         for(
@@ -145,17 +153,19 @@ class MatchController {
             r >= 0 && c >= 0 &&
             !bulletStopped;
 
-            r += deltaY, c += deltaX
+            c += deltaX, r += deltaY
         ) {
             let idx = r * model._map.cols + c;
-            bulletStopped = stopsBullet(model._map.tiles[idx]);
-            console.error("bulletStopped: " + bulletStopped);
+            let tile = model._map.tiles[idx];
+            console.log("Checking " + r + "," + c + " (" + tile + ")");
+            bulletStopped = stopsBullet(tile);
+            //console.debug("bulletStopped: " + bulletStopped);
             if(!bulletStopped) {
                 model._map.tiles[idx] = "*";
                 cells++;
             }
         }
-        console.error("Match Controller: shot over " + cells + " cells.");
+        console.debug("Match Controller: shot over " + cells + " cells.");
     }
 
     // Map view management
@@ -302,13 +312,13 @@ class MatchController {
 
     load() {
         // All listeners common to every kind of user
-        document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", this.lookMapHandler, false);
+        document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", (this.lookMapHandler).bind(this), false);
 
         // Shoot events
-        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:N", ((evt) => { this.shootHandler(evt, gameClient.UP) }).bind(this), false);
-        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:S", ((evt) => { this.shootHandler(evt, gameClient.DOWN) }).bind(this), false);
-        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:W", ((evt) => { this.shootHandler(evt, gameClient.LEFT) }).bind(this), false);
-        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:E", ((evt) => { this.shootHandler(evt, gameClient.RIGHT) }).bind(this), false);
+        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:N", ((evt) => { this.shootHandler(evt, GameClient.UP) }).bind(this), false);
+        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:S", ((evt) => { this.shootHandler(evt, GameClient.DOWN) }).bind(this), false);
+        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:W", ((evt) => { this.shootHandler(evt, GameClient.LEFT) }).bind(this), false);
+        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:E", ((evt) => { this.shootHandler(evt, GameClient.RIGHT) }).bind(this), false);
 
         // DEBUG: Status button
         // document.getElementById("statusButton").addEventListener("click", () => {
@@ -355,7 +365,7 @@ class MatchController {
         }, false);
         
         document.addEventListener("MODEL_PLAYER_JOINED", () => {
-        this._pollOnce();
+            this._pollOnce();
         }, false);
     }
 
