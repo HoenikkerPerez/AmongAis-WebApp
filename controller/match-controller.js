@@ -17,7 +17,6 @@ class MatchController {
                 // SHOOT
                 console.debug("MatchController is asking the game client to SHOOT in the last direction moved (" + lastDirection.direction + ").");
                 gameClient.shoot(lastDirection.direction);
-                this.eventualConsistentShot(lastDirection.direction);
                 break;
             default:
                 // MOVE. Moving also sets the lastDirection in which the player shoots.
@@ -67,18 +66,57 @@ class MatchController {
         }
         // update model
         model.setMap(map_obj);
-        // send notification to render component
-
+        // extract local interesting information from the map
+        this.applyOnMapEntities([
+            [model.status.me.symbol,
+                (x,y) => { model.local.me.position = {x:x, y:y} }],
+            // [symbol, (x,y) => { handlers }],
+        ]);
     };
+
+    applyOnMapEntities(symbolFunctionList) {
+        let map = model._map;
+        // foreach element in map
+        for(let r = 0; r < map.rows; r++) {
+            for(let c = 0; c < map.cols; c++) {
+                // Compute cell index
+                let idx = r * map.cols + c;
+                let tile = map.tiles[idx];
+                // Check foreach symbol in the list
+                for(let sf of symbolFunctionList) {
+                    //console.debug(map[idx] + "=?=" + sf[0]);
+                    if(tile == sf[0]) {
+                        console.debug("Match Controller found " + sf[0] + " AT " + c + "," + r + " in map. Applying now " + sf[1] + " on that position.");
+                        sf[1](c,r);
+                    }
+                }
+            }
+        }
+    }
 
     // Lasers
 
-    computeShootOnMap(shooterPosition, direction) {
+    shootHandler(evt, direction) {
+        console.debug("Match Controller has received a SHOOT response. Direction: " + direction);
+        let msgOk = evt.detail.startsWith("OK");
+        if(msgOk) {
+            // I'll avoid making a copy of the whole map...
+            let position = model.local.me.position;
+            this.computeShootOnMap(position, direction);
+            console.debug("Match Controller computed the map with the shot and is going to set the new map in the model.");
+            model.setMap(model._map); // update needed to fire the rendering action
+        } else {
+            console.error("Match Controller retrieved an error from the server while shooting.");
+        }
+    }
 
+    computeShootOnMap(shooterPosition, direction) {
+        console.debug("Match Controller is computing SHOOT in direction " + direction + " from position: " + shooterPosition.x + "," + shooterPosition.y);
+        
         let stopsBullet = (tile) => {
-            console.error("check &");
+            //console.debug("check &");
             if(tile == "&") return true;
-            console.error("check #");
+            //console.error("check #");
             if(tile == "#") return true;
             return false;
         }
@@ -99,13 +137,13 @@ class MatchController {
                 break;
         }
         let firstX = shooterPosition.x + deltaX;
-        console.error("firstX: " + firstX);
+        //console.debug("firstX: " + firstX);
         let firstY = shooterPosition.y + deltaY;
-        console.error("firstY: " + firstY);
+        //console.debug("firstY: " + firstY);
         let limitX = model._map.cols;
-        console.error("limitX: " + limitX);
+        //console.debug("limitX: " + limitX);
         let limitY = model._map.rows;
-        console.error("limitY: " + limitY);
+        //console.debug("limitY: " + limitY);
         let cells = 0;
         let bulletStopped = false;
         for(
@@ -115,28 +153,19 @@ class MatchController {
             r >= 0 && c >= 0 &&
             !bulletStopped;
 
-            r += deltaY, c += deltaX
+            c += deltaX, r += deltaY
         ) {
             let idx = r * model._map.cols + c;
-            bulletStopped = stopsBullet(model._map.tiles[idx]);
-            console.error("bulletStopped: " + bulletStopped);
+            let tile = model._map.tiles[idx];
+            console.log("Checking " + r + "," + c + " (" + tile + ")");
+            bulletStopped = stopsBullet(tile);
+            //console.debug("bulletStopped: " + bulletStopped);
             if(!bulletStopped) {
                 model._map.tiles[idx] = "*";
                 cells++;
             }
         }
-        console.error("Match Controller: shot over " + cells + " cells.");
-    }
-
-    eventualConsistentShot(direction) {
-        if(!model.local.shot) {
-            // I'll avoid making a copy of the whole map...
-            let position = model.local.me.position;
-            this.computeShootOnMap(position, direction);
-            console.debug("Match Controller computed the map with the shot and is going to set the new map in the model.");
-            model.setMap(model._map); // horrible
-            model.local.shot = true;
-        }
+        console.debug("Match Controller: shot over " + cells + " cells.");
     }
 
     // Map view management
@@ -202,7 +231,6 @@ class MatchController {
                 break;
         }
     };
-
 
     getStatusHandler(evt){
         //console.debug("getStatusHandler: " + evt.detail);
@@ -284,8 +312,14 @@ class MatchController {
 
     load() {
         // All listeners common to every kind of user
-        document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", this.lookMapHandler, false);
-        
+        document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", (this.lookMapHandler).bind(this), false);
+
+        // Shoot events
+        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:N", ((evt) => { this.shootHandler(evt, GameClient.UP) }).bind(this), false);
+        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:S", ((evt) => { this.shootHandler(evt, GameClient.DOWN) }).bind(this), false);
+        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:W", ((evt) => { this.shootHandler(evt, GameClient.LEFT) }).bind(this), false);
+        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:E", ((evt) => { this.shootHandler(evt, GameClient.RIGHT) }).bind(this), false);
+
         // DEBUG: Status button
         // document.getElementById("statusButton").addEventListener("click", () => {
         //     this.statusPoller();
@@ -300,7 +334,7 @@ class MatchController {
             // Session-related commands during the lobby (keys)
             document.addEventListener("keyup", this.startHandler.bind(this), false);
             // Init map polling
-            this._pollOnce();
+            this._poller(); // TODO this._pollOnce();
             // Loads the specialized listeners
             switch(model.local.kind) {
                 case model.PLAYER:
@@ -331,7 +365,7 @@ class MatchController {
         }, false);
         
         document.addEventListener("MODEL_PLAYER_JOINED", () => {
-        this._pollOnce();
+            this._poller(); // TODO this._pollOnce();
         }, false);
     }
 
