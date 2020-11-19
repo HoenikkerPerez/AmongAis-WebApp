@@ -32,6 +32,16 @@ class HudUi {
             document.getElementById("start-button").style.display = "";
         }, false);
 
+        document.addEventListener("MODEL_STATE_KILLED", () => {
+            console.debug("hud displaying killing status");
+            popupMsg("WASTED!!!\nYou are dead ... not a BIG surprise!", "danger");
+        }, false);
+
+        document.addEventListener("MODEL_STATE_LOBBYGUEST", () => {
+            console.debug("hud displaying lobbyguess status");
+            popupMsg("Welcome! You are the special guest, please wait for the beginning\nPS: don't worry, you not need to press anything \n  to refresh the map and the status :^)\n  you can have a drink in meanwhile ;-)", "success");
+        }, false);
+
         document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
             document.getElementById("start-button").style.display = "none";
         }, false);
