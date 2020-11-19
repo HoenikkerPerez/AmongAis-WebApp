@@ -180,9 +180,8 @@ class GameClient {
         this._send("miticoOggettoCheNonEsiste.SPECTATE_GAME", msg);
     }
 
-    startGame() {
+    startGame(gameName) {
         //console.debug("Game Client is starting the current game.");
-        let gameName = model.status.ga;
         let msg = this._lobby.startGame(gameName);
         this._send("miticoOggettoCheNonEsiste.START_GAME", msg);
     }

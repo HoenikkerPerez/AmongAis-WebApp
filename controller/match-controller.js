@@ -217,11 +217,11 @@ class MatchController {
 
     startHandler = function (evt) {
         switch(evt.key) {
-            case "Enter":
-                // START
-                console.debug("MatchController is asking the game client to START the joined game after the ENTER key.");
-                this._gameClient.startGame();
-                break;
+            // case "Enter":
+            //     // START
+            //     console.debug("MatchController is asking the game client to START the joined game after the ENTER key.");
+            //     this._gameClient.startGame();
+            //     break;
             case "Escape":
                 // LEAVE
                 if(model.status.gameActive){
@@ -332,6 +332,12 @@ class MatchController {
         document.addEventListener("MODEL_RUN_GAME", () => {
             // Init human commands
             // Session-related commands during the lobby (keys)
+
+            document.getElementById("start-button").addEventListener("click", () => {
+                console.debug("MatchController is asking the game client to START the joined game");
+                this._gameClient.startGame(model.status.ga);
+            });
+        
             document.addEventListener("keyup", this.startHandler.bind(this), false);
             // Init map polling
             this._poller(); // TODO this._pollOnce();

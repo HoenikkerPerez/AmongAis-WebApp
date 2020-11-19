@@ -26,6 +26,15 @@ class HudUi {
         document.addEventListener("MODEL_UNSUBSCRIBEDCHANNEL", () => {
             this.renderSubscribedChannels();
         }, false);
+
+        document.addEventListener("MODEL_STATE_LOBBYOWNER", () => {
+            console.debug("hud displaying start button")
+            document.getElementById("start-button").style.display = "";
+        }, false);
+
+        document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
+            document.getElementById("start-button").style.display = "none";
+        }, false);
         
     };
     
