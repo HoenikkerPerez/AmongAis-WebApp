@@ -66,7 +66,7 @@
             <div class="form-group p-3 my-3" id="login-form-wrapper">
                 <form class="form" name="loginForm" for="email" id="loginForm"  action="">Login Credentials:
                     <!-- <div class="col-sm-4"> . </div> -->
-                    <input type="email" id="usernameInput" name="usernameInput" class="form-control my-3" placeholder="loginName"> <!-- col-sm-4 -->
+                    <input type="text" id="usernameInput" name="usernameInput" class="form-control my-3" placeholder="loginName"> <!-- col-sm-4 -->
                     <input type="button" class="btn btn-primary" id="loginButton" name="loginButton" value="LOGIN" disabled>
                     <!-- <div class="col-sm-4"></div> -->
 
@@ -77,10 +77,12 @@
                 <form name="startGameForm" id="startGameForm" action="">Enter game name:<br>
                     <input type="text" class="form-control my-3" id="ingamenameInput" name="ingamenameInput" placeholder="username"><P>
                     <input type="text" class="form-control my-3" id="gameNameInput" name="gameNameInput"  placeholder="matchname" value=""><P>
-                        <input type="button" class="btn btn-primary" id="createButton" name="createButton" value="CREATE" disabled>
-                        <input type="button" class="btn btn-primary" id="startButtonNoJoin" name="startButtonNoJoin" value="START MATCH" disabled>
+                        <div class="btn-group">
+                            <input type="button" class="btn btn-primary" id="createButton" name="createButton" value="CREATE" disabled>
+                            <input type="button" class="btn btn-primary" id="startButtonNoJoin" name="startButtonNoJoin" value="START MATCH" disabled>
+                        </div>
                         <input type="button" class="btn btn-primary" id="joinButton" name="joinButton" value="JOIN" disabled>
-                    <input type="button" class="btn btn-secondary" id="spectateButton" name="spectateButton" value="SPECTATE" disabled>
+                    <input type="button" class="btn btn-primary" id="spectateButton" name="spectateButton" value="SPECTATE" disabled>
                 </form>
             </div>
         </div>
