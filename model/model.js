@@ -96,7 +96,15 @@ var model = {
             document.dispatchEvent(new CustomEvent(newstate_tag, {detail: {status:status}}));
         }
         document.dispatchEvent(new CustomEvent("MODEL_SETSTATUS", {detail: {status:status}}));
+
+        // check if you'are the owner
+        let pl_list = this.status.pl_list;
+        let me = pl_list.find(o => o.name === this.status.me.name);
+        if (me != undefined && me.state === "LOBBYOWNER") {
+            document.dispatchEvent(new CustomEvent("MODEL_STATE_LOBBYOWNER", {detail: {state: me.state}}));
+        }
     },
+
     // enter into the match: players & spectators
     setRunningGame: function(isRunning, kindOfUser) {
         // set user kind

@@ -24,11 +24,11 @@ class SessionController {
     _loadUI() {
         // Game name
         let gameNameInput = document.getElementById("gameNameInput");
-        gameNameInput.addEventListener("input", this._validateCreateJoin);
+        gameNameInput.addEventListener("input", this._validateInput);
         
         // InGame name
         let ingamenameInput = document.getElementById("ingamenameInput");
-        ingamenameInput.addEventListener("input", this._validateCreateJoin)
+        ingamenameInput.addEventListener("input", this._validateInput)
 
         // Create game
         document.getElementById("createButton").addEventListener("click", () => {
@@ -43,6 +43,12 @@ class SessionController {
             model.inGameName = inGameName;
             console.debug("SessionController: joining a name called " + gameName + " as " + inGameName);
             this._gameClient.joinGame(gameName, inGameName);
+        });
+        // start game no join
+        document.getElementById("startButtonNoJoin").addEventListener("click", () => {
+            let gameName = document.getElementById("gameNameInput").value;
+            console.debug("SessionController: start game " + gameName + " without joining it");
+            this._gameClient.startGame(gameName);
         });
         // Spectate game
         document.getElementById("spectateButton").addEventListener("click", () => {
@@ -76,13 +82,14 @@ class SessionController {
 
     _loadWsMessages() {
         document.addEventListener("miticoOggettoCheNonEsiste.CREATE_GAME", (evt) => {
-            let msgOk = evt.detail.startsWith("OK");
+            let msg = evt.detail
+            let msgOk = msg.startsWith("OK");
             if(msgOk)
                 // alert("Game has been created!");
                 popupMsg("Game has been created!","success")
             else
                 // alert("Game creation failed.");
-                popupMsg("Game creation failed.","danger")
+                popupMsg(msg,"danger")
         }, false);
 
         document.addEventListener("miticoOggettoCheNonEsiste.JOIN_GAME", (evt) => {
@@ -94,13 +101,9 @@ class SessionController {
                 // Remove home UI elements
                 console.debug("Session Controller is going to set the game as running with user kind " + model.PLAYER);
                 model.setRunningGame(true, model.PLAYER);
-            } else if (msg.includes("410")) {
-                // alert("PLAYER NAME ALREADY TAKEN IN THIS GAME");
-                popupMsg("PLAYER NAME ALREADY TAKEN IN THIS GAME","danger")
             } else {
-                // alert("GAME NOT EXIST");
-                popupMsg("GAME NOT EXIST","danger")
-            }
+                popupMsg(msg,"danger")
+            } 
         }, false);
 
         document.addEventListener("miticoOggettoCheNonEsiste.SPECTATE_GAME", (evt) => {
@@ -115,7 +118,7 @@ class SessionController {
                 model.setRunningGame(true, model.SPECTATOR);
             } else {
                 // alert("GAME NOT EXIST")
-                popupMsg("GAME NOT EXIST","danger")
+                popupMsg(msg,"danger")
             }
         }, false);
 
@@ -126,15 +129,9 @@ class SessionController {
             let msgOk= msg.startsWith("OK");
 
             if(msgOk) {
-                // alert("You started the game!");
                 popupMsg("You started the game!","success")
-            } else if(msg.includes("501 Only")) {
-                // alert("Only creator can start a game");
-                popupMsg("Only creator can start a game","danger")
-            } else if (msg.includes("501 Need")) {
-                // alert("Need two non-empty teams to start");
-                popupMsg("Need two non-empty teams to start","danger")
-
+            } else {
+                popupMsg(msg, "danger")
             }
         }, false);
 
@@ -156,25 +153,28 @@ class SessionController {
         }
     };
     
-    _validateCreateJoin() {
+    _validateInput() {
         let ingamenameInput = document.getElementById("ingamenameInput");
         let gameNameInput = document.getElementById("gameNameInput");
 
         let createButton = document.getElementById("createButton");
         let joinButton = document.getElementById("joinButton");
         let spectateButton = document.getElementById("spectateButton");
+        let startButtonNoJoin = document.getElementById("startButtonNoJoin");
         
         if(gameNameInput.value.length == 0 || ingamenameInput.value.length == 0) {
-            joinButton.disabled = true
+            joinButton.disabled = true;
         } else {
-            joinButton.disabled = false
+            joinButton.disabled = false;
         }
         if(gameNameInput.value.length == 0) {
-            createButton.disabled = true
-            spectateButton.disabled = true
+            createButton.disabled = true;
+            spectateButton.disabled = true;
+            startButtonNoJoin.disabled = true;
         } else {
-            createButton.disabled = false
-            spectateButton.disabled = false
+            createButton.disabled = false;
+            spectateButton.disabled = false;
+            startButtonNoJoin.disabled = false;
         }
     };
 }

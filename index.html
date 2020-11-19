@@ -77,14 +77,17 @@
                 <form name="startGameForm" id="startGameForm" action="">Enter game name:<br>
                     <input type="text" class="form-control my-3" id="ingamenameInput" name="ingamenameInput" placeholder="username"><P>
                     <input type="text" class="form-control my-3" id="gameNameInput" name="gameNameInput"  placeholder="matchname" value=""><P>
-                    <input type="button" class="btn btn-primary" id="createButton" name="createButton" value="CREATE" disabled>
-                    <input type="button" class="btn btn-primary" id="joinButton" name="joinButton" value="JOIN" disabled>
+                        <input type="button" class="btn btn-primary" id="createButton" name="createButton" value="CREATE" disabled>
+                        <input type="button" class="btn btn-primary" id="startButtonNoJoin" name="startButtonNoJoin" value="START MATCH" disabled>
+                        <input type="button" class="btn btn-primary" id="joinButton" name="joinButton" value="JOIN" disabled>
                     <input type="button" class="btn btn-secondary" id="spectateButton" name="spectateButton" value="SPECTATE" disabled>
                 </form>
             </div>
         </div>
 
+
         <div id="console" class="row" style="display:none">
+            <button id="start-button" type="button" class="btn btn-primary" style="display: none;">START</button>
             <div id="hud" class="col-sm-2" style="overflow:auto; max-height:100vh;">
             </div>
             <div class="col">
