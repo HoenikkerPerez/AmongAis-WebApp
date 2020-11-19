@@ -22,6 +22,23 @@ class SessionController {
     }
 
     _loadUI() {
+        // Login
+        document.getElementById("loginButton").addEventListener("click", () => {
+            console.debug("LoginButton has been clicked!");
+            let username = document.getElementById("usernameInput").value;
+            console.debug("LoginController: try to login for " + username);
+            if(this._gameClient.login(username)){
+                model.username = username;
+                // model.inGameName = document.getElementById("ingamenameInput").value;
+                document.getElementById("login-form-wrapper").style.display="none";
+                document.getElementById("startgame-form-wrapper").style.display="";
+                document.getElementById("ingamenameInput").focus();
+                // enter event
+                document.removeEventListener("keydown", this._keydownLogin, false);
+            }
+        });
+
+                
         // Game name
         let gameNameInput = document.getElementById("gameNameInput");
         gameNameInput.addEventListener("input", this._validateInput);
@@ -29,6 +46,7 @@ class SessionController {
         // InGame name
         let ingamenameInput = document.getElementById("ingamenameInput");
         ingamenameInput.addEventListener("input", this._validateInput)
+
 
         // Create game
         document.getElementById("createButton").addEventListener("click", () => {
@@ -59,20 +77,7 @@ class SessionController {
             //model.setGameActive(true);
             this._gameClient.spectateGame(gameName);
         });
-        // Login
-        document.getElementById("loginButton").addEventListener("click", () => {
-            console.debug("LoginButton has been clicked!");
-            let username = document.getElementById("usernameInput").value;
-            console.debug("LoginController: try to login for " + username);
-            if(this._gameClient.login(username)){
-                model.username = username;
-                // model.inGameName = document.getElementById("ingamenameInput").value;
-                document.getElementById("login-form-wrapper").style.display="none";
-                document.getElementById("startgame-form-wrapper").style.display="";
-                // enter event
-                document.removeEventListener("keydown", this._keydownLogin, false);
-            }
-        });
+
         // validate Login using credential
         let usernameInput = document.getElementById("usernameInput");
         usernameInput.addEventListener("input", this._validateLogin);
