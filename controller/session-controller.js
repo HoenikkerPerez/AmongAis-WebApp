@@ -69,18 +69,18 @@ class SessionController {
                 // model.inGameName = document.getElementById("ingamenameInput").value;
                 document.getElementById("login-form-wrapper").style.display="none";
                 document.getElementById("startgame-form-wrapper").style.display="";
+                // enter event
+                document.removeEventListener("keydown", this._keydownLogin, false);
             }
         });
-        
         // validate Login using credential
         let usernameInput = document.getElementById("usernameInput");
         usernameInput.addEventListener("input", this._validateLogin);
-        // let ingamenameInput = document.getElementById("ingamenameInput");
-        // ingamenameInput.addEventListener("input", this._validateLogin);
-
+        
     }
 
     _loadWsMessages() {
+        document.addEventListener("keydown", this._keydownLogin, false);
         document.addEventListener("miticoOggettoCheNonEsiste.CREATE_GAME", (evt) => {
             let msg = evt.detail
             let msgOk = msg.startsWith("OK");
@@ -140,12 +140,21 @@ class SessionController {
             alert("This has been so refreshing!");
             location.reload(); 
         });
+
+        
     }
 
+    _keydownLogin(evt) {
+        console.debug("Pressed " + evt.key);
+        if(evt.key == "Enter")
+            document.getElementById("loginButton").click();
+    }
 
     _validateLogin() {
         let usernameInput = document.getElementById("usernameInput");
         let loginButton = document.getElementById("loginButton");
+        // set focus on login button
+
         if(usernameInput.value.length == 0) {
                 loginButton.disabled = true
         } else {
@@ -161,7 +170,7 @@ class SessionController {
         let joinButton = document.getElementById("joinButton");
         let spectateButton = document.getElementById("spectateButton");
         let startButtonNoJoin = document.getElementById("startButtonNoJoin");
-        
+
         if(gameNameInput.value.length == 0 || ingamenameInput.value.length == 0) {
             joinButton.disabled = true;
         } else {
