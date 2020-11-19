@@ -38,7 +38,7 @@ class Ui {
 
     _gameEnded() {
         // alert("This is The END ... my only frien, the END! (DOORS) \n to Restart, Refresh page. (I can't do all stuff for you!)");
-        popupMsg("This is The END ... my only frien, the END! (DOORS) \n to Restart, Refresh page. (I can't do all stuff for you!)", "info");
+        popupMsg("This is The END ... my only friend, the END! (DOORS) \n to Restart, Refresh page. (Thank You to use our Web-Client!)", "info");
     }
 
     _loadWsMessages() {

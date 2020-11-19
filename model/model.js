@@ -79,30 +79,33 @@ var model = {
         // Reset laser presence
         this.local.shot = false;
     },
-    
-    setStatus: function(status) {
-        // preprocess status
-        // if(status.state =="FINISHED"){
-        //     if(this.status.state != status.state){
-        //         this.status = status;
-        //         document.dispatchEvent(new CustomEvent("MODEL_ENDGAME", {detail: {status:status}}));
-        //     }
-        //     return;
-        // }
-        let old = this.status.state;
-        this.status = status;
-        if(this.status.state != old){
-            let newstate_tag = "MODEL_MATCH_STATUS_"+status.state; // LOBBY, ACTIVE, FINISHED
-            document.dispatchEvent(new CustomEvent(newstate_tag, {detail: {status:status}}));
-        }
-        document.dispatchEvent(new CustomEvent("MODEL_SETSTATUS", {detail: {status:status}}));
 
-        // check if you'are the owner
-        let pl_list = this.status.pl_list;
-        let me = pl_list.find(o => o.name === this.status.me.name);
-        if (me != undefined && me.state === "LOBBYOWNER") {
-            document.dispatchEvent(new CustomEvent("MODEL_STATE_LOBBYOWNER", {detail: {state: me.state}}));
+    _isMatchStatusChange(oldMatchStatus,newMatchStatus){
+        if(newMatchStatus !== oldMatchStatus){
+            let newstate_tag = "MODEL_MATCH_STATUS_"+this.status.state; // LOBBY, ACTIVE, FINISHED
+            document.dispatchEvent(new CustomEvent(newstate_tag, {detail: {status:this.status}}));
         }
+    },
+    _isMePlayerStatusChange(oldStatus,newStatus){
+        // check if you'are the owner
+        let pl_list_old = oldStatus.pl_list;
+        let me_old = pl_list_old.find(o => o.name === oldStatus.me.name);
+        let pl_list_new = newStatus.pl_list;
+        let me_new = pl_list_new.find(o => o.name === newStatus.me.name);
+
+        if( (me_new != undefined) && ( (me_old == undefined) || (me_new.state != me_old.state) ) ){
+            let newMeState_tag = "MODEL_STATE_" + me_new.state;
+            document.dispatchEvent(new CustomEvent(newMeState_tag, {detail: {state: me_new.state}}));
+        }
+    },
+    setStatus: function(status) {
+        let old = this.status;
+        this.status = status;
+        
+        this._isMatchStatusChange(old.state,status.state);
+        this._isMePlayerStatusChange(old,status);
+
+        document.dispatchEvent(new CustomEvent("MODEL_SETSTATUS", {detail: {status:status}}));
     },
 
     // enter into the match: players & spectators

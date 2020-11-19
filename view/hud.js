@@ -32,6 +32,16 @@ class HudUi {
             document.getElementById("start-button").style.display = "";
         }, false);
 
+        document.addEventListener("MODEL_STATE_KILLED", () => {
+            console.debug("hud displaying killing status");
+            popupMsg("WASTED!!!\nYou are dead ... not a BIG surprise!", "danger");
+        }, false);
+
+        document.addEventListener("MODEL_STATE_LOBBYGUEST", () => {
+            console.debug("hud displaying lobbyguess status");
+            popupMsg("Welcome! Please wait for the match beginning", "success");
+        }, false);
+
         document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
             document.getElementById("start-button").style.display = "none";
         }, false);
