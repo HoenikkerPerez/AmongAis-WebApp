@@ -40,7 +40,7 @@ class MatchController {
                     break;
                 }
                 if(newDirection) {
-                    console.debug("MatchController is asking the game client to moove " + newDirection);
+                    console.debug("MatchController is asking the game client to move " + newDirection);
                     gameClient.move(newDirection);
                     lastDirection.direction = newDirection;
                 }
@@ -49,7 +49,7 @@ class MatchController {
 
     lookMapHandler(evt) {
         //LOOK MAP save to model
-        console.debug("LOOKMAPHANDLER " + evt.detail);
+        //console.debug("LOOKMAPHANDLER " + evt.detail);
         let msgOk = evt.detail.startsWith("OK");
         if(!msgOk){
             return;
@@ -193,7 +193,7 @@ class MatchController {
         visibleHeight = height / scale;
     }
     mapPoller() {
-        console.debug("Polling map")
+        //console.debug("Polling map")
         let gameName = model.status.ga;
         
         this._gameClient.lookMap(gameName);
@@ -219,16 +219,15 @@ class MatchController {
                     this._gameClient.leave();
                 }
                 break;
-            default:
-                console.debug("MatchController retrieved a keyup, but nothing happened.");
         }
     };
 
     getStatusHandler(evt){
-        console.debug("getStatusHandler: " + evt.detail);
+        //console.debug("getStatusHandler: " + evt.detail);
         let msgOk = evt.detail.startsWith("OK");
         if(!msgOk){
             // alert("HUD[!]" + evt.detail);
+            popupMsg("[!] getStatusHandler" + evt.detail, "danger");
             return;
         }
         let status = {};
@@ -240,7 +239,9 @@ class MatchController {
         let stat = evt.detail.slice(7).replace("«ENDOFSTATUS»",'').trim().split('\n');
         let ga_list = stat[0].slice(4).split(' ')
         for(let j=0;j<ga_list.length;j++){
-            ga[ga_list[j].split('=')[0]] = ga_list[j].split('=')[1];
+            let key = ga_list[j].split('=')[0]
+            let value = ga_list[j].substring(ga_list[j].indexOf('=')+1);
+            ga[key] = value
         }
         status.ga = ga.name;
         status.state = ga.state;
@@ -252,7 +253,9 @@ class MatchController {
             if(stat[1].startsWith("ME:")){
                 let me_list = stat[1].slice(4).split(' ');
                 for(let j=0;j<me_list.length;j++){
-                    me[me_list[j].split('=')[0]] = me_list[j].split('=')[1];
+                    let key =me_list[j].split('=')[0]
+                    let value =  me_list[j].substring( me_list[j].indexOf('=')+1);
+                    me[key] = value
                 }
             }
             else{
@@ -264,7 +267,9 @@ class MatchController {
                 let pl = {};
                 let pl_list = stat[i].slice(4).split(' ')
                 for(let j=0;j<pl_list.length;j++){
-                    pl[pl_list[j].split('=')[0]] = pl_list[j].split('=')[1];
+                    let key = pl_list[j].split('=')[0]
+                    let value =  pl_list[j].substring( pl_list[j].indexOf('=')+1);
+                    pl[key] = value
                 }
                 pls.push(pl);
             }
@@ -276,20 +281,27 @@ class MatchController {
     };
 
     statusPoller(){
-        console.debug("status poller run");
+        //console.debug("status poller run");
         let gameName = model.status.ga;
-        console.debug("matchController: try to get status for " + gameName);
+        //console.debug("matchController: try to get status for " + gameName);
         this._gameClient.getStatus(gameName)
     };
 
-    poller(){
-        let timeframe = model.timeframe;
+    _pollOnce() {
         this.mapPoller();
         this.statusPoller();
-        window.setTimeout(function(){ this.poller() }.bind(this), timeframe);
+    };
+
+    _poller() {
+        let timeframe = model.timeframe;
+        this._pollOnce();
+        window.setTimeout(function(){ this._poller() }.bind(this), timeframe);
     }
 
+    
+
     load() {
+        // All listeners common to every kind of user
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", this.lookMapHandler, false);
 
         // Shoot events
@@ -309,19 +321,52 @@ class MatchController {
         // document.addEventListener("MODEL_SETGAMENAME", this.init, false);
         document.addEventListener("MODEL_RUN_GAME", () => {
             // Init human commands
-            // TODO: add "start action"
-            // Session-related commands during the match (keys)
+            // Session-related commands during the lobby (keys)
             document.addEventListener("keyup", this.startHandler.bind(this), false);
             // Init map polling
-            this.poller()
+            this._pollOnce();
+            // Loads the specialized listeners
+            switch(model.local.kind) {
+                case model.PLAYER:
+                    console.debug("Match Controller is loading the player listeners...");
+                    this._loadPlayerOnRunGame();
+                break;
+                case model.SPECTATOR:
+                    console.debug("Match Controller is loading the spectator listeners...");
+                    this._loadSpectatorOnRunGame();
+                break;
+                default:
+                    console.error("Unable to retrieve user kind.");
+                    popupMsg("Are you a PLAYER or a SPECTATOR?", "danger");
+            }
         }, false);
+    };
 
+    // Player-specific listeners
+
+    _loadPlayerOnRunGame() {
         document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
             // Init human commands
+            console.debug("match-controller catches MODEL_MATCH_STATUS_ACTIVE")
             document.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
             document.addEventListener("ACCUSE", (evt) => {this.accuseHandler(evt, this._gameClient)}, false);
+            model.timeframe = model.playerTimeframe;
+            this._poller();
         }, false);
+        
+        document.addEventListener("MODEL_PLAYER_JOINED", () => {
+        this._pollOnce();
+        }, false);
+    }
 
-    };
+    // Spectator-specific listeners
+
+    _loadSpectatorOnRunGame() {
+        document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
+            // Init human commands
+            model.timeframe = model.spectatorTimeframe;
+            this._poller();
+        }, false);
+    }
     
 };

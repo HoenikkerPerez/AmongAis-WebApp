@@ -2,7 +2,7 @@ class HudUi {
 
     constructor() {
         this._load();
-        console.debug("UI: HUD loaded");
+        console.debug("UI: HUD loaded"); 
     };
 
     _load(){
@@ -18,6 +18,15 @@ class HudUi {
         document.addEventListener("MODEL_SETCHAT", () => {
             this.renderChat();
         }, false);
+
+        document.addEventListener("MODEL_SUBSCRIBEDCHANNEL", () => {
+            this.renderSubscribedChannels();
+        }, false);
+
+        document.addEventListener("MODEL_UNSUBSCRIBEDCHANNEL", () => {
+            this.renderSubscribedChannels();
+        }, false);
+        
     };
     
     renderHud() {
@@ -120,6 +129,32 @@ class HudUi {
             messages.appendChild(box);
         }
         div.appendChild(messages)
-    }   
+    };
 
+    renderSubscribedChannels() {
+        // subscribed messages
+        let chatSubscribedChannelBlock = document.getElementById("chatSubscribedChannelBlock");
+        chatSubscribedChannelBlock.innerHTML = "";
+        let subs_channels = model.chat.chatSubscribedChannels
+
+        let box = document.createElement("ul");
+        box.textContent = "Subscribed channels"
+        for (let i=0; i< subs_channels.length; i++) { 
+            let channel = document.createElement("li");
+            let channelstr = subs_channels[i].channel;
+
+            channel.innerHTML = channelstr
+            box.appendChild(channel);
+
+            let leaveButton = document.createElement("button");
+            leaveButton.innerText = "Leave"
+            leaveButton.onclick= () => {
+                //this._chat_client.removeSubscribedChannel(channel);
+                document.dispatchEvent(new CustomEvent("BUTTON_UNSUBSRIBECHANNEL", {detail: {channel: channelstr}}));
+            };
+            box.appendChild(leaveButton);
+
+        }   
+        chatSubscribedChannelBlock.appendChild(box);
+    };
 };

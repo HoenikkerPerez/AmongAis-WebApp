@@ -31,8 +31,14 @@ class Ui {
         
     };
 
+    _gameStarted(){
+        // alert("This is The END ... my only frien, the END! (DOORS) \n to Restart, Refresh page. (I can't do all stuff for you!)");
+        popupMsg("Match is START: Let's get ready to rumble!!!!!", "success");
+    }
+
     _gameEnded() {
-        alert("This is The END ... my only frien, the END! (DOORS) \n to Restart, Refresh page. (I can't do all stuff for you!)");
+        // alert("This is The END ... my only frien, the END! (DOORS) \n to Restart, Refresh page. (I can't do all stuff for you!)");
+        popupMsg("This is The END ... my only frien, the END! (DOORS) \n to Restart, Refresh page. (I can't do all stuff for you!)", "info");
     }
 
     _loadWsMessages() {
@@ -40,6 +46,10 @@ class Ui {
 
         document.addEventListener("MODEL_RUN_GAME", () => {
             this._gameActivated();
+        }, false);
+
+        document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
+            this._gameStarted();
         }, false);
 
         document.addEventListener("MODEL_MATCH_STATUS_FINISHED", () => {

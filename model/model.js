@@ -1,7 +1,9 @@
 var model = {
     _map: [],
-    timeframe: 1000, // Map polling rate
-    connectionTimeframe: 1000, // Minimum delay between requests
+    timeframe: 1000, // Default map polling rate
+    spectatorTimeframe: 1000, // Spectator's map polling rate
+    playerTimeframe: 1000, // Player's map polling rate
+    connectionTimeframe: 600, // Minimum delay between requests
     net: {
         game: {
             // ws: "ws://localhost:8765"
@@ -10,6 +12,7 @@ var model = {
         },
         chat: {
             ws: "ws://margot.di.unipi.it:8522"//ws: "ws://margot.di.unipi.it:8522"
+            // ws: "ws://localhost:8522"//ws: "ws://margot.di.unipi.it:8522"
         }
 }   ,
     status: {
@@ -26,6 +29,11 @@ var model = {
         },
         pl_list:[]
     },
+
+    NONE: "NONE",
+    PLAYER: "PLAYER",
+    SPECTATOR: "SPECTATOR",
+
     local: {
         me: {
             position: { // (0,0) is North West corner
@@ -33,6 +41,8 @@ var model = {
                 y: 0
             }
         },
+        shot: false,
+        kind: this.NONE
     },
     chat: {
         messages:[], //{channel: string, user: string, message: string}
@@ -79,12 +89,22 @@ var model = {
         }
         document.dispatchEvent(new CustomEvent("MODEL_SETSTATUS", {detail: {status:status}}));
     },
-
     // enter into the match: players & spectators
-    setRunningGame: function(isRunning) {
+    setRunningGame: function(isRunning, kindOfUser) {
+        // set user kind
+        this.local.kind = kindOfUser;
         // preprocess status
         this.isRunning = isRunning;
         document.dispatchEvent(new CustomEvent("MODEL_RUN_GAME", {detail:isRunning}));
+    },
+
+    setGameActive: function(){
+        this.status.state = "ACTIVE";
+        document.dispatchEvent(new CustomEvent("MODEL_MATCH_STATUS_ACTIVE"));
+    },
+
+    playerJoined: function() {
+        document.dispatchEvent(new CustomEvent("MODEL_PLAYER_JOINED"));
     },
 
     addMessageChat: function(channel, user, message) {
@@ -96,11 +116,25 @@ var model = {
     },
 
     addSubscribedChannel: function(channel) {
-        this.chat.chatSubscribedChannels.push({channel: channel});
+        // todo check if already exists
+        let find = this.chat.chatSubscribedChannels.find(o => o.channel === channel);
+        if (find == undefined) {
+            this.chat.chatSubscribedChannels.push({channel: channel});
+            document.dispatchEvent(new CustomEvent("MODEL_SUBSCRIBEDCHANNEL")); // for the HUD
+            console.debug("chat addSubscribedChannel: " + channel)
+        }
     },
 
     removeSubscribedChannel: function(channel) {
-        // TODO
+        // TODO 
+        let findidx = this.chat.chatSubscribedChannels.findIndex(o => o.channel === channel);
+        if (findidx != -1) {
+            console.debug(find);
+            this.chat.chatSubscribedChannels.splice(findidx)
+            document.dispatchEvent(new CustomEvent("MODEL_UNSUBSCRIBEDCHANNEL")); // for the HUD
+            console.debug("chat removeSubscribedChannel: " + channel)
+        }
+
     },
 
     findPlayerBySymbol: function(symb) {
