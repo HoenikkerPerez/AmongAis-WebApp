@@ -9,8 +9,14 @@
 }
 
 #canvas{
-    outline: black 3px solid;
+    outline: rgb(48, 48, 48) 5px solid;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
 }
+
 .footer {
     position: fixed;
     left: 0;

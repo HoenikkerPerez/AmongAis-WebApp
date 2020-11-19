@@ -32,15 +32,6 @@ class ChatController {
         }           // TODO LEAVING PLAYER
     }
 
-
-    _loginChat() {
-        let username = document.getElementById("chatLoginInput").value
-        this._chat_client.loginChat(username);
-
-        let block = document.getElementById("chatLoginBlock");
-        block.parentNode.removeChild(block);
-    }
-
     _sendChatMessage() {
         let channel = document.getElementById("chatSendChannelInput").value
         let message = document.getElementById("chatSendMessageInput").value
@@ -57,11 +48,6 @@ class ChatController {
     }
 
     load() {
-        document.getElementById("chatLoginInput").addEventListener("input", this._validateLogin);
-        document.getElementById("chatLoginButton").addEventListener("click", () => {
-            this._loginChat();
-        });
-
         document.getElementById("chatChannelInput").addEventListener("input", this._validateChannel);
         document.getElementById("chatChannelButton").addEventListener("click", () => {
             this._subscribeChatChannel();
@@ -98,16 +84,7 @@ class ChatController {
         });
 
     };
-    
-    _validateLogin() {
-        let inputValue = document.getElementById("chatLoginInput").value;
-        let button = document.getElementById("chatLoginButton");
-        if(inputValue.length == 0) {
-            button.disabled = true
-        } else {
-            button.disabled = false
-        }
-    };
+
 
     _validateSend() {
         let channel = document.getElementById("chatSendChannelInput").value;
