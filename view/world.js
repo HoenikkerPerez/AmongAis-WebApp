@@ -32,8 +32,6 @@ class WorldUi {
 
     imgTileSet = './assets/mod32x32_map_tilev2.png'    
     
-    N = 32 // map size NxN
-
     images = {}
 
     _rendering = false
@@ -43,6 +41,7 @@ class WorldUi {
     scaleFactor = 1.01
 
     tmp_players = []
+    _initSize;
 
     constructor(ctx) {
         this.ctx = ctx;
@@ -52,8 +51,7 @@ class WorldUi {
         }.bind(this));
         
         let canvas = document.getElementById("canvas");
-        this.initCanvasSize();
-
+        
         this.trackTransforms(this.ctx)
 
         this._load();
@@ -129,7 +127,7 @@ class WorldUi {
         return [tile, symbol, team, type]
     };
 
-    initCanvasSize() {
+    _initCanvasSize() {
         // Lookup the size the browser is displaying the canvas.
         let displayWidth  = window.innerWidth*0.9;
         let displayHeight = window.innerHeight*0.9;
@@ -147,12 +145,29 @@ class WorldUi {
         this.lastX = canvas.width/2
         this.lastX  = canvas.height/2
         
-        this._tsizeMap = Math.floor(this.ctx.canvas.height / this.N)
-        this.ctx.canvas.width  = this._tsizeMap * this.N
-        this.ctx.canvas.height = this._tsizeMap * this.N
+        this._tsizeMap = Math.floor(this.ctx.canvas.height / model._map.rows)
+        this.ctx.canvas.width  = this._tsizeMap * model._map.rows;
+        this.ctx.canvas.height = this._tsizeMap * model._map.cols;
+    }
+
+    _resizeCanvasHandler() {
+        let displayWidth  = window.innerHeight * 0.9
+        let displayHeight = window.innerWidth * 0.9
+        let sz = 0;
+        if(displayWidth<displayHeight) {sz=displayWidth;} else {sz=displayHeight;}
+        displayHeight = displayWidth = sz;
+        this._tsizeMap = Math.floor(displayHeight / model._map.rows)
+        this.ctx.canvas.width  = this._tsizeMap * model._map.rows;
+        this.ctx.canvas.height = this._tsizeMap * model._map.cols;
+
+
     }
 
     renderMap() {
+        if (!this._initSize) {
+            this._initCanvasSize();
+            this._initSize = true;
+        }
         this._clearCanvas();
         this._drawMap();
         this._drawPlayerNames();
@@ -169,7 +184,7 @@ class WorldUi {
 
     _drawMap() {
         let map = model._map;
-        // let tsizeMap = Math.floor(this.ctx.canvas.height / this.N)
+        // let tsizeMap = Math.floor(this.ctx.canvas.height / this._N)
         this.tmp_players = [];
         for (let c = 0; c < map.cols; c++) {
             for (let r = 0; r < map.rows; r++) {
@@ -197,7 +212,7 @@ class WorldUi {
     _drawPlayerNames() {
         for (let i=0; i<this.tmp_players.length; i++) {
             let [symbol, team, c, r] = this.tmp_players[i];
-            // let this._tsizeMap = Math.floor(this.ctx.canvas.height / this.N)
+            // let this._tsizeMap = Math.floor(this.ctx.canvas.height / this._N)
 
             let player = model.findPlayerBySymbol(symbol);
             if (typeof player !== 'undefined') {
@@ -261,6 +276,8 @@ class WorldUi {
 
         canvas.addEventListener('DOMMouseScroll',this.handleScroll.bind(this),false);
         canvas.addEventListener('mousewheel',this.handleScroll.bind(this),false);
+
+        window.addEventListener("resize", this._resizeCanvasHandler.bind(this), false);
     }
 
     
