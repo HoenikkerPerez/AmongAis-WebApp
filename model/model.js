@@ -59,7 +59,7 @@ var model = {
     username: "",
 
     login: false,
-    ingamename:"",
+    inGameName:"",
     userType: "", // player/spectator
     isRunning: false,
 
@@ -128,9 +128,26 @@ var model = {
 
     addMessageChat: function(channel, user, message) {
         // preprocess message
+        if (user.startsWith("@")) {
+            type = "system";
+        } else if (this.inGameName != undefined && user == this.inGameName) {
+            type = "me";
+        } else {
+            let userobj = this.status.pl_list.find(o => o.name === user);
+            if (userobj != undefined) {
+                if (userobj.team == 0) {
+                    type = "teamA";
+                } else {
+                    type = "teamB";
+                }
+            } else {
+                type = "other";
+            }
+        }
         this.chat.messages.push({channel: channel,
                                  user: user, 
-                                 message: message});
+                                 message: message,
+                                 type: type});
         document.dispatchEvent(new CustomEvent("MODEL_SETCHAT"));
     },
 

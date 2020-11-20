@@ -130,19 +130,40 @@ class HudUi {
         let messages = document.createElement("ul");
         let model_messages = model.chat.messages
         for (let i=0; i<model_messages.length; i++) {
+            let usrstr = model_messages[i].user;
+            let chstr  = model_messages[i].channel;;
+            let msgstr = model_messages[i].message;
+            let type = model_messages[i].type;
+            
             let box = document.createElement("ul");
             box.textContent = "---"
+            switch(type) {
+                case "system":
+                    box.className = "system-message"
+                  break;
+                case "me":
+                    box.className = "my-message"
+                    break;
+                case "teamA":
+                    box.className = "teama-message"
+                    break;
+                case "teamB":
+                    box.className = "teamb-message"
+                    break;
+                default:
+                    box.className = "others-message"
+              }
 
             let channel = document.createElement("li");
-            channel.innerHTML = model_messages[i].channel;
+            channel.innerHTML = chstr;
             box.appendChild(channel);
 
             let user = document.createElement("li");
-            user.innerHTML = model_messages[i].user;
+            user.innerHTML = usrstr;
             box.appendChild(user);
 
             let message = document.createElement("li");
-            message.innerHTML = model_messages[i].message;
+            message.innerHTML = msgstr;
             box.appendChild(message);
 
             messages.appendChild(box);

@@ -62,7 +62,7 @@ class ChatController {
         document.addEventListener("MODEL_RUN_GAME", () => {
             // JOIN chat with login name
             console.debug("chat-controller USERNAME SET")
-            this._username = model.username
+            this._username = model.inGameName
             this._chat_client.loginChat(this._username);
 
             // SUBSCRIBE to the game channel
