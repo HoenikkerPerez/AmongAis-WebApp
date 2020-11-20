@@ -31,3 +31,23 @@
     top: 50%;
     border: 3px solid #8AC007;
   }  */
+
+.system-message {
+    color: purple;
+}
+
+.teama-message {
+    color: red;
+}
+
+.teamb-message {
+    color: blue;
+}
+
+.my-message {
+    color: green;
+}
+
+.others-message {
+    color: black;
+}
