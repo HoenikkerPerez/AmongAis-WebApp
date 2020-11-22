@@ -57,8 +57,9 @@ class ChatController {
         document.getElementById("chatSendChannelInput").addEventListener("input", this._validateSend);
         document.getElementById("chatSendButton").addEventListener("click", () => {
             this._sendChatMessage();
+            document.getElementById("chatSendMessageInput").value = "";
         });
-
+        
         document.addEventListener("MODEL_RUN_GAME", () => {
             // JOIN chat with login name
             console.debug("chat-controller USERNAME SET")
