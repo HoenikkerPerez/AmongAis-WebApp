@@ -58,7 +58,7 @@ var model = {
     username: "",
 
     login: false,
-    inGameName:"",
+    inGameName: undefined,
     userType: "", // player/spectator
     isRunning: false,
 
