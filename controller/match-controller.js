@@ -336,6 +336,7 @@ class MatchController {
             document.getElementById("start-button").addEventListener("click", () => {
                 console.debug("MatchController is asking the game client to START the joined game");
                 this._gameClient.startGame(model.status.ga);
+                // memorize game start time
             });
         
             document.addEventListener("keyup", this.startHandler.bind(this), false);
@@ -367,6 +368,8 @@ class MatchController {
             document.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
             document.addEventListener("ACCUSE", (evt) => {this.accuseHandler(evt, this._gameClient)}, false);
             model.timeframe = model.playerTimeframe;
+            model.setStartGameTime();
+
             this._poller();
         }, false);
         

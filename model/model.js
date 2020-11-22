@@ -6,13 +6,12 @@ var model = {
     connectionTimeframe: 600, // Minimum delay between requests
     net: {
         game: {
-            // ws: "ws://localhost:8765"
-            // ws: "ws://93.150.215.219:8765"
+            // ws: "ws://93.150.215.219:8521"
             ws: "ws://margot.di.unipi.it:8521"
         },
         chat: {
-            ws: "ws://margot.di.unipi.it:8522"//ws: "ws://margot.di.unipi.it:8522"
-            // ws: "ws://localhost:8522"//ws: "ws://margot.di.unipi.it:8522"
+            // ws: "ws://93.150.215.219:8522"
+            ws: "ws://margot.di.unipi.it:8522"
         }
 }   ,
     status: {
@@ -125,6 +124,21 @@ var model = {
     playerJoined: function() {
         document.dispatchEvent(new CustomEvent("MODEL_PLAYER_JOINED"));
     },
+    
+    _sec2time: function(timeInSeconds) {
+        var pad = function(num, size) { return ('000' + num).slice(size * -1); },
+        time = parseFloat(timeInSeconds).toFixed(3),
+        // hours = Math.floor(time / 60 / 60),
+        minutes = Math.floor(time / 60) % 60,
+        seconds = Math.floor(time - minutes * 60);
+        // milliseconds = time.slice(-3);
+        // return pad(hours, 2) + ':' + pad(minutes, 2) + ':' + pad(seconds, 2) + ',' + pad(milliseconds, 3);
+        return pad(minutes, 2) + ':' + pad(seconds, 2); // + ',' + pad(milliseconds, 3);
+    },
+
+    setStartGameTime: function() {
+        this._startGameTime = new Date();
+    },
 
     addMessageChat: function(channel, user, message) {
         // preprocess message
@@ -144,7 +158,11 @@ var model = {
                 type = "other";
             }
         }
-        this.chat.messages.push({channel: channel,
+        let time = undefined;
+        if (this._startGameTime != undefined)
+            time = this._sec2time((new Date() - this._startGameTime)/1000);
+        this.chat.messages.unshift({time: time,
+                                 channel: channel,
                                  user: user, 
                                  message: message,
                                  type: type});
