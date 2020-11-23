@@ -271,7 +271,7 @@ class WorldUi {
         
         canvas.addEventListener('mouseup',function(evt){
             this.dragStart = null;
-            if (!this.dragged) this.zoom(evt.shiftKey ? -1 : 1 );
+            //if (!this.dragged) this.zoom(evt.shiftKey ? -1 : 1 );
         }.bind(this),false);
 
         canvas.addEventListener('DOMMouseScroll',this.handleScroll.bind(this),false);

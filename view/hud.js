@@ -124,47 +124,78 @@ class HudUi {
     }
     
     renderChat() {
+        // channel chat -> [time from start] user: message (colored by team, or me)
+        // server chat -> [time from start] AmongAis message
+        // others -> <canale> user: messaggio
+        
         let div = document.getElementById("messageList");
         div.innerHTML="";
 
-        let messages = document.createElement("ul");
+        let messages = document.createElement("div");
         let model_messages = model.chat.messages
         for (let i=0; i<model_messages.length; i++) {
+            let timestr = model_messages[i].time;
             let usrstr = model_messages[i].user;
             let chstr  = model_messages[i].channel;;
             let msgstr = model_messages[i].message;
             let type = model_messages[i].type;
             
-            let box = document.createElement("ul");
-            box.textContent = "---"
+            let box = document.createElement("div");
+            // box.textContent = "---"
             switch(type) {
                 case "system":
                     box.className = "system-message"
+                     // server chat -> [time from start] AmongAis message
+                    if (timestr == undefined)
+                        box.innerHTML = "[lobby] " + msgstr;
+                    else 
+                        box.innerHTML = "[" + timestr +  "] " + msgstr;
                   break;
+                  
                 case "me":
                     box.className = "my-message"
-                    break;
+                    if (timestr == undefined)
+                        box.innerHTML = "[lobby] " + msgstr;
+                    else 
+                        box.innerHTML = "[" + timestr +  "] " + msgstr;
+                        break;
+
                 case "teamA":
                     box.className = "teama-message"
+                    if (timestr == undefined)
+                        box.innerHTML = "[lobby] " + usrstr + ": "+ msgstr;
+                    else 
+                        box.innerHTML = "[" + timestr +  "] "  + usrstr + ": "+ msgstr;
                     break;
+
                 case "teamB":
                     box.className = "teamb-message"
+                    if (timestr == undefined)
+                        box.innerHTML = "[lobby] " + usrstr + ": "+ msgstr;
+                    else 
+                        box.innerHTML = "[" + timestr +  "] "  + usrstr + ": "+ msgstr;
                     break;
+                    
                 default:
                     box.className = "others-message"
+                    if (timestr == undefined)
+                        box.innerHTML = "[lobby] " + "<" + chstr + "> " + usrstr + ": "+ msgstr;
+                    else 
+                        box.innerHTML = "[" + timestr +  "] "  + "<" + chstr + "> " + usrstr + ": "+ msgstr;
+                    break;
               }
 
-            let channel = document.createElement("li");
-            channel.innerHTML = chstr;
-            box.appendChild(channel);
+            // let channel = document.createElement("div");
+            // channel.innerHTML = chstr;
+            // box.appendChild(channel);
 
-            let user = document.createElement("li");
-            user.innerHTML = usrstr;
-            box.appendChild(user);
+            // let user = document.createElement("div");
+            // user.innerHTML = usrstr;
+            // box.appendChild(user);
 
-            let message = document.createElement("li");
-            message.innerHTML = msgstr;
-            box.appendChild(message);
+            // let message = document.createElement("div");
+            // message.innerHTML = msgstr;
+            // box.appendChild(message);
 
             messages.appendChild(box);
         }

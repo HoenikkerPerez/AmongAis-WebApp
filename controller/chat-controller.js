@@ -57,12 +57,16 @@ class ChatController {
         document.getElementById("chatSendChannelInput").addEventListener("input", this._validateSend);
         document.getElementById("chatSendButton").addEventListener("click", () => {
             this._sendChatMessage();
+            document.getElementById("chatSendMessageInput").value = "";
         });
-
+        
         document.addEventListener("MODEL_RUN_GAME", () => {
             // JOIN chat with login name
             console.debug("chat-controller USERNAME SET")
             this._username = model.inGameName
+            if (model.inGameName == undefined) {
+                this._username = "spectator";
+            } 
             this._chat_client.loginChat(this._username);
 
             // SUBSCRIBE to the game channel

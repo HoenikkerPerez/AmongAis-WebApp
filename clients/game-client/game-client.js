@@ -32,7 +32,9 @@ class GameClient {
         console.debug("Game Client is connecting...");
         this._ws = new WebSocket(model.net.game.ws, ['binary','base64']);
         this._ws.onopen = function(evt) { console.debug("Game Client opened the WebSocket.") };
-        this._ws.onclose = function(evt) { console.debug("Game Client closed the connection.") };
+        this._ws.onclose = function(evt) { 
+            popupMsg("Game Server closed the connection!", "danger");
+            console.debug("Game Client closed the connection.") };
         this._ws.onerror = function(evt) { 
             popupMsg("Game Server connection error!", "danger");
             console.error("Game Client error: " + evt); 

@@ -17,6 +17,12 @@
     display: block;
 }
 
+#canvas:focus {
+    outline: none !important;
+    border: rgb(48, 48, 48) 5px solid;
+    box-shadow: 0 0 10px #719ECE;
+}
+
 .footer {
     position: fixed;
     left: 0;
