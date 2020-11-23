@@ -66,7 +66,7 @@ class MatchController {
         let msgOk = evt.detail.startsWith("OK");
         if(msgOk) {
             // I'll avoid making a copy of the whole map...
-            let position = model.local.me.position;
+            let position = model.status.me.position;
             this.computeShootOnMap(position, direction);
             console.debug("Match Controller computed the map with the shot and is going to set the new map in the model.");
             model.setMap(model._map); // update needed to fire the rendering action
@@ -97,12 +97,20 @@ class MatchController {
         // update model
         model.setMap(map_obj);
         // extract local interesting information from the map
-        this.applyOnMapEntities([
+    };
+
+
+    /**
+     * This function was once used with this code:
+     * 
+     *         this.applyOnMapEntities([
             [model.status.me.symbol,
-                (x,y) => { model.local.me.position = {x:x, y:y} }],
+                (x,y) => { model.status.me.position = {x:x, y:y} }],
             // [symbol, (x,y) => { handlers }],
         ]);
-    };
+     *
+     * I hope it'll be needed again. I had a lot of fun in writing it.
+     * 
 
     applyOnMapEntities(symbolFunctionList) {
         let map = model._map;
@@ -123,6 +131,8 @@ class MatchController {
             }
         }
     }
+
+    */
 
     computeShootOnMap(shooterPosition, direction) {
         console.debug("Match Controller is computing SHOOT in direction " + direction + " from position: " + shooterPosition.x + "," + shooterPosition.y);
@@ -211,9 +221,8 @@ class MatchController {
         }
         let status = {};
         let ga = {};
-        let me = {}
-        status.pl_list = [];        
-
+        let me = {};
+        status.pl_list = [];
 
         let stat = evt.detail.slice(7).replace("«ENDOFSTATUS»",'').trim().split('\n');
         let ga_list = stat[0].slice(4).split(' ')
@@ -250,7 +259,10 @@ class MatchController {
                     let value =  pl_list[j].substring( pl_list[j].indexOf('=')+1);
                     pl[key] = value
                 }
-                pls.push(pl);
+                console.debug("MatchController just parsed player " + pl.name) // TODO comment this log because of polling
+                if(pl.name == undefined) console.error("MatchController found that " + pl + "has no name!");
+                pls[pl.name] = pl;
+                //pls.push(pl);
             }
             status.me = me;
             status.pl_list = pls;        
@@ -348,7 +360,7 @@ class MatchController {
             // Init map polling
             this._poller(); // TODO this._pollOnce();
             // Loads the specialized listeners
-            switch(model.local.kind) {
+            switch(model.kind) {
                 case model.PLAYER:
                     console.debug("Match Controller is loading the player listeners...");
                     this._loadPlayerOnRunGame();

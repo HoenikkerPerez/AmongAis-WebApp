@@ -13,7 +13,7 @@ var model = {
             // ws: "ws://93.150.215.219:8522"
             ws: "ws://margot.di.unipi.it:8522"
         }
-}   ,
+    },
     status: {
         ga: "gamename",
         state: "lobby-started-ended",
@@ -40,17 +40,8 @@ var model = {
     NONE: "NONE",
     PLAYER: "PLAYER",
     SPECTATOR: "SPECTATOR",
+    kind: this.NONE,
 
-    local: {
-        me: {
-            position: { // (0,0) is North West corner
-                x: 0,
-                y: 0
-            }
-        },
-        shot: false,
-        kind: this.NONE
-    },
     chat: {
         messages:[], //{channel: string, user: string, message: string}
         chatSubscribedChannels: []
@@ -75,8 +66,13 @@ var model = {
         // preprocess map
         this._map = map;
         document.dispatchEvent(new CustomEvent("MODEL_SETMAP", {detail: {map:map}}));
-        // Reset laser presence
-        this.local.shot = false;
+    },
+
+    _restoreTouringGame(oldMatchStatus, newMatchStatus) {
+        for(let player of this.status.pl_list) {
+            let name = player.name;
+            newMatchStatus[name].touring = oldMatchStatus.pl_list[name].touring;
+        }
     },
 
     _isMatchStatusChange(oldMatchStatus,newMatchStatus){
@@ -85,6 +81,7 @@ var model = {
             document.dispatchEvent(new CustomEvent(newstate_tag, {detail: {status:this.status}}));
         }
     },
+
     _isMePlayerStatusChange(oldStatus,newStatus){
         // check if you'are the owner
         let pl_list_old = oldStatus.pl_list;
@@ -97,11 +94,18 @@ var model = {
             document.dispatchEvent(new CustomEvent(newMeState_tag, {detail: {state: me_new.state}}));
         }
     },
+
     setStatus: function(status) {
         let old = this.status;
         this.status = status;
         
+        // Postprocess the status after it is received from the server
+        this._restoreTouringGame(old, this.status);
+
+        // Fire an event if the match status actually changed
         this._isMatchStatusChange(old.state,status.state);
+
+        // Fire an event if the player status actually changed
         this._isMePlayerStatusChange(old,status);
 
         document.dispatchEvent(new CustomEvent("MODEL_SETSTATUS", {detail: {status:status}}));
@@ -110,7 +114,7 @@ var model = {
     // enter into the match: players & spectators
     setRunningGame: function(isRunning, kindOfUser) {
         // set user kind
-        this.local.kind = kindOfUser;
+        this.kind = kindOfUser;
         // preprocess status
         this.isRunning = isRunning;
         document.dispatchEvent(new CustomEvent("MODEL_RUN_GAME", {detail:isRunning}));
