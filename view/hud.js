@@ -46,10 +46,6 @@ class HudUi {
             document.getElementById("start-button").style.display = "none";
         }, false);
         
-        document.addEventListener("CHAT_EMERGENCY", (evt) => {
-            popupMeetingMsg(evt.detail.message, "warning");
-        }, false);
-
     };
     
     renderHud() {
