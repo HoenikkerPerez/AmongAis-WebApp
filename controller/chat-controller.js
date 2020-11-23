@@ -36,9 +36,11 @@ class ChatController {
             document.dispatchEvent(new CustomEvent("CHAT_GAME_FINISHED", {detail: {message:msg}}));
         } 
         else{
-            let msgspl = msg.split(" "); // @gameserver ...
-            if (msgspl[1] == "joined") { // JOINED PLAYER
+            let msgspl = msg.split(" "); 
+            if (msgspl[1] == "joined") { // JOINED PLAYER: edo joined the game.
                 model.playerJoined(msgspl[0]);
+            } else if (msgspl[0] == "EMERGENCY"){
+                document.dispatchEvent(new CustomEvent("CHAT_EMERGENCY", {detail: {message:msg}}));
             }
         }           // TODO LEAVING PLAYER
 
