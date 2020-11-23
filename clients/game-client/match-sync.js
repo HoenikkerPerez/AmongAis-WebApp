@@ -20,6 +20,12 @@ class MatchSync {
         return msg;
     }
 
+    accuse(gameName, teammateName) {
+        let msg = gameName + " ACCUSE " + teammateName;
+        console.debug("MatchSync built " + msg);
+        return msg;
+    }
+
     nop(gameName) {
         let msg = gameName + " NOP";
         console.debug("MatchSync built " + msg);

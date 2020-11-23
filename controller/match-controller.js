@@ -176,9 +176,16 @@ class MatchController {
         // setMap()
     };
 
-    accuseHandler(evt, gameClient){
-        let teammate = evt.detail;
-        gameClient.accuse(teammate);
+
+    // ACCUSE
+    accuseResponseHandler(evt){
+        console.debug("Match Controller has received a ACCUSE response"); 
+        let msgOk = evt.detail.startsWith("OK");
+        if(msgOk) {
+            console.debug("Match Controller accept an accuse");
+        } else {
+            console.error("Match Controller retrieved an error from the server while accusing.");
+        }
     };
 
     startHandler = function (evt) {
@@ -290,9 +297,11 @@ class MatchController {
         // document.getElementById("statusButton").addEventListener("click", () => {
         //     this.statusPoller();
         // });
+        
+        // ACCUSE 
+        document.addEventListener("miticoOggettoCheNonEsiste.ACCUSE", ((evt) => { this.accuseResponseHandler(evt) }).bind(this), false);
 
         document.addEventListener("STATUS", this.getStatusHandler, false);
-        // document.addEventListener("ACCUSE", (evt) => {this.accuseHandler(this._gameClient)}, false);
 
         // document.addEventListener("MODEL_SETGAMENAME", this.init, false);
         document.addEventListener("MODEL_RUN_GAME", () => {
@@ -334,7 +343,7 @@ class MatchController {
             console.debug("match-controller catches MODEL_MATCH_STATUS_ACTIVE")
             let canvas = document.getElementById("canvas");
             canvas.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
-            document.addEventListener("ACCUSE", (evt) => {this.accuseHandler(evt, this._gameClient)}, false);
+            document.addEventListener("BUTTON_ACCUSE", (evt) => {this._gameClient.accuse(evt.detail);}, false);
             model.timeframe = model.playerTimeframe;
             model.setStartGameTime();
 

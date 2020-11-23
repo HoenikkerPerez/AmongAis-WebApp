@@ -111,7 +111,7 @@ class HudUi {
                 accuse_button.innerText = "Accuse!"
                 accuse_button.className = "accuse-button";
                 accuse_button.onclick= () => {
-                    document.dispatchEvent(new CustomEvent("ACCUSE", {detail: _p.name }));
+                    document.dispatchEvent(new CustomEvent("BUTTON_ACCUSE", {detail: _p.name }));
                     let allb = document.getElementsByClassName("accuse-button");
                     // TODO: to be continued ...
                 };
