@@ -45,8 +45,48 @@ class HudUi {
         document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
             document.getElementById("start-button").style.display = "none";
         }, false);
-        
+
+        document.addEventListener("MODEL_MEETING_START", () => {
+            console.debug("hud EMERGENCY MEETING START");
+            popupMsg("EMERGENCY MEETING START!!!", "danger");
+            let meet_div = document.getElementById("emergency-meeting");
+            meet_div.style.display="";
+            // <div class="spinner-border"></div>
+            // TODO: Improve countdown Design <---------------- !!!
+            $("#emergency-meeting").append("<div id=\"countdown\"class=\"spinner-border\"></div>");
+            window.setTimeout(function(){ this.meeting_countdown(15) }.bind(this), 1000);
+        }, false);
+
+        document.addEventListener("MODEL_MEETING_END", () => {
+            console.debug("hud EMERGENCY MEETING END");
+            // popupMsg("EMERGENCY MEETING END!!!", "danger");
+            window.setTimeout(function(){ 
+                let meet_div = document.getElementById("emergency-meeting");
+                meet_div.style.display="none";
+                meet_div.innerText="";
+            }, 5000);
+        }, false);
+
+        document.addEventListener("MODEL_MEETING_ACCUSE", (evt) => {
+            console.debug("hud displaying EMERGENCY MEETING START");
+            let msg = evt.detail.accuser + " --accuse--> " + evt.detail.accused;
+            $("#emergency-meeting").prepend("<div>" + msg + "</div>");
+        }, false);
+
+        document.addEventListener("MODEL_MEETING_MSG", (evt) => {
+            console.debug("hud displaying EMERGENCY MEETING START");
+            let msg = evt.detail;
+            $("#emergency-meeting").prepend("<div>" + msg + "</div>");
+        }, false);
     };
+
+    meeting_countdown(times){
+        let cnt_div = document.getElementById("countdown");
+        cnt_div.textContent = times;
+        if(times>0){
+            window.setTimeout(function(){ this.meeting_countdown(times-1) }.bind(this), 1000);
+        }
+    }
     
     renderHud() {
         let div = document.getElementById("hud");
