@@ -372,11 +372,16 @@ class MatchController {
             console.debug("match-controller catches MODEL_MATCH_STATUS_ACTIVE")
             let canvas = document.getElementById("canvas");
             canvas.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
-            document.addEventListener("BUTTON_ACCUSE", (evt) => {this._gameClient.accuse(evt.detail);}, false);
+            // Accuse Button
+            document.addEventListener("BUTTON_ACCUSE", (evt) => {
+                popupMsg("A vote of no confidence for teammate: " + teammateName, "warning");
+                this._gameClient.accuse(evt.detail);
+            }, false);
+            // Touring Button
             document.addEventListener("BUTTON_TOURING", (evt) => {this._gameClient.tour(evt.detail.name, evt.detail.touring);}, false);
+            // Start game
             model.timeframe = model.playerTimeframe;
             model.setStartGameTime();
-
             this._poller();
         }, false);
         

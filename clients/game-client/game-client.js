@@ -247,8 +247,6 @@ class GameClient {
 
     accuse(teammateName) {
         console.debug("Game Client is requesting a vote of no confidence for teammate: " + teammateName);
-        // alert("A vote of no confidence for teammate: " + teammateName);
-        popupMsg("A vote of no confidence for teammate: " + teammateName, "warning");
         let msg = this._sync.accuse(model.status.ga, teammateName);
         this._send("miticoOggettoCheNonEsiste.ACCUSE", msg);
     }
