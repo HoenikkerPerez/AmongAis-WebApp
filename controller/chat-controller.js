@@ -30,6 +30,11 @@ class ChatController {
         } else if (msg.split(" ")[1] == "joined") { // JOINED PLAYER
             model.playerJoined(msg.split(" ")[0]);
         }           // TODO LEAVING PLAYER
+        else if(msg.startsWith("EMERGENCY MEETING! Called by")){
+            let msg_list = msg.split(" ");
+            let who_call = msg_list[msg_list.length-1];
+            model.meetingStart(who_call);
+        }
     }
 
     _sendChatMessage() {
