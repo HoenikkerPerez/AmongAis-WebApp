@@ -28,7 +28,7 @@ class ChatClient {
 
     _send(msg) {
         console.debug("Chat Client is sending message: " + msg);
-        this._ws.send(msg + "\n");
+        this._ws.send(new Blob([msg + "\n"], {type: 'text/plain'}));
     }
 
     loginChat(username) {
