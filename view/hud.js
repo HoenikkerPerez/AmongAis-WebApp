@@ -107,8 +107,9 @@ class HudUi {
             // p.appendChild(team);
             pl.appendChild(p);
             if(model.status.me != {} && model.status.me.team == _p.team && model.status.me.symbol != _p.symbol){ // && model.status.me.symbol != _p.symbol
+                // Social deduction
                 let accuse_button = document.createElement("button");
-                accuse_button.innerText = "Accuse!"
+                accuse_button.innerText = "Accuse!";
                 accuse_button.className = "accuse-button";
                 accuse_button.onclick= () => {
                     document.dispatchEvent(new CustomEvent("ACCUSE", {detail: _p.name }));
@@ -116,6 +117,15 @@ class HudUi {
                     // TODO: to be continued ...
                 };
                 p.appendChild(accuse_button);
+                // Touring game
+                let touring_button = document.createElement("button");
+                touring_button.innerText = "Play touring";
+                touring_button.className = "touring-button";
+                touring_button.onclick = () => {
+                    document.dispatchEvent(new CustomEvent("TOURING", {detail: _p.name }));
+                    let allb = document.getElementsByClassName("touring-button");
+                };
+                p.appendChild(touring_button);
             }
             
         }
