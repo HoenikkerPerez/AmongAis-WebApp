@@ -8,18 +8,23 @@ class ChatController {
         this._chat_client.onMessage(async (evt) => {
             let msg = await evt.data.text();
             // let msg = evt.data;
-            console.debug("Chat Client received message: " + msg);
-            // <channel> <name> <text>
-            let spltmsg = msg.split(" ")
-            let channel = spltmsg.shift();
-            let name = spltmsg.shift();
-            let text = spltmsg.join(' ');;
+            let msgs = msg.split("\n");
+            msgs.forEach((item, idx) => {
+                if (item.length > 0) {
+                    console.debug("Chat Client received message: " + msg);
+                    // <channel> <name> <text>
+                    let spltmsg = item.split(" ");
+                    let channel = spltmsg.shift();
+                    let name = spltmsg.shift();
+                    let text = spltmsg.join(' ');
 
-            model.addMessageChat(channel, name, text);
-            
-            if(name.startsWith("@") && (channel == model.status.ga)) {
-                this._parseSystemMessage(text);
-            }
+                    model.addMessageChat(channel, name, text);
+                    
+                    if(name.startsWith("@") && (channel == model.status.ga)) {
+                        this._parseSystemMessage(text);
+                    }
+                }
+            });             
         });
         this.load();
     }
@@ -27,8 +32,14 @@ class ChatController {
     _parseSystemMessage(msg) {
         if(msg == "Now starting!\n") {  // STARTED GAME
             model.setGameActive();
-        } else if (msg.split(" ")[1] == "joined") { // JOINED PLAYER
-            model.playerJoined(msg.split(" ")[0]);
+        } else if (msg.startsWith("Game finished!")) {
+            document.dispatchEvent(new CustomEvent("CHAT_GAME_FINISHED", {detail: {message:msg}}));
+        } 
+        else{
+            let msgspl = msg.split(" "); // @gameserver ...
+            if (msgspl[1] == "joined") { // JOINED PLAYER
+                model.playerJoined(msgspl[0]);
+            }
         }           // TODO LEAVING PLAYER
         else if(msg.startsWith("EMERGENCY MEETING! Called by")){
             let msg_list = msg.split(" ");

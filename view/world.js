@@ -168,7 +168,7 @@ class WorldUi {
             this._initCanvasSize();
             this._initSize = true;
         }
-        this._clearCanvas();
+        // this._clearCanvas();
         this._drawMap();
         this._drawPlayerNames();
         window.requestAnimationFrame(this.renderMap.bind(this));
@@ -266,6 +266,7 @@ class WorldUi {
             if (this.dragStart){
               let pt = this.ctx.transformedPoint(this.lastX,this.lastY);
               this.ctx.translate(pt.x-this.dragStart.x,pt.y-this.dragStart.y);
+              this._clearCanvas();
             }
         }.bind(this),false);
         
@@ -318,11 +319,13 @@ class WorldUi {
         let factor = Math.pow(this.scaleFactor,clicks);
         this.ctx.scale(factor,factor);
         this.ctx.translate(-pt.x,-pt.y);
+        this._clearCanvas();
     }
 
     handleScroll = function(evt){
         let delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
         if (delta) this.zoom(delta);
+        this._clearCanvas();
         return evt.preventDefault() && false;
     };
     
