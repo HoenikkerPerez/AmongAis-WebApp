@@ -36,9 +36,11 @@ class Ui {
         popupMsg("Match is START: Let's get ready to rumble!!!!!", "success");
     }
 
-    _gameEnded() {
+    _gameEnded(message) {
         // alert("This is The END ... my only frien, the END! (DOORS) \n to Restart, Refresh page. (I can't do all stuff for you!)");
-        popupMsg("This is The END ... my only friend, the END! (DOORS) \n to Restart, Refresh page. (Thank You to use our Web-Client!)", "info");
+        popupMsg("This is The END ... my only friend, the END! (DOORS) \n" 
+        + message 
+        + "\nto Restart, Refresh page. (Thank You to use our Web-Client!)", "info");
     }
 
     _loadWsMessages() {
@@ -52,10 +54,16 @@ class Ui {
             this._gameStarted();
         }, false);
 
-        document.addEventListener("MODEL_MATCH_STATUS_FINISHED", () => {
-            this._gameEnded();
-        }, false);
+        // TODO only one of the following?
+        // document.addEventListener("MODEL_MATCH_STATUS_FINISHED", () => {
+        //     this._gameEnded();
+        // }, false);
 
+        document.addEventListener("CHAT_GAME_FINISHED", (evt) => {
+            let msg = evt.detail.message;
+            this._gameEnded(msg);
+            
+        }, false);
     };
 
      _loadUI() {
