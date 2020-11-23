@@ -41,7 +41,8 @@ class ChatController {
                 model.playerJoined(msgspl[0]);
             }
         }           // TODO LEAVING PLAYER
-        else if(msg.startsWith("EMERGENCY MEETING! Called by")){
+        
+        if(msg.startsWith("EMERGENCY MEETING! Called by")){
             let msg_list = msg.split(" ");
             let who_call = msg_list[msg_list.length-1];
             model.meetingStart(who_call);
