@@ -88,10 +88,11 @@ class HudUi {
 
         let pl = document.createElement("ul");
         pl.textContent="PLAYERS IN GAME"
-        for(let _p of model.status.pl_list){
+        for(let playerName in model.status.pl_list){
             // PL: symbol=A name=username3 team=0 x=7 y=26
             // let pul = document.createElement("il");
 
+            let _p = model.status.pl_list[playerName];
             let p = document.createElement("li");
 
             p.innerHTML = _p.name; //+ "   (" + _p.team + ")"; // "["+_p.symbol+"] " + 

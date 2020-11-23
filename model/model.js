@@ -69,10 +69,10 @@ var model = {
     },
 
     _restoreTouringGame(oldMatchStatus, newMatchStatus) {
-        for(let player of this.status.pl_list) {
-            let name = player.name;
-            newMatchStatus[name].touring = oldMatchStatus.pl_list[name].touring;
-        }
+        let oldPlayers = oldMatchStatus.pl_list;
+        let newPlayers = newMatchStatus.pl_list;
+        for(let name in oldPlayers)
+            newPlayers[name].touring = oldPlayers[name].touring;
     },
 
     _isMatchStatusChange(oldMatchStatus,newMatchStatus){
@@ -85,9 +85,9 @@ var model = {
     _isMePlayerStatusChange(oldStatus,newStatus){
         // check if you'are the owner
         let pl_list_old = oldStatus.pl_list;
-        let me_old = pl_list_old.find(o => o.name === oldStatus.me.name);
+        let me_old = pl_list_old[oldStatus.me.name];
         let pl_list_new = newStatus.pl_list;
-        let me_new = pl_list_new.find(o => o.name === newStatus.me.name);
+        let me_new = pl_list_new[newStatus.me.name];
 
         if( (me_new != undefined) && ( (me_old == undefined) || (me_new.state != me_old.state) ) ){
             let newMeState_tag = "MODEL_STATE_" + me_new.state;
@@ -100,7 +100,9 @@ var model = {
         this.status = status;
         
         // Postprocess the status after it is received from the server
-        this._restoreTouringGame(old, this.status);
+        if(old != undefined) {
+            this._restoreTouringGame(old, this.status);
+        }
 
         // Fire an event if the match status actually changed
         this._isMatchStatusChange(old.state,status.state);
@@ -151,7 +153,7 @@ var model = {
         } else if (this.inGameName != undefined && user == this.inGameName) {
             type = "me";
         } else {
-            let userobj = this.status.pl_list.find(o => o.name === user);
+            let userobj = this.status.pl_list[user];
             if (userobj != undefined) {
                 if (userobj.team == 0) {
                     type = "teamA";
@@ -196,7 +198,13 @@ var model = {
     },
 
     findPlayerBySymbol: function(symb) {
-        return this.status.pl_list.find(o => o.symbol === symb);
+        let playerList = this.status.pl_list;
+        for(let p in playerList) {
+            let player = playerList[p];
+            if(player.symbol === symb)
+                return player;
+        }
+        return undefined;
     }
 };
 

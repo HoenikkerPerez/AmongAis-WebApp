@@ -250,7 +250,7 @@ class MatchController {
                 pl_start=1;
             }
             
-            let pls = [];
+            let pls = {};
             for(let i=pl_start;i<stat.length;i++){
                 let pl = {};
                 let pl_list = stat[i].slice(4).split(' ')
@@ -259,14 +259,13 @@ class MatchController {
                     let value =  pl_list[j].substring( pl_list[j].indexOf('=')+1);
                     pl[key] = value
                 }
-                console.debug("MatchController just parsed player " + pl.name) // TODO comment this log because of polling
-                if(pl.name == undefined) console.error("MatchController found that " + pl + "has no name!");
                 pls[pl.name] = pl;
-                //pls.push(pl);
             }
             status.me = me;
-            status.pl_list = pls;        
+            status.pl_list = pls;
         }
+
+        console.debug(status.pl_list.length);
 
         model.setStatus(status);
     };
