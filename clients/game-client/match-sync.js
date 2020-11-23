@@ -26,6 +26,12 @@ class MatchSync {
         return msg;
     }
 
+    touringChoice(gameName, name, choice) {
+        let msg = gameName + " JUDGE " + name + " " + choice;
+        console.debug("MatchSync built " + msg);
+        return msg;
+    }
+
     nop(gameName) {
         let msg = gameName + " NOP";
         console.debug("MatchSync built " + msg);

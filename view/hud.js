@@ -117,22 +117,37 @@ class HudUi {
                     // TODO: to be continued ...
                 };
                 p.appendChild(accuse_button);
-                // Touring game
-                let touring_button = document.createElement("button");
-                touring_button.innerText = "Play touring";
-                touring_button.className = "touring-button";
-                touring_button.onclick = () => {
-                    document.dispatchEvent(new CustomEvent("TOURING", {detail: _p.name }));
-                    let allb = document.getElementsByClassName("touring-button");
-                };
-                p.appendChild(touring_button);
+                
+                // Touring game visualization
+                let touring_button_human = document.createElement("button");
+                touring_button_human.innerText = "A-ha, it's a HUMAN!";
+                touring_button_human.className = "touring-button-human";
+                touring_button_human.onclick = () => {
+                    document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} }));
+                }
+                let touring_button_ai = document.createElement("button");
+                touring_button_ai.innerText = "A-ha, it's an AI!";
+                touring_button_ai.className = "touring-button-ai";
+                touring_button_ai.onclick = () => {
+                    document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} }));
+                }
+                if(_p.touring == undefined){
+                    p.appendChild(touring_button_human);
+                    p.appendChild(touring_button_ai);
+                } else if(_p.touring == GameClient.AI) {
+                    p.appendChild(touring_button_ai);
+                } else if(_p.touring == GameClient.HUMAN) {
+                    p.appendChild(touring_button_human);
+                } else {
+                    console.error("HUD is unable to render Touring button: can't understand touring choice for " + _p);
+                }
             }
-            
+
         }
         root.appendChild(pl);
 
     }
-    
+
     renderChat() {
         // channel chat -> [time from start] user: message (colored by team, or me)
         // server chat -> [time from start] AmongAis message

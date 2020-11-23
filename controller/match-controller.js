@@ -1,4 +1,14 @@
 class MatchController {
+    
+    // This class controls:
+    // PHYSICAL GAME
+    // MAP HANDLING
+    // STATUS HANDLING
+    // POLLING
+    // SOCIAL DEDUCTION GAME
+    // TOURING GAME
+    // LISTENERS
+
     _gameClient;
     _lastDirection = {direction: GameClient.UP}; // Not in model because it's intended to be part of the interaction. The server actually allows to shoot in a different direction.
 
@@ -6,6 +16,8 @@ class MatchController {
         this._gameClient = gameClient;
         this.load();
     }
+
+    /* PHYSICAL GAME */
 
     getLastDirection() {
         return this._lastDirection;
@@ -46,6 +58,24 @@ class MatchController {
                 }
         }
     }
+
+    // Laser
+
+    shootHandler(evt, direction) {
+        console.debug("Match Controller has received a SHOOT response. Direction: " + direction);
+        let msgOk = evt.detail.startsWith("OK");
+        if(msgOk) {
+            // I'll avoid making a copy of the whole map...
+            let position = model.local.me.position;
+            this.computeShootOnMap(position, direction);
+            console.debug("Match Controller computed the map with the shot and is going to set the new map in the model.");
+            model.setMap(model._map); // update needed to fire the rendering action
+        } else {
+            console.error("Match Controller retrieved an error from the server while shooting.");
+        }
+    }
+
+    /* MAP HANDLING */
 
     lookMapHandler(evt) {
         //LOOK MAP save to model
@@ -91,22 +121,6 @@ class MatchController {
                     }
                 }
             }
-        }
-    }
-
-    // Lasers
-
-    shootHandler(evt, direction) {
-        console.debug("Match Controller has received a SHOOT response. Direction: " + direction);
-        let msgOk = evt.detail.startsWith("OK");
-        if(msgOk) {
-            // I'll avoid making a copy of the whole map...
-            let position = model.local.me.position;
-            this.computeShootOnMap(position, direction);
-            console.debug("Match Controller computed the map with the shot and is going to set the new map in the model.");
-            model.setMap(model._map); // update needed to fire the rendering action
-        } else {
-            console.error("Match Controller retrieved an error from the server while shooting.");
         }
     }
 
@@ -168,25 +182,7 @@ class MatchController {
         console.debug("Match Controller: shot over " + cells + " cells.");
     }
 
-    mapPoller() {
-        //console.debug("Polling map")
-        let gameName = model.status.ga;
-        
-        this._gameClient.lookMap(gameName);
-        // setMap()
-    };
-
-
-    // ACCUSE
-    accuseResponseHandler(evt){
-        console.debug("Match Controller has received a ACCUSE response"); 
-        let msgOk = evt.detail.startsWith("OK");
-        if(msgOk) {
-            console.debug("Match Controller accept an accuse");
-        } else {
-            console.error("Match Controller retrieved an error from the server while accusing.");
-        }
-    };
+    /* STATUS HANDLING */
 
     startHandler = function (evt) {
         switch(evt.key) {
@@ -263,6 +259,16 @@ class MatchController {
         model.setStatus(status);
     };
 
+    /* POLLING */
+
+    mapPoller() {
+        //console.debug("Polling map")
+        let gameName = model.status.ga;
+        
+        this._gameClient.lookMap(gameName);
+        // setMap()
+    };
+
     statusPoller(){
         //console.debug("status poller run");
         let gameName = model.status.ga;
@@ -281,10 +287,29 @@ class MatchController {
         window.setTimeout(function(){ this._poller() }.bind(this), timeframe);
     }
 
-    
+    /* SOCIAL DEDUCTION GAME */
+
+    accuseResponseHandler(evt){
+        console.debug("Match Controller has received a ACCUSE response"); 
+        let msgOk = evt.detail.startsWith("OK");
+        if(msgOk) {
+            console.debug("Match Controller accept an accuse");
+        } else {
+            console.error("Match Controller retrieved an error from the server while accusing.");
+        }
+    };
+
+    /* SOCIAL DEDUCTION GAME */
+
+    touringResponseHandler(evt) {
+        // OK from server after a touring choice TODO
+    }
+
+    /* LISTENERS */
+
+    // All listeners common to every kind of user
 
     load() {
-        // All listeners common to every kind of user
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", (this.lookMapHandler).bind(this), false);
 
         // Shoot events
@@ -301,6 +326,10 @@ class MatchController {
         // ACCUSE 
         document.addEventListener("miticoOggettoCheNonEsiste.ACCUSE", ((evt) => { this.accuseResponseHandler(evt) }).bind(this), false);
 
+        // TOURING
+        document.addEventListener("miticoOggettoCheNonEsiste.TOURING", ((evt) => { this.touringResponseHandler(evt) }).bind(this), false);
+
+        // STATUS
         document.addEventListener("STATUS", this.getStatusHandler, false);
 
         // document.addEventListener("MODEL_SETGAMENAME", this.init, false);
@@ -344,6 +373,7 @@ class MatchController {
             let canvas = document.getElementById("canvas");
             canvas.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
             document.addEventListener("BUTTON_ACCUSE", (evt) => {this._gameClient.accuse(evt.detail);}, false);
+            document.addEventListener("BUTTON_TOURING", (evt) => {this._gameClient.tour(evt.detail.name, evt.detail.touring);}, false);
             model.timeframe = model.playerTimeframe;
             model.setStartGameTime();
 
