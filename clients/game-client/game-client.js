@@ -101,7 +101,8 @@ class GameClient {
                 //console.debug("Game Client's request queue is not empty.");
                 let msg = this._wsRequests_cmd.shift();
                 //console.debug("_requestHandler isOdd && CMD");
-                this._ws.send(msg.msg + "\n");
+                this._ws.send(new Blob([msg.msg + "\n"], {type: 'text/plain'}));
+                
                 this._wsQueue.push(msg.tag);
                 this._noRequestsCount = 0;
                 this._schedulerCounter++;
@@ -110,7 +111,7 @@ class GameClient {
                     //console.debug("Game Client's request queue is not empty.");
                     let msg = this._wsRequests_look.shift();
                     //console.debug("_requestHandler isOdd && LOOK");
-                    this._ws.send(msg.msg + "\n");
+                    this._ws.send(new Blob([msg.msg + "\n"], {type: 'text/plain'}));
                     this._wsQueue.push(msg.tag);
                     this._noRequestsCount = 0;
                     //console.debug("Game Client actually sent " + msg);
@@ -129,7 +130,8 @@ class GameClient {
                 //console.debug("Game Client's request queue is not empty.");
                 let msg = this._wsRequests_look.shift();
                 //console.debug("_requestHandler isEven && LOOK");
-                this._ws.send(msg.msg + "\n");
+                this._ws.send(new Blob([msg.msg + "\n"], {type: 'text/plain'}));
+
                 this._wsQueue.push(msg.tag);
                 this._noRequestsCount = 0;
                 this._schedulerCounter++;
@@ -138,7 +140,8 @@ class GameClient {
                 //console.debug("_requestHandler isEven && CMD");
                 let msg = this._wsRequests_cmd.shift();
                 //console.debug("Game Client is going to actually send the message " + msg);
-                this._ws.send(msg.msg + "\n");
+                this._ws.send(new Blob([msg.msg + "\n"], {type: 'text/plain'}));
+
                 this._wsQueue.push(msg.tag);
                 this._noRequestsCount = 0;
                 //console.debug("Game Client actually sent " + msg);
