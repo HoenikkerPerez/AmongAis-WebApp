@@ -244,14 +244,22 @@ class WorldUi {
 
     _drawShoots() {
         let shoots = model.shoots;
+        let map = model._map;
         for (let i=0; i<shoots.length; i++) {
-            let [x, y, direction, counter]= shoots[i];
-            // choose tile
-            if (direction == "vertical") 
-                tile = [21, 21];
-            else 
-                tile = [21, 21];
+            let shoot = shoots[i];
+            let x = shoot.x;
+            let y = shoot.y;
+            let direction = shoot.direction;
+            let counter = shoot.counter;
+            let tile;
+            
             if (counter > 0) {
+                console.debug("drawing shoots: " + x +", " + " " + direction + " " + counter);
+                // choose tile
+                if (direction == "vertical") 
+                    tile = Terrain.BULLET;
+                else 
+                    tile = Terrain.BULLET;
                 this.ctx.drawImage(
                     this.tileAtlas, // image
                     tile[0] * map.tsize, // source x

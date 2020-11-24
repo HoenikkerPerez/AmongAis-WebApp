@@ -80,7 +80,7 @@ var model = {
         let shoots = this.shoots;
         for (let i=0; i<shoots.length; i++) {
             if(shoots[i].counter <= 0) {
-                shoots.splice(i,1);
+                this.shoots.splice(i,1);
             }
         }
     },

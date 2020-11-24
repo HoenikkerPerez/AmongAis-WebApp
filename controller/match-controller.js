@@ -127,7 +127,7 @@ class MatchController {
             if(!bulletStopped) {
                 let dirLinear = (direction == "E" || direction == "W") ? "horizontal" : "vertical";
 
-                model.shoots.push({x:r, y:c, direction: dirLinear, counter:2}); // direction vertical, horizontal
+                model.shoots.push({x:c, y:r, direction: dirLinear, counter:2}); // direction vertical, horizontal
                 cells++;
             };
         };
