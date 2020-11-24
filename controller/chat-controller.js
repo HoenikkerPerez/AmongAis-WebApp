@@ -18,7 +18,7 @@ class ChatController {
                     let name = spltmsg.shift();
                     let text = spltmsg.join(' ');
 
-                    
+
                     if(name.startsWith("@") && (channel == model.status.ga)) {
                         this._parseSystemMessage(text, channel, name);
                     } else {
@@ -31,57 +31,68 @@ class ChatController {
     }
 
     _parseSystemMessage(msg, channel, name) {
-        if(msg == "Now starting!\n") {  // STARTED GAME
+        
+        let msgspl = msg.split(" "); // @gameserver ...
+
+        // GAME start
+        if(msg == "Now starting!\n") { 
             model.setGameActive();
             model.addMessageChat(channel, name, msg);
-        } else if (msg.startsWith("Game finished!")) {
+            return;
+        }
+
+        // GAME finish
+        if (msg.startsWith("Game finished!")) {
             document.dispatchEvent(new CustomEvent("CHAT_GAME_FINISHED", {detail: {message:msg}}));
             model.addMessageChat(channel, name, msg);
+            return;
         } 
-        else{
-            let msgspl = msg.split(" "); // @gameserver ...
-            if (msgspl[1] == "joined") { // JOINED PLAYER
-                model.playerJoined(msgspl[0]);
-                model.addMessageChat(channel, name, msg);
-            }
-        }           // TODO LEAVING PLAYER
+    
+        // JOIN
+        if (msgspl[1] == "joined") { // JOINED PLAYER
+            model.playerJoined(msgspl[0]);
+            model.addMessageChat(channel, name, msg);
+            return;
+        }
+        // SHOT
+        if(msgspl[1]=="shot") {
+            let playerName = msgspl[0];
+            let direction = msgspl[2];
+            let shootEvent = new CustomEvent("CHAT_SHOOT", {detail: { shooter: playerName, direction:  direction} });
+            document.dispatchEvent(shootEvent);
+            return;
+        }
         
+        // TODO LEAVING PLAYER
+
+        // EMERGENCY MEETING start
         if(msg.startsWith("EMERGENCY MEETING! Called by")){
             let msg_list = msg.split(" ");
             let who_call = msg_list[msg_list.length-1];
             model.meetingStart(who_call);
             return;
         }
-        //  EMERGENCY MEETING ended.
+        // EMERGENCY MEETING ended.
         if(msg.startsWith("EMERGENCY MEETING ended.")){
             model.meetingEnd();
             return;
         }
-        // accuses 
-        let msgspl = msg.split(" ");
-        if(msgspl[1]==="accuses"){
+        // ACCUSE
+        if(msgspl[1]=="accuses"){
             model.accuseDone(msgspl[0],msgspl[2]);
             return;
         }
-        //  EMERGENCY MEETING.
+        //  Other EMERGENCY MEETING messages
         if(msg.startsWith("EMERGENCY MEETING")){
             model.meetingMSG(msg.slice(17));
             return;
         }
+
         model.addMessageChat(channel, name, msg);
     }
 
     _parseNonSystemMessage(msg, channel, name) {
-        // shoot
-        let msgspl = msg.split(" ");
-        if(msgspl[1]==="shot"){
-            let playerName = msgspl[0];
-            let direction = msgspl[2];
-            let shootEvent = new CustomEvent({detail: { shooter: playerName, direction:  direction} });
-            document.dispatchEvent(shootEvent);
-            return;
-        }
-
+        // Perhaps one day this function will grow and become powerful. But not today.
         model.addMessageChat(channel, name, msg);
     }
 

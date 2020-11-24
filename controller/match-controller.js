@@ -327,6 +327,7 @@ class MatchController {
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", (this.lookMapHandler).bind(this), false);
 
         // Shoot OK event is handled by chat for every player (included "me")
+        //document.addEventListener("CHAT_SHOOT", ((evt) => { console.debug("MATCH CONTROLLE SHOTAAA " + evt.detail.shooter + " BAMS IN DIRECTIO " + evt.detail.direction) }).bind(this));
         
         // ACCUSE 
         document.addEventListener("miticoOggettoCheNonEsiste.ACCUSE", ((evt) => { this.accuseResponseHandler(evt) }).bind(this), false);
