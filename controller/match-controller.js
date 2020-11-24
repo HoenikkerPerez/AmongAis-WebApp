@@ -381,6 +381,7 @@ class MatchController {
             canvas.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
             // Accuse Button
             document.addEventListener("BUTTON_ACCUSE", (evt) => {
+                let teammateName = evt.detail;
                 popupMsg("A vote of no confidence for teammate: " + teammateName, "warning");
                 this._gameClient.accuse(evt.detail);
             }, false);
