@@ -68,6 +68,11 @@ var model = {
         mePlayer: "#FFFFFF"
     },
 
+    meeting: {
+        isRunning: false,
+        iVote: false,
+    },
+
     setLogin: function(lg) {this.login=lg},
     setUsername(uName){this.username=uName},
 
@@ -193,7 +198,27 @@ var model = {
 
     findPlayerBySymbol: function(symb) {
         return this.status.pl_list.find(o => o.symbol === symb);
+    },
+
+    meetingStart(who_start){
+        this.meeting.isRunning = true;
+        document.dispatchEvent(new CustomEvent("MODEL_MEETING_START", {detail:who_start}));
+
+    },
+
+    meetingMSG(msg){
+        document.dispatchEvent(new CustomEvent("MODEL_MEETING_MSG", {detail:msg}));
+    },
+
+    accuseDone(accuser, accused){
+        document.dispatchEvent(new CustomEvent("MODEL_MEETING_ACCUSE", {detail:{accuser:accuser, accused:accused}}));
+    },
+    
+    meetingEnd(){
+        this.meeting.isRunning = false;
+        document.dispatchEvent(new CustomEvent("MODEL_MEETING_END"));
     }
+
 };
 
 

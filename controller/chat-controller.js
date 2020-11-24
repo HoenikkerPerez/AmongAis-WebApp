@@ -18,10 +18,11 @@ class ChatController {
                     let name = spltmsg.shift();
                     let text = spltmsg.join(' ');
 
-                    model.addMessageChat(channel, name, text);
                     
                     if(name.startsWith("@") && (channel == model.status.ga)) {
-                        this._parseSystemMessage(text);
+                        this._parseSystemMessage(text, channel, name);
+                    } else {
+                        model.addMessageChat(channel, name, text);
                     }
                 }
             });             
@@ -29,19 +30,45 @@ class ChatController {
         this.load();
     }
 
-    _parseSystemMessage(msg) {
+    _parseSystemMessage(msg, channel, name) {
         if(msg == "Now starting!\n") {  // STARTED GAME
             model.setGameActive();
+            model.addMessageChat(channel, name, msg);
         } else if (msg.startsWith("Game finished!")) {
             document.dispatchEvent(new CustomEvent("CHAT_GAME_FINISHED", {detail: {message:msg}}));
+            model.addMessageChat(channel, name, msg);
         } 
         else{
             let msgspl = msg.split(" "); // @gameserver ...
             if (msgspl[1] == "joined") { // JOINED PLAYER
                 model.playerJoined(msgspl[0]);
+                model.addMessageChat(channel, name, msg);
             }
         }           // TODO LEAVING PLAYER
-
+        
+        if(msg.startsWith("EMERGENCY MEETING! Called by")){
+            let msg_list = msg.split(" ");
+            let who_call = msg_list[msg_list.length-1];
+            model.meetingStart(who_call);
+            return;
+        }
+        //  EMERGENCY MEETING ended.
+        if(msg.startsWith("EMERGENCY MEETING ended.")){
+            model.meetingEnd();
+            return;
+        }
+        // accuses 
+        let msgspl = msg.split(" ");
+        if(msgspl[1]==="accuses"){
+            model.accuseDone(msgspl[0],msgspl[2]);
+            return;
+        }
+        //  EMERGENCY MEETING.
+        if(msg.startsWith("EMERGENCY MEETING")){
+            model.meetingMSG(msg.slice(17));
+            return;
+        }
+        model.addMessageChat(channel, name, msg);
     }
 
     _sendChatMessage() {
