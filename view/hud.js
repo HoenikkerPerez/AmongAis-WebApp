@@ -104,6 +104,30 @@ class HudUi {
             // let team = document.createElement("li");
             // team.innerHTML = "T: " + _p.team;
             
+            // Touring game visualization
+            let touring_button_human = document.createElement("button");
+            touring_button_human.innerText = "A-ha, it's a HUMAN!";
+            touring_button_human.className = "touring-button-human";
+            let touring_button_ai = document.createElement("button");
+            touring_button_ai.innerText = "A-ha, it's an AI!";
+            touring_button_ai.className = "touring-button-ai";
+            // Touring undefined => pushing a button means "I want to say that"
+            // Touring !undefined => pushing a button means "change that I said that"
+            if(_p.touring == undefined) {
+                p.appendChild(touring_button_human);
+                touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} })); }
+                p.appendChild(touring_button_ai);
+                touring_button_ai.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} })); }
+            } else if(_p.touring == GameClient.AI) {
+                p.appendChild(touring_button_ai);
+                touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} })); }
+            } else if(_p.touring == GameClient.HUMAN) {
+                p.appendChild(touring_button_human);
+                touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} })); }
+            } else {
+                console.error("HUD is unable to render Touring button: can't understand touring choice for " + _p.name);
+            }
+
             // p.appendChild(team);
             pl.appendChild(p);
             if(model.status.me != {} && model.status.me.team == _p.team && model.status.me.symbol != _p.symbol) { // && model.status.me.symbol != _p.symbol
@@ -117,30 +141,6 @@ class HudUi {
                     // TODO: to be continued ...
                 };
                 p.appendChild(accuse_button);
-                
-                // Touring game visualization
-                let touring_button_human = document.createElement("button");
-                touring_button_human.innerText = "A-ha, it's a HUMAN!";
-                touring_button_human.className = "touring-button-human";
-                let touring_button_ai = document.createElement("button");
-                touring_button_ai.innerText = "A-ha, it's an AI!";
-                touring_button_ai.className = "touring-button-ai";
-                // Touring undefined => pushing a button means "I want to say that"
-                // Touring !undefined => pushing a button means "change that I said that"
-                if(_p.touring == undefined) {
-                    p.appendChild(touring_button_human);
-                    touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} })); }
-                    p.appendChild(touring_button_ai);
-                    touring_button_ai.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} })); }
-                } else if(_p.touring == GameClient.AI) {
-                    p.appendChild(touring_button_ai);
-                    touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} })); }
-                } else if(_p.touring == GameClient.HUMAN) {
-                    p.appendChild(touring_button_human);
-                    touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} })); }
-                } else {
-                    console.error("HUD is unable to render Touring button: can't understand touring choice for " + _p.name);
-                }
             }
 
         }

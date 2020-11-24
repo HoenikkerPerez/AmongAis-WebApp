@@ -315,8 +315,8 @@ class MatchController {
     _touringQueue = []; // {name: string, touring: string}
 
     touringResponseHandler(evt, choice) {
-        console.debug("MatchController is setting touring choice for " + this.model.status.pl_list[choice.name].name + " as " + choice.touring);
-        this.model.status.pl_list[choice.name].touring = choice.touring;
+        console.debug("MatchController is setting touring choice for " + model.status.pl_list[choice.name].name + " as " + choice.touring);
+        model.status.pl_list[choice.name].touring = choice.touring;
     }
 
     /* LISTENERS */
