@@ -22,7 +22,7 @@ class ChatController {
                     if(name.startsWith("@") && (channel == model.status.ga)) {
                         this._parseSystemMessage(text, channel, name);
                     } else {
-                        model.addMessageChat(channel, name, text);
+                        this._parseNonSystemMessage(text, channel, name);
                     }
                 }
             });             
@@ -68,6 +68,20 @@ class ChatController {
             model.meetingMSG(msg.slice(17));
             return;
         }
+        model.addMessageChat(channel, name, msg);
+    }
+
+    _parseNonSystemMessage(msg, channel, name) {
+        // shoot
+        let msgspl = msg.split(" ");
+        if(msgspl[1]==="shot"){
+            let playerName = msgspl[0];
+            let direction = msgspl[2];
+            let shootEvent = new CustomEvent({detail: { shooter: playerName, direction:  direction} });
+            document.dispatchEvent(shootEvent);
+            return;
+        }
+
         model.addMessageChat(channel, name, msg);
     }
 
