@@ -63,6 +63,7 @@ var model = {
         isRunning: false,
         iVote: false,
     },
+    shoots: [],
 
     setLogin: function(lg) {this.login=lg},
     setUsername(uName){this.username=uName},
@@ -70,7 +71,18 @@ var model = {
     setMap: function(map) {
         // preprocess map
         this._map = map;
+        // remove exausted shoots
+        this._removeExaustedShoots();
         document.dispatchEvent(new CustomEvent("MODEL_SETMAP", {detail: {map:map}}));
+    },
+
+    _removeExaustedShoots() {
+        let shoots = this.shoots;
+        for (let i=0; i<shoots.length; i++) {
+            if(shoots[i].counter <= 0) {
+                this.shoots.splice(i,1);
+            }
+        }
     },
 
     _restoreTouringGame(oldMatchStatus, newMatchStatus) {

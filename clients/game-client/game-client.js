@@ -243,7 +243,7 @@ class GameClient {
     shoot(direction) {
         console.debug("Game Client is requesting a shoot to direction: " + direction);
         let msg = this._sync.shoot(model.status.ga, direction);
-        this._send("miticoOggettoCheNonEsiste.SHOOT:" + direction, msg);
+        this._send("miticoOggettoCheNonEsiste.SHOOT", msg);
     }
 
     // SOCIAL DEDUCTION
