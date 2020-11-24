@@ -107,10 +107,14 @@ class HudUi {
             // Touring game visualization
             let touring_button_human = document.createElement("button");
             touring_button_human.innerText = "A-ha, it's a HUMAN!";
-            touring_button_human.className = "touring-button-human";
+            touring_button_human.classList.add("touring-button-human");
+            touring_button_human.classList.add("btn");
+            touring_button_human.classList.add("btn-primary");
             let touring_button_ai = document.createElement("button");
             touring_button_ai.innerText = "A-ha, it's an AI!";
-            touring_button_ai.className = "touring-button-ai";
+            touring_button_ai.classList.add("touring-button-ai");
+            touring_button_ai.classList.add("btn");
+            touring_button_ai.classList.add("btn-primary");
             // Touring undefined => pushing a button means "I want to say that"
             // Touring !undefined => pushing a button means "change that I said that"
             if(_p.touring == undefined) {
@@ -134,7 +138,9 @@ class HudUi {
                 // Social deduction
                 let accuse_button = document.createElement("button");
                 accuse_button.innerText = "Accuse!";
-                accuse_button.className = "accuse-button";
+                accuse_button.classList.add("accuse-button");
+                accuse_button.classList.add("btn");
+                accuse_button.classList.add("btn-danger");
                 accuse_button.onclick= () => {
                     document.dispatchEvent(new CustomEvent("BUTTON_ACCUSE", {detail: _p.name }));
                     let allb = document.getElementsByClassName("accuse-button");
