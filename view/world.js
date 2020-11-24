@@ -170,6 +170,7 @@ class WorldUi {
         }
         // this._clearCanvas();
         this._drawMap();
+        this._drawShoots();
         this._drawPlayerNames();
         window.requestAnimationFrame(this.renderMap.bind(this));
     };
@@ -239,6 +240,32 @@ class WorldUi {
                 this.ctx.fillText(player.name, c * this._tsizeMap + Math.floor(this._tsizeMap/2), r * this._tsizeMap);
             }
         }        
+    }
+
+    _drawShoots() {
+        let shoots = model.shoots;
+        for (let i=0; i<shoots.length; i++) {
+            let [x, y, direction, counter]= shoots[i];
+            // choose tile
+            if (direction == "vertical") 
+                tile = [21, 21];
+            else 
+                tile = [21, 21];
+            if (counter > 0) {
+                this.ctx.drawImage(
+                    this.tileAtlas, // image
+                    tile[0] * map.tsize, // source x
+                    tile[1] * map.tsize, // source y
+                    map.tsize, // source width
+                    map.tsize, // source height
+                    x * this._tsizeMap,  // target x
+                    y * this._tsizeMap, // target y
+                    this._tsizeMap, // target width
+                    this._tsizeMap // target height
+                );
+                model.shoots[i].counter--;  // TODO terrible modify the model
+            }
+        }
     }
 
     _loadWsMessages() {
