@@ -312,8 +312,11 @@ class MatchController {
 
     /* SOCIAL DEDUCTION GAME */
 
-    touringResponseHandler(evt) {
-        // OK from server after a touring choice TODO
+    _touringQueue = []; // {name: string, touring: string}
+
+    touringResponseHandler(evt, choice) {
+        console.debug("MatchController is setting touring choice for " + this.model.status.pl_list[choice.name].name + " as " + choice.touring);
+        this.model.status.pl_list[choice.name].touring = choice.touring;
     }
 
     /* LISTENERS */
@@ -338,7 +341,7 @@ class MatchController {
         document.addEventListener("miticoOggettoCheNonEsiste.ACCUSE", ((evt) => { this.accuseResponseHandler(evt) }).bind(this), false);
 
         // TOURING
-        document.addEventListener("miticoOggettoCheNonEsiste.TOURING", ((evt) => { this.touringResponseHandler(evt) }).bind(this), false);
+        document.addEventListener("miticoOggettoCheNonEsiste.TOURING", ((evt) => { this.touringResponseHandler(evt, this._touringQueue.shift()) }).bind(this), false);
 
         // STATUS
         document.addEventListener("STATUS", this.getStatusHandler, false);
@@ -389,7 +392,12 @@ class MatchController {
                 this._gameClient.accuse(evt.detail);
             }, false);
             // Touring Button
-            document.addEventListener("BUTTON_TOURING", (evt) => {this._gameClient.tour(evt.detail.name, evt.detail.touring);}, false);
+            document.addEventListener("BUTTON_TOURING", (evt) => {
+                let name = evt.detail.name;
+                let touringChoice = evt.detail.touring;
+                this._touringQueue.push({name: name, touring: touringChoice});
+                this._gameClient.tour(name, touringChoice);
+            }, false);
             // Start game
             model.timeframe = model.playerTimeframe;
             model.setStartGameTime();
