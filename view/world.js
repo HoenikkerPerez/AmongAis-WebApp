@@ -114,7 +114,7 @@ class WorldUi {
                 case "&":
                     tile = Terrain.BARRIER;
                     break;
-                case "*": // not a terrain, actually
+                case "*": // TODO LUCA // not a terrain, actually
                     tile = Terrain.BULLET;
                     break;
                 default:

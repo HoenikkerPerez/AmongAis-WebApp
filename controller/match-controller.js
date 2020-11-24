@@ -61,7 +61,7 @@ class MatchController {
 
     // Laser
 
-    shootHandler(evt, direction) {
+    shootHandler(evt, direction) { // TODO LUCA
         console.debug("Match Controller has received a SHOOT response. Direction: " + direction);
         let msgOk = evt.detail.startsWith("OK");
         if(msgOk) {
@@ -185,7 +185,7 @@ class MatchController {
             bulletStopped = stopsBullet(tile);
             //console.debug("bulletStopped: " + bulletStopped);
             if(!bulletStopped) {
-                model._map.tiles[idx] = "*";
+                model._map.tiles[idx] = "*"; // TODO LUCA
                 cells++;
             }
         }
@@ -326,16 +326,7 @@ class MatchController {
     load() {
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", (this.lookMapHandler).bind(this), false);
 
-        // Shoot events
-        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:N", ((evt) => { this.shootHandler(evt, GameClient.UP) }).bind(this), false);
-        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:S", ((evt) => { this.shootHandler(evt, GameClient.DOWN) }).bind(this), false);
-        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:W", ((evt) => { this.shootHandler(evt, GameClient.LEFT) }).bind(this), false);
-        document.addEventListener("miticoOggettoCheNonEsiste.SHOOT:E", ((evt) => { this.shootHandler(evt, GameClient.RIGHT) }).bind(this), false);
-
-        // DEBUG: Status button
-        // document.getElementById("statusButton").addEventListener("click", () => {
-        //     this.statusPoller();
-        // });
+        // Shoot OK event is handled by chat for every player (included "me")
         
         // ACCUSE 
         document.addEventListener("miticoOggettoCheNonEsiste.ACCUSE", ((evt) => { this.accuseResponseHandler(evt) }).bind(this), false);
