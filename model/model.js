@@ -241,6 +241,16 @@ var model = {
     meetingEnd(){
         this.meeting.isRunning = false;
         document.dispatchEvent(new CustomEvent("MODEL_MEETING_END"));
+    },
+
+    // Endgame
+
+    endgameScore: [],
+
+    pushEndgameScore(endscore) {
+        this.endgameScore.push(endscore);
+        this.endgameScore.sort((a,b) => (a.score < b.score) ? 1 : ((b.score < a.score) ? -1 : 0));
+        document.dispatchEvent(new CustomEvent("MODEL_ENDGAME_SCORE_ADDED"));
     }
 
 };

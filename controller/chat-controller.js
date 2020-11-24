@@ -3,6 +3,8 @@ class ChatController {
     _username
     _gamename
 
+    _isEndgame = false
+
     constructor(chat_client) {
         this._chat_client = chat_client;
         this._chat_client.onMessage(async (evt) => {
@@ -18,7 +20,6 @@ class ChatController {
                     let name = spltmsg.shift();
                     let text = spltmsg.join(' ');
 
-
                     if(name.startsWith("@") && (channel == model.status.ga)) {
                         this._parseSystemMessage(text, channel, name);
                     } else {
@@ -31,7 +32,19 @@ class ChatController {
     }
 
     _parseSystemMessage(msg, channel, name) {
-        
+
+        if(this._isEndgame) { // TODO BUG since the final message is multiline and this probably makes score entries added to the model's list multiple times.
+            // Player endgame messages
+            let rsplit = msg.replace(/  +/g, ' ').split(" ");
+            let team = rsplit[0][1];
+            let playerName = rsplit[1];
+            let finalStatus = rsplit[2]; // ACTIVE, KILLED, ...
+            let score = parseInt(rsplit[3]);
+            let endscore = {score: score, team: team, name: playerName, endedAs: finalStatus};
+            model.pushEndgameScore(endscore);
+            return;
+        }
+
         let msgspl = msg.split(" "); // @gameserver ...
 
         // GAME start
@@ -45,9 +58,10 @@ class ChatController {
         if (msg.startsWith("Game finished!")) {
             document.dispatchEvent(new CustomEvent("CHAT_GAME_FINISHED", {detail: {message:msg}}));
             model.addMessageChat(channel, name, msg);
+            this._isEndgame = true;
             return;
-        } 
-    
+        }
+
         // JOIN
         if (msgspl[1] == "joined") { // JOINED PLAYER
             model.playerJoined(msgspl[0]);
