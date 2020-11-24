@@ -60,6 +60,8 @@ class HudUi {
         document.addEventListener("MODEL_MEETING_END", () => {
             console.debug("hud EMERGENCY MEETING END");
             // popupMsg("EMERGENCY MEETING END!!!", "danger");
+            let eMeeting = document.getElementById("emergency-meeting");
+            eMeeting.className = "emergency-meeting-ended";;
             window.setTimeout(function(){ 
                 let meet_div = document.getElementById("emergency-meeting");
                 meet_div.style.display="none";
@@ -81,8 +83,16 @@ class HudUi {
     };
 
     meeting_countdown(times){
-        let cnt_div = document.getElementById("countdown");
-        cnt_div.textContent = times;
+        if (times>5) {
+            let cnt_div = document.getElementById("countdown");
+            cnt_div.textContent = times;
+        } else {
+            let eMeeting = document.getElementById("emergency-meeting");
+            eMeeting.className = "emergency-meeting-red";
+            let cnt_div = document.getElementById("countdown");
+            cnt_div.textContent = "";
+        }
+
         if(times>0){
             window.setTimeout(function(){ this.meeting_countdown(times-1) }.bind(this), 1000);
         }
