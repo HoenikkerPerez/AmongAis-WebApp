@@ -61,19 +61,79 @@ class MatchController {
 
     // Laser
 
-    shootHandler(evt, direction) { // TODO LUCA
-        console.debug("Match Controller has received a SHOOT response. Direction: " + direction);
-        let msgOk = evt.detail.startsWith("OK");
-        if(msgOk) {
-            // I'll avoid making a copy of the whole map...
-            let position = model.status.me.position;
-            this.computeShootOnMap(position, direction);
-            console.debug("Match Controller computed the map with the shot and is going to set the new map in the model.");
-            model.setMap(model._map); // update needed to fire the rendering action
-        } else {
-            console.error("Match Controller retrieved an error from the server while shooting.");
-        }
+    shootHandler(evt) { // TODO LUCA
+        let shooter = evt.detail.shooter;
+        let direction = evt.detail.direction;
+        console.debug("Match Controller has received a SHOOT: " + shooter + " in direction: " + direction);
+
+        // I'll avoid making a copy of the whole map...
+        // let position = model.status.me.position;
+        let position =  {x: parseInt(model.status.pl_list[shooter].x), y: parseInt(model.status.pl_list[shooter].y)};
+        this.computeShootOnMap(position, direction);
+        console.debug("Match Controller computed the map with the shot and is going to set the new map in the model.");
+        model.setMap(model._map); // update needed to fire the rendering action
     }
+
+    computeShootOnMap(shooterPosition, direction) {
+        console.debug("Match Controller is computing SHOOT in direction " + direction + " from position: " + shooterPosition.x + "," + shooterPosition.y);
+        
+        let stopsBullet = (tile) => {
+            //console.debug("check &");
+            if(tile == "&") return true;
+            //console.error("check #");
+            if(tile == "#") return true;
+            return false;
+        }
+
+        let deltaX = 0, deltaY = 0;
+        switch(direction) {
+            case GameClient.UP:
+                deltaY = -1;
+                break;
+            case GameClient.DOWN:
+                deltaY = 1;
+                break;
+            case GameClient.LEFT:
+                deltaX = -1;
+                break;
+            case GameClient.RIGHT:
+                deltaX = 1;
+                break;
+        }
+        let firstX = shooterPosition.x + deltaX;
+        //console.debug("firstX: " + firstX);
+        let firstY = shooterPosition.y + deltaY;
+        //console.debug("firstY: " + firstY);
+        let limitX = model._map.cols;
+        //console.debug("limitX: " + limitX);
+        let limitY = model._map.rows;
+        //console.debug("limitY: " + limitY);
+        let cells = 0;
+        let bulletStopped = false;
+        for(
+            let c = firstX, r = firstY;
+
+            c < limitX && r < limitY &&
+            r >= 0 && c >= 0 &&
+            !bulletStopped;
+
+            c += deltaX, r += deltaY
+        ) {
+            let idx = r * model._map.cols + c;
+            let tile = model._map.tiles[idx];
+            console.log("Checking " + r + "," + c + " (" + tile + ")");
+            bulletStopped = stopsBullet(tile);
+            //console.debug("bulletStopped: " + bulletStopped);
+            if(!bulletStopped) {
+                let dirLinear = (direction == "E" || direction == "W") ? "horizontal" : "vertical";
+
+                model.shoots.push({x:c, y:r, direction: dirLinear, counter:2}); // direction vertical, horizontal
+                cells++;
+            };
+        };
+        console.debug("Match Controller: shot over " + cells + " cells.");
+    };
+
 
     /* MAP HANDLING */
 
@@ -134,64 +194,7 @@ class MatchController {
 
     */
 
-    computeShootOnMap(shooterPosition, direction) {
-        console.debug("Match Controller is computing SHOOT in direction " + direction + " from position: " + shooterPosition.x + "," + shooterPosition.y);
-        
-        let stopsBullet = (tile) => {
-            //console.debug("check &");
-            if(tile == "&") return true;
-            //console.error("check #");
-            if(tile == "#") return true;
-            return false;
-        }
-
-        let deltaX = 0, deltaY = 0;
-        switch(direction) {
-            case GameClient.UP:
-                deltaY = -1;
-                break;
-            case GameClient.DOWN:
-                deltaY = 1;
-                break;
-            case GameClient.LEFT:
-                deltaX = -1;
-                break;
-            case GameClient.RIGHT:
-                deltaX = 1;
-                break;
-        }
-        let firstX = shooterPosition.x + deltaX;
-        //console.debug("firstX: " + firstX);
-        let firstY = shooterPosition.y + deltaY;
-        //console.debug("firstY: " + firstY);
-        let limitX = model._map.cols;
-        //console.debug("limitX: " + limitX);
-        let limitY = model._map.rows;
-        //console.debug("limitY: " + limitY);
-        let cells = 0;
-        let bulletStopped = false;
-        for(
-            let c = firstX, r = firstY;
-
-            c < limitX && r < limitY &&
-            r >= 0 && c >= 0 &&
-            !bulletStopped;
-
-            c += deltaX, r += deltaY
-        ) {
-            let idx = r * model._map.cols + c;
-            let tile = model._map.tiles[idx];
-            console.log("Checking " + r + "," + c + " (" + tile + ")");
-            bulletStopped = stopsBullet(tile);
-            //console.debug("bulletStopped: " + bulletStopped);
-            if(!bulletStopped) {
-                model._map.tiles[idx] = "*"; // TODO LUCA
-                cells++;
-            }
-        }
-        console.debug("Match Controller: shot over " + cells + " cells.");
-    }
-
+    
     /* STATUS HANDLING */
 
     startHandler = function (evt) {
@@ -265,8 +268,6 @@ class MatchController {
             status.pl_list = pls;
         }
 
-        console.debug(status.pl_list.length);
-
         model.setStatus(status);
     };
 
@@ -327,8 +328,8 @@ class MatchController {
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", (this.lookMapHandler).bind(this), false);
 
         // Shoot OK event is handled by chat for every player (included "me")
-        //document.addEventListener("CHAT_SHOOT", ((evt) => { console.debug("MATCH CONTROLLE SHOTAAA " + evt.detail.shooter + " BAMS IN DIRECTIO " + evt.detail.direction) }).bind(this));
-        
+        document.addEventListener("CHAT_SHOOT", (evt) => {this.shootHandler(evt);});
+
         // ACCUSE 
         document.addEventListener("miticoOggettoCheNonEsiste.ACCUSE", ((evt) => { this.accuseResponseHandler(evt) }).bind(this), false);
 

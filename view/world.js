@@ -170,6 +170,7 @@ class WorldUi {
         }
         // this._clearCanvas();
         this._drawMap();
+        this._drawShoots();
         this._drawPlayerNames();
         window.requestAnimationFrame(this.renderMap.bind(this));
     };
@@ -239,6 +240,40 @@ class WorldUi {
                 this.ctx.fillText(player.name, c * this._tsizeMap + Math.floor(this._tsizeMap/2), r * this._tsizeMap);
             }
         }        
+    }
+
+    _drawShoots() {
+        let shoots = model.shoots;
+        let map = model._map;
+        for (let i=0; i<shoots.length; i++) {
+            let shoot = shoots[i];
+            let x = shoot.x;
+            let y = shoot.y;
+            let direction = shoot.direction;
+            let counter = shoot.counter;
+            let tile;
+            
+            if (counter > 0) {
+                console.debug("drawing shoots: " + x +", " + " " + direction + " " + counter);
+                // choose tile
+                if (direction == "vertical") 
+                    tile = Terrain.BULLET;
+                else 
+                    tile = Terrain.BULLET;
+                this.ctx.drawImage(
+                    this.tileAtlas, // image
+                    tile[0] * map.tsize, // source x
+                    tile[1] * map.tsize, // source y
+                    map.tsize, // source width
+                    map.tsize, // source height
+                    x * this._tsizeMap,  // target x
+                    y * this._tsizeMap, // target y
+                    this._tsizeMap, // target width
+                    this._tsizeMap // target height
+                );
+                model.shoots[i].counter--;  // TODO terrible modify the model
+            }
+        }
     }
 
     _loadWsMessages() {
