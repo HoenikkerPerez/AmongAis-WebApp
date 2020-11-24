@@ -13,7 +13,7 @@ var model = {
             ws: "ws://93.39.188.250:8522"
             // ws: "ws://margot.di.unipi.it:8522"
         }
-}   ,
+    },
     status: {
         ga: "gamename",
         state: "lobby-started-ended",
@@ -40,17 +40,8 @@ var model = {
     NONE: "NONE",
     PLAYER: "PLAYER",
     SPECTATOR: "SPECTATOR",
+    kind: this.NONE,
 
-    local: {
-        me: {
-            position: { // (0,0) is North West corner
-                x: 0,
-                y: 0
-            }
-        },
-        shot: false,
-        kind: this.NONE
-    },
     chat: {
         messages:[], //{channel: string, user: string, message: string}
         chatSubscribedChannels: []
@@ -80,8 +71,13 @@ var model = {
         // preprocess map
         this._map = map;
         document.dispatchEvent(new CustomEvent("MODEL_SETMAP", {detail: {map:map}}));
-        // Reset laser presence
-        this.local.shot = false;
+    },
+
+    _restoreTouringGame(oldMatchStatus, newMatchStatus) {
+        let oldPlayers = oldMatchStatus.pl_list;
+        let newPlayers = newMatchStatus.pl_list;
+        for(let name in oldPlayers)
+            newPlayers[name].touring = oldPlayers[name].touring;
     },
 
     _isMatchStatusChange(oldMatchStatus,newMatchStatus){
@@ -90,23 +86,33 @@ var model = {
             document.dispatchEvent(new CustomEvent(newstate_tag, {detail: {status:this.status}}));
         }
     },
+
     _isMePlayerStatusChange(oldStatus,newStatus){
         // check if you'are the owner
         let pl_list_old = oldStatus.pl_list;
-        let me_old = pl_list_old.find(o => o.name === oldStatus.me.name);
+        let me_old = pl_list_old[oldStatus.me.name];
         let pl_list_new = newStatus.pl_list;
-        let me_new = pl_list_new.find(o => o.name === newStatus.me.name);
+        let me_new = pl_list_new[newStatus.me.name];
 
         if( (me_new != undefined) && ( (me_old == undefined) || (me_new.state != me_old.state) ) ){
             let newMeState_tag = "MODEL_STATE_" + me_new.state;
             document.dispatchEvent(new CustomEvent(newMeState_tag, {detail: {state: me_new.state}}));
         }
     },
+
     setStatus: function(status) {
         let old = this.status;
         this.status = status;
         
+        // Postprocess the status after it is received from the server
+        if(old != undefined) {
+            this._restoreTouringGame(old, this.status);
+        }
+
+        // Fire an event if the match status actually changed
         this._isMatchStatusChange(old.state,status.state);
+
+        // Fire an event if the player status actually changed
         this._isMePlayerStatusChange(old,status);
 
         document.dispatchEvent(new CustomEvent("MODEL_SETSTATUS", {detail: {status:status}}));
@@ -115,7 +121,7 @@ var model = {
     // enter into the match: players & spectators
     setRunningGame: function(isRunning, kindOfUser) {
         // set user kind
-        this.local.kind = kindOfUser;
+        this.kind = kindOfUser;
         // preprocess status
         this.isRunning = isRunning;
         document.dispatchEvent(new CustomEvent("MODEL_RUN_GAME", {detail:isRunning}));
@@ -152,7 +158,7 @@ var model = {
         } else if (this.inGameName != undefined && user == this.inGameName) {
             type = "me";
         } else {
-            let userobj = this.status.pl_list.find(o => o.name === user);
+            let userobj = this.status.pl_list[user];
             if (userobj != undefined) {
                 if (userobj.team == 0) {
                     type = "teamA";
@@ -197,7 +203,13 @@ var model = {
     },
 
     findPlayerBySymbol: function(symb) {
-        return this.status.pl_list.find(o => o.symbol === symb);
+        let playerList = this.status.pl_list;
+        for(let p in playerList) {
+            let player = playerList[p];
+            if(player.symbol === symb)
+                return player;
+        }
+        return undefined;
     },
 
     meetingStart(who_start){

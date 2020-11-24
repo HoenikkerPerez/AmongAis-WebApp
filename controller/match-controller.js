@@ -1,4 +1,14 @@
 class MatchController {
+    
+    // This class controls:
+    // PHYSICAL GAME
+    // MAP HANDLING
+    // STATUS HANDLING
+    // POLLING
+    // SOCIAL DEDUCTION GAME
+    // TOURING GAME
+    // LISTENERS
+
     _gameClient;
     _lastDirection = {direction: GameClient.UP}; // Not in model because it's intended to be part of the interaction. The server actually allows to shoot in a different direction.
 
@@ -6,6 +16,8 @@ class MatchController {
         this._gameClient = gameClient;
         this.load();
     }
+
+    /* PHYSICAL GAME */
 
     getLastDirection() {
         return this._lastDirection;
@@ -47,6 +59,24 @@ class MatchController {
         }
     }
 
+    // Laser
+
+    shootHandler(evt, direction) {
+        console.debug("Match Controller has received a SHOOT response. Direction: " + direction);
+        let msgOk = evt.detail.startsWith("OK");
+        if(msgOk) {
+            // I'll avoid making a copy of the whole map...
+            let position = model.status.me.position;
+            this.computeShootOnMap(position, direction);
+            console.debug("Match Controller computed the map with the shot and is going to set the new map in the model.");
+            model.setMap(model._map); // update needed to fire the rendering action
+        } else {
+            console.error("Match Controller retrieved an error from the server while shooting.");
+        }
+    }
+
+    /* MAP HANDLING */
+
     lookMapHandler(evt) {
         //LOOK MAP save to model
         //console.debug("LOOKMAPHANDLER " + evt.detail);
@@ -67,12 +97,20 @@ class MatchController {
         // update model
         model.setMap(map_obj);
         // extract local interesting information from the map
-        this.applyOnMapEntities([
+    };
+
+
+    /**
+     * This function was once used with this code:
+     * 
+     *         this.applyOnMapEntities([
             [model.status.me.symbol,
-                (x,y) => { model.local.me.position = {x:x, y:y} }],
+                (x,y) => { model.status.me.position = {x:x, y:y} }],
             // [symbol, (x,y) => { handlers }],
         ]);
-    };
+     *
+     * I hope it'll be needed again. I had a lot of fun in writing it.
+     * 
 
     applyOnMapEntities(symbolFunctionList) {
         let map = model._map;
@@ -94,21 +132,7 @@ class MatchController {
         }
     }
 
-    // Lasers
-
-    shootHandler(evt, direction) {
-        console.debug("Match Controller has received a SHOOT response. Direction: " + direction);
-        let msgOk = evt.detail.startsWith("OK");
-        if(msgOk) {
-            // I'll avoid making a copy of the whole map...
-            let position = model.local.me.position;
-            this.computeShootOnMap(position, direction);
-            console.debug("Match Controller computed the map with the shot and is going to set the new map in the model.");
-            model.setMap(model._map); // update needed to fire the rendering action
-        } else {
-            console.error("Match Controller retrieved an error from the server while shooting.");
-        }
-    }
+    */
 
     computeShootOnMap(shooterPosition, direction) {
         console.debug("Match Controller is computing SHOOT in direction " + direction + " from position: " + shooterPosition.x + "," + shooterPosition.y);
@@ -168,25 +192,7 @@ class MatchController {
         console.debug("Match Controller: shot over " + cells + " cells.");
     }
 
-    mapPoller() {
-        //console.debug("Polling map")
-        let gameName = model.status.ga;
-        
-        this._gameClient.lookMap(gameName);
-        // setMap()
-    };
-
-
-    // ACCUSE
-    accuseResponseHandler(evt){
-        console.debug("Match Controller has received a ACCUSE response"); 
-        let msgOk = evt.detail.startsWith("OK");
-        if(msgOk) {
-            console.debug("Match Controller accept an accuse");
-        } else {
-            console.error("Match Controller retrieved an error from the server while accusing.");
-        }
-    };
+    /* STATUS HANDLING */
 
     startHandler = function (evt) {
         switch(evt.key) {
@@ -215,9 +221,8 @@ class MatchController {
         }
         let status = {};
         let ga = {};
-        let me = {}
-        status.pl_list = [];        
-
+        let me = {};
+        status.pl_list = [];
 
         let stat = evt.detail.slice(7).replace("«ENDOFSTATUS»",'').trim().split('\n');
         let ga_list = stat[0].slice(4).split(' ')
@@ -245,7 +250,7 @@ class MatchController {
                 pl_start=1;
             }
             
-            let pls = [];
+            let pls = {};
             for(let i=pl_start;i<stat.length;i++){
                 let pl = {};
                 let pl_list = stat[i].slice(4).split(' ')
@@ -254,13 +259,25 @@ class MatchController {
                     let value =  pl_list[j].substring( pl_list[j].indexOf('=')+1);
                     pl[key] = value
                 }
-                pls.push(pl);
+                pls[pl.name] = pl;
             }
             status.me = me;
-            status.pl_list = pls;        
+            status.pl_list = pls;
         }
 
+        console.debug(status.pl_list.length);
+
         model.setStatus(status);
+    };
+
+    /* POLLING */
+
+    mapPoller() {
+        //console.debug("Polling map")
+        let gameName = model.status.ga;
+        
+        this._gameClient.lookMap(gameName);
+        // setMap()
     };
 
     statusPoller(){
@@ -281,10 +298,32 @@ class MatchController {
         window.setTimeout(function(){ this._poller() }.bind(this), timeframe);
     }
 
-    
+    /* SOCIAL DEDUCTION GAME */
+
+    accuseResponseHandler(evt){
+        console.debug("Match Controller has received a ACCUSE response"); 
+        let msgOk = evt.detail.startsWith("OK");
+        if(msgOk) {
+            console.debug("Match Controller accept an accuse");
+        } else {
+            console.error("Match Controller retrieved an error from the server while accusing.");
+        }
+    };
+
+    /* SOCIAL DEDUCTION GAME */
+
+    _touringQueue = []; // {name: string, touring: string}
+
+    touringResponseHandler(evt, choice) {
+        console.debug("MatchController is setting touring choice for " + model.status.pl_list[choice.name].name + " as " + choice.touring);
+        model.status.pl_list[choice.name].touring = choice.touring;
+    }
+
+    /* LISTENERS */
+
+    // All listeners common to every kind of user
 
     load() {
-        // All listeners common to every kind of user
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", (this.lookMapHandler).bind(this), false);
 
         // Shoot events
@@ -301,6 +340,10 @@ class MatchController {
         // ACCUSE 
         document.addEventListener("miticoOggettoCheNonEsiste.ACCUSE", ((evt) => { this.accuseResponseHandler(evt) }).bind(this), false);
 
+        // TOURING
+        document.addEventListener("miticoOggettoCheNonEsiste.TOURING", ((evt) => { this.touringResponseHandler(evt, this._touringQueue.shift()) }).bind(this), false);
+
+        // STATUS
         document.addEventListener("STATUS", this.getStatusHandler, false);
 
         // document.addEventListener("MODEL_SETGAMENAME", this.init, false);
@@ -319,7 +362,7 @@ class MatchController {
             // Init map polling
             this._poller(); // TODO this._pollOnce();
             // Loads the specialized listeners
-            switch(model.local.kind) {
+            switch(model.kind) {
                 case model.PLAYER:
                     console.debug("Match Controller is loading the player listeners...");
                     this._loadPlayerOnRunGame();
@@ -343,10 +386,21 @@ class MatchController {
             console.debug("match-controller catches MODEL_MATCH_STATUS_ACTIVE")
             let canvas = document.getElementById("canvas");
             canvas.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
-            document.addEventListener("BUTTON_ACCUSE", (evt) => {this._gameClient.accuse(evt.detail);}, false);
+            // Accuse Button
+            document.addEventListener("BUTTON_ACCUSE", (evt) => {
+                popupMsg("A vote of no confidence for teammate: " + teammateName, "warning");
+                this._gameClient.accuse(evt.detail);
+            }, false);
+            // Touring Button
+            document.addEventListener("BUTTON_TOURING", (evt) => {
+                let name = evt.detail.name;
+                let touringChoice = evt.detail.touring;
+                this._touringQueue.push({name: name, touring: touringChoice});
+                this._gameClient.tour(name, touringChoice);
+            }, false);
+            // Start game
             model.timeframe = model.playerTimeframe;
             model.setStartGameTime();
-
             this._poller();
         }, false);
         

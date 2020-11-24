@@ -208,11 +208,20 @@ class GameClient {
     }
     
     /* MATCH interface */
+
     getStatus(gameName){
         //console.debug("Game Client is requesting a game status for " + gameName);
         let msg = this._sync.getStatus(gameName);
         this._send("STATUS", msg);
     }
+
+    nop() {
+        console.debug("Game Client is requesting a nop");
+        let msg = this._sync.nop(model.status.ga);
+        this._send("miticoOggettoCheNonEsiste.NOP", msg);
+    }
+
+    // PLAYER ACTIONS
 
     static UP = "N";
     static DOWN = "S";
@@ -237,17 +246,23 @@ class GameClient {
         this._send("miticoOggettoCheNonEsiste.SHOOT:" + direction, msg);
     }
 
+    // SOCIAL DEDUCTION
+
     accuse(teammateName) {
         console.debug("Game Client is requesting a vote of no confidence for teammate: " + teammateName);
-        // alert("A vote of no confidence for teammate: " + teammateName);
-        popupMsg("A vote of no confidence for teammate: " + teammateName,"warning");
         let msg = this._sync.accuse(model.status.ga, teammateName);
         this._send("miticoOggettoCheNonEsiste.ACCUSE", msg);
     }
 
-    nop() {
-        console.debug("Game Client is requesting a nop");
-        let msg = this._sync.nop(model.status.ga);
-        this._send("miticoOggettoCheNonEsiste.NOP", msg);
+    // TOURING GAME
+
+    static HUMAN = "H";
+    static AI = "AI";
+
+    tour(name, choice) {
+        console.debug("Game Client is requesting a touring choice for " + name + " being " + choice);
+        let msg = this._sync.touringChoice(model.status.ga, name, choice);
+        this._send("miticoOggettoCheNonEsiste.TOURING", msg);
     }
+
 }

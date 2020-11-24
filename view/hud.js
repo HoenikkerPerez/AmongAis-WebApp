@@ -102,14 +102,14 @@ class HudUi {
         let div = document.getElementById("hud");
         div.innerHTML="";
         let root = document.createElement("ul");
-        
+
         let match = document.createElement("ul");
         match.textContent="GAME";
         let gamename = document.createElement("li");
         gamename.innerHTML= "Name: " + model.status.ga;
         let statusGame = document.createElement("li");
         statusGame.innerHTML = "Status: " + model.status.state;
-        
+
         match.appendChild(gamename);
         match.appendChild(statusGame);
         root.appendChild(match);
@@ -138,11 +138,11 @@ class HudUi {
 
         let pl = document.createElement("ul");
         pl.textContent="PLAYERS IN GAME"
-        for(let i=0;i<model.status.pl_list.length;i++){
+        for(let playerName in model.status.pl_list){
             // PL: symbol=A name=username3 team=0 x=7 y=26
             // let pul = document.createElement("il");
 
-            let _p = model.status.pl_list[i]; 
+            let _p = model.status.pl_list[playerName];
             let p = document.createElement("li");
 
             p.innerHTML = _p.name; //+ "   (" + _p.team + ")"; // "["+_p.symbol+"] " + 
@@ -154,12 +154,43 @@ class HudUi {
             // let team = document.createElement("li");
             // team.innerHTML = "T: " + _p.team;
             
+            // Touring game visualization
+            let touring_button_human = document.createElement("button");
+            touring_button_human.innerText = "A-ha, it's a HUMAN!";
+            touring_button_human.classList.add("touring-button-human");
+            touring_button_human.classList.add("btn");
+            touring_button_human.classList.add("btn-primary");
+            let touring_button_ai = document.createElement("button");
+            touring_button_ai.innerText = "A-ha, it's an AI!";
+            touring_button_ai.classList.add("touring-button-ai");
+            touring_button_ai.classList.add("btn");
+            touring_button_ai.classList.add("btn-primary");
+            // Touring undefined => pushing a button means "I want to say that"
+            // Touring !undefined => pushing a button means "change that I said that"
+            if(_p.touring == undefined) {
+                p.appendChild(touring_button_human);
+                touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} })); }
+                p.appendChild(touring_button_ai);
+                touring_button_ai.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} })); }
+            } else if(_p.touring == GameClient.AI) {
+                p.appendChild(touring_button_ai);
+                touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} })); }
+            } else if(_p.touring == GameClient.HUMAN) {
+                p.appendChild(touring_button_human);
+                touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} })); }
+            } else {
+                console.error("HUD is unable to render Touring button: can't understand touring choice for " + _p.name);
+            }
+
             // p.appendChild(team);
             pl.appendChild(p);
-            if(model.status.me != {} && model.status.me.team == _p.team && model.status.me.symbol != _p.symbol){ // && model.status.me.symbol != _p.symbol
+            if(model.status.me != {} && model.status.me.team == _p.team && model.status.me.symbol != _p.symbol) { // && model.status.me.symbol != _p.symbol
+                // Social deduction
                 let accuse_button = document.createElement("button");
-                accuse_button.innerText = "Accuse!"
-                accuse_button.className = "accuse-button";
+                accuse_button.innerText = "Accuse!";
+                accuse_button.classList.add("accuse-button");
+                accuse_button.classList.add("btn");
+                accuse_button.classList.add("btn-danger");
                 accuse_button.onclick= () => {
                     document.dispatchEvent(new CustomEvent("BUTTON_ACCUSE", {detail: _p.name }));
                     let allb = document.getElementsByClassName("accuse-button");
@@ -167,12 +198,11 @@ class HudUi {
                 };
                 p.appendChild(accuse_button);
             }
-            
+
         }
         root.appendChild(pl);
-
     }
-    
+
     renderChat() {
         // channel chat -> [time from start] user: message (colored by team, or me)
         // server chat -> [time from start] AmongAis message
