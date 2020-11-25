@@ -122,7 +122,9 @@ class HudUi {
             let player = document.createElement("li");
             player.innerHTML = model.status.me.name; // +" [" + model.status.me.symbol + "]"
             let teamLoy = document.createElement("li");
-            teamLoy.innerHTML = "team/loyalty: " + model.status.me.team + "/" + model.status.me.loyalty;
+            let team = model.status.me.team == "0" ? "red" : "blue";
+            let loyalty = model.status.me.loyalty == "0" ? "red" : "blue";
+            teamLoy.innerHTML = "Affiliation: " + team + " loyal to " + loyalty;
             let energy = document.createElement("li");
             energy.innerHTML = "Energy: "+model.status.me.energy;
             let score = document.createElement("li");
@@ -160,12 +162,12 @@ class HudUi {
             
             // Touring game visualization
             let touring_button_human = document.createElement("button");
-            touring_button_human.innerText = "A-ha, it's a HUMAN!";
+            touring_button_human.innerText = "H";
             touring_button_human.classList.add("touring-button-human");
             touring_button_human.classList.add("btn");
             touring_button_human.classList.add("btn-primary");
             let touring_button_ai = document.createElement("button");
-            touring_button_ai.innerText = "A-ha, it's an AI!";
+            touring_button_ai.innerText = "AI";
             touring_button_ai.classList.add("touring-button-ai");
             touring_button_ai.classList.add("btn");
             touring_button_ai.classList.add("btn-primary");
