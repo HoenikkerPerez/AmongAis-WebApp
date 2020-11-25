@@ -88,8 +88,9 @@ var model = {
     _restoreTouringGame(oldMatchStatus, newMatchStatus) {
         let oldPlayers = oldMatchStatus.pl_list;
         let newPlayers = newMatchStatus.pl_list;
-        for(let name in oldPlayers)
-            newPlayers[name].touring = oldPlayers[name].touring;
+        for(let name of oldPlayers)
+            if(oldPlayers[name].touring)
+                newPlayers[name].touring = oldPlayers[name].touring;
     },
 
     _isMatchStatusChange(oldMatchStatus,newMatchStatus){
