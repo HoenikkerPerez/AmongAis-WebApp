@@ -3,6 +3,8 @@ class ChatController {
     _username
     _gamename
 
+    _isEndgame = false
+
     constructor(chat_client) {
         this._chat_client = chat_client;
         this._chat_client.onMessage(async (evt) => {
@@ -13,11 +15,11 @@ class ChatController {
                 if (item.length > 0) {
                     console.debug("Chat Client received message: " + msg);
                     // <channel> <name> <text>
-                    let spltmsg = item.split(" ");
+                    let trimmed = item.replace(/  +/g, ' ');
+                    let spltmsg = trimmed.split(" ");
                     let channel = spltmsg.shift();
                     let name = spltmsg.shift();
                     let text = spltmsg.join(' ');
-
 
                     if(name.startsWith("@") && (channel == model.status.ga)) {
                         this._parseSystemMessage(text, channel, name);
@@ -31,8 +33,19 @@ class ChatController {
     }
 
     _parseSystemMessage(msg, channel, name) {
-        
+
         let msgspl = msg.split(" "); // @gameserver ...
+
+        if(this._isEndgame) {
+            // Player endgame messages
+            let team = msgspl[0][1];
+            let playerName = msgspl[1];
+            let finalStatus = msgspl[2]; // ACTIVE, KILLED, ...
+            let score = parseInt(msgspl[3]);
+            let endscore = {score: score, team: team, name: playerName, endedAs: finalStatus};
+            model.pushEndgameScore(endscore);
+            return;
+        }
 
         // GAME start
         if(msg == "Now starting!\n") { 
@@ -45,9 +58,10 @@ class ChatController {
         if (msg.startsWith("Game finished!")) {
             document.dispatchEvent(new CustomEvent("CHAT_GAME_FINISHED", {detail: {message:msg}}));
             model.addMessageChat(channel, name, msg);
+            this._isEndgame = true;
             return;
-        } 
-    
+        }
+
         // JOIN
         if (msgspl[1] == "joined") { // JOINED PLAYER
             model.playerJoined(msgspl[0]);
