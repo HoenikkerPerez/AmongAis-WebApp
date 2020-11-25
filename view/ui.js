@@ -32,15 +32,26 @@ class Ui {
     };
 
     _gameStarted(){
-        // alert("This is The END ... my only frien, the END! (DOORS) \n to Restart, Refresh page. (I can't do all stuff for you!)");
         popupMsg("Match is START: Let's get ready to rumble!!!!!", "success");
     }
 
     _gameEnded(message) {
-        // alert("This is The END ... my only frien, the END! (DOORS) \n to Restart, Refresh page. (I can't do all stuff for you!)");
-        popupMsg("This is The END ... my only friend, the END! (DOORS) \n" 
-        + message 
-        + "\nto Restart, Refresh page. (Thank You to use our Web-Client!)", "info");
+        popupMsg("This is the END ... my only friend, the END! (The Doors)" 
+        + "\nThank you for using our Web Client!", "info");
+
+        document.getElementById("endgame-title").innerText = message;
+    }
+
+    _refreshLadder() {
+        let endgameDiv = document.getElementById("endgame-ladder");
+        endgameDiv.innerHTML = '';
+        for(let endscore of model.endgameScore) {
+            let el = document.createElement("h4");
+            let teamColor = endscore.team == "0" ? "red" : "blue";
+            el.innerText = endscore.score + " / " + endscore.name;
+            el.style.color = teamColor;
+            endgameDiv.appendChild(el);
+        }
     }
 
     _loadWsMessages() {
@@ -64,6 +75,10 @@ class Ui {
             this._gameEnded(msg);
             
         }, false);
+
+        document.addEventListener("MODEL_ENDGAME_SCORE_ADDED", () => {
+            this._refreshLadder();
+        });
     };
 
      _loadUI() {
