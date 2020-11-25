@@ -43,7 +43,8 @@ class Ui {
     }
 
     _refreshLadder() {
-        let endgameDiv = document.getElementById("endgame");
+        let endgameDiv = document.getElementById("endgame-ladder");
+        endgameDiv.innerHTML = '';
         for(let endscore of model.endgameScore) {
             let el = document.createElement("h4");
             let teamColor = endscore.team == "0" ? "red" : "blue";

@@ -36,12 +36,12 @@ class ChatController {
 
         let msgspl = msg.split(" "); // @gameserver ...
 
-        if(this._isEndgame) { // TODO BUG since the final message is multiline and this probably makes score entries added to the model's list multiple times.
+        if(this._isEndgame) {
             // Player endgame messages
-            let team = rsplit[0][1];
-            let playerName = rsplit[1];
-            let finalStatus = rsplit[2]; // ACTIVE, KILLED, ...
-            let score = parseInt(rsplit[3]);
+            let team = msgspl[0][1];
+            let playerName = msgspl[1];
+            let finalStatus = msgspl[2]; // ACTIVE, KILLED, ...
+            let score = parseInt(msgspl[3]);
             let endscore = {score: score, team: team, name: playerName, endedAs: finalStatus};
             model.pushEndgameScore(endscore);
             return;
