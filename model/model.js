@@ -1,17 +1,17 @@
 var model = {
     _map: [],
     timeframe: 1000, // Default map polling rate
-    spectatorTimeframe: 1000, // Spectator's map polling rate
-    playerTimeframe: 1000, // Player's map polling rate
-    connectionTimeframe: 600, // Minimum delay between requests
+    spectatorTimeframe: 1500, // Spectator's map polling rate
+    playerTimeframe: 700, // Player's map polling rate
+    connectionTimeframe: 700, // Minimum delay between requests
     net: {
         game: {
             ws: "ws://93.39.188.250:8521"
-            // ws: "ws://margot.di.unipi.it:8521"
+            // ws: "ws://131.114.3.213:8521"
         },
         chat: {
             ws: "ws://93.39.188.250:8522"
-            // ws: "ws://margot.di.unipi.it:8522"
+            // ws: "ws://131.114.3.213:8522"
         }
     },
     status: {

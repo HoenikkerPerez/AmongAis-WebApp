@@ -1,4 +1,7 @@
 // Controller
+
+mapClient = new GameClient();
+
 window.onload = function () {
    // Loading session
    console.debug("Controller: loading GameClient...");

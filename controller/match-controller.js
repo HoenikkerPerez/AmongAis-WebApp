@@ -275,9 +275,10 @@ class MatchController {
 
     mapPoller() {
         //console.debug("Polling map")
-        let gameName = model.status.ga;
-        
-        this._gameClient.lookMap(gameName);
+        if(model.status.ga != undefined) {
+            let gameName = model.status.ga;
+            mapClient.lookMap(gameName);
+        }
         // setMap()
     };
 

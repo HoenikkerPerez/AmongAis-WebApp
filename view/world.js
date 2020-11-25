@@ -42,12 +42,14 @@ class WorldUi {
 
     tmp_players = []
     _initSize;
+    _imageLoaded = false;
 
     constructor(ctx) {
         this.ctx = ctx;
         let p = this._loads();
         Promise.all(p).then(function (loaded) {
             this.tileAtlas = this._getImage('tiles');
+            this._imageLoaded = true;
         }.bind(this));
         
         let canvas = document.getElementById("canvas");
@@ -164,14 +166,16 @@ class WorldUi {
     }
 
     renderMap() {
-        if (!this._initSize) {
-            this._initCanvasSize();
-            this._initSize = true;
-        }
-        // this._clearCanvas();
-        this._drawMap();
-        this._drawShoots();
-        this._drawPlayerNames();
+        if (this._imageLoaded) {
+            if (!this._initSize) {
+                this._initCanvasSize();
+                this._initSize = true;
+            }
+            // this._clearCanvas();
+            this._drawMap();
+            this._drawShoots();
+            this._drawPlayerNames();
+        };
         window.requestAnimationFrame(this.renderMap.bind(this));
     };
 
