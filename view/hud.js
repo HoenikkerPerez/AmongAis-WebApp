@@ -146,6 +146,10 @@ class HudUi {
             let p = document.createElement("li");
 
             p.innerHTML = _p.name; //+ "   (" + _p.team + ")"; // "["+_p.symbol+"] " + 
+            if(_p.state == "KILLED") {
+                p.style.textDecoration = "line-through";
+            }
+            
             if (_p.team == 0) {
                 p.style.color = model.teamColors.teamA;
             } else if (_p.team == 1) {
