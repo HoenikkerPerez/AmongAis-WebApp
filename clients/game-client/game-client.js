@@ -48,7 +48,7 @@ class GameClient {
             //console.debug("Game Client: Dispatching event" + msgtag);
             document.dispatchEvent(new CustomEvent(msgtag, {detail: msg }));
             // Check too fast error
-            if(msg.data == "ERROR 401 Too fast") {
+            if(msg == "ERROR 401 Too fast") {
                 popupMsg("Connection closed by the server - too fast.","danger")
                 console.error("Too fast :(");
             }
