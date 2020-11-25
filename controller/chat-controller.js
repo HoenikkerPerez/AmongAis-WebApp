@@ -15,7 +15,8 @@ class ChatController {
                 if (item.length > 0) {
                     console.debug("Chat Client received message: " + msg);
                     // <channel> <name> <text>
-                    let spltmsg = item.split(" ");
+                    let trimmed = item.replace(/  +/g, ' ');
+                    let spltmsg = trimmed.split(" ");
                     let channel = spltmsg.shift();
                     let name = spltmsg.shift();
                     let text = spltmsg.join(' ');
@@ -33,9 +34,10 @@ class ChatController {
 
     _parseSystemMessage(msg, channel, name) {
 
+        let msgspl = msg.split(" "); // @gameserver ...
+
         if(this._isEndgame) { // TODO BUG since the final message is multiline and this probably makes score entries added to the model's list multiple times.
             // Player endgame messages
-            let rsplit = msg.replace(/  +/g, ' ').split(" ");
             let team = rsplit[0][1];
             let playerName = rsplit[1];
             let finalStatus = rsplit[2]; // ACTIVE, KILLED, ...
@@ -44,8 +46,6 @@ class ChatController {
             model.pushEndgameScore(endscore);
             return;
         }
-
-        let msgspl = msg.split(" "); // @gameserver ...
 
         // GAME start
         if(msg == "Now starting!\n") { 
