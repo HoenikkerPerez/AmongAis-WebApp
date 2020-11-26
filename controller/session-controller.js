@@ -129,7 +129,6 @@ class SessionController {
 
         document.addEventListener("miticoOggettoCheNonEsiste.START_GAME", (evt) => {
             console.debug("SessionController has received a START_GAME response from WS. " + evt.detail);
-            console.debug(evt);
             let msg = evt.detail;
             let msgOk= msg.startsWith("OK");
 

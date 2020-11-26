@@ -18,6 +18,7 @@ class GameClient {
     _wsRequests_look = [];
     _wsRequests_cmd = [];
     _noRequestsCount = 0;
+    _waitingResponse = false;
 
     constructor() {
         this._connect();
@@ -43,15 +44,20 @@ class GameClient {
         this._wsQueue = [];
         this._ws.onmessage = async function(evt) {
             let msg = await evt.data.text();
-            //console.debug("Game Client received a message - " + msg);
+            console.debug("Game Client received a message - " + msg);
             let msgtag = this._wsQueue.shift()
+            
             //console.debug("Game Client: Dispatching event" + msgtag);
             document.dispatchEvent(new CustomEvent(msgtag, {detail: msg }));
+            this._waitingResponse = false;
+            console.debug("Game Client onmesage _waitingResponse = " + this._waitingResponse)
+
             // Check too fast error
             if(msg == "ERROR 401 Too fast") {
                 popupMsg("Connection closed by the server - too fast.","danger")
                 console.error("Too fast :(");
             }
+
         }.bind(this)
 
         console.debug("Game Client is initializing the request queue.");
@@ -96,13 +102,21 @@ class GameClient {
         //console.debug("Game Client is going to send a message to the server, the clock tick'd!");
         //console.debug("_requestHandler Time: " + new Date());
         let timeframe = model.connectionTimeframe;
+        if (this._waitingResponse) {
+            timeframe = 100; // wait other 100 ms 
+            console.debug("_requetHandler waiting " + timeframe + " ms")
+            window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
+            return;
+        }
+
         if(this.isOdd(this._schedulerCounter) ){
             if(this._wsRequests_cmd.length > 0) {
                 //console.debug("Game Client's request queue is not empty.");
                 let msg = this._wsRequests_cmd.shift();
                 //console.debug("_requestHandler isOdd && CMD");
                 this._ws.send(new Blob([msg.msg + "\n"], {type: 'text/plain'}));
-                
+                this._waitingResponse = true;
+
                 this._wsQueue.push(msg.tag);
                 this._noRequestsCount = 0;
                 this._schedulerCounter++;
@@ -112,6 +126,8 @@ class GameClient {
                     let msg = this._wsRequests_look.shift();
                     //console.debug("_requestHandler isOdd && LOOK");
                     this._ws.send(new Blob([msg.msg + "\n"], {type: 'text/plain'}));
+                    this._waitingResponse = true;
+
                     this._wsQueue.push(msg.tag);
                     this._noRequestsCount = 0;
                     //console.debug("Game Client actually sent " + msg);
@@ -131,8 +147,10 @@ class GameClient {
                 let msg = this._wsRequests_look.shift();
                 //console.debug("_requestHandler isEven && LOOK");
                 this._ws.send(new Blob([msg.msg + "\n"], {type: 'text/plain'}));
+                this._waitingResponse = true;
 
                 this._wsQueue.push(msg.tag);
+                
                 this._noRequestsCount = 0;
                 this._schedulerCounter++;
                 //console.debug("Game Client actually sent " + msg);
@@ -141,6 +159,7 @@ class GameClient {
                 let msg = this._wsRequests_cmd.shift();
                 //console.debug("Game Client is going to actually send the message " + msg);
                 this._ws.send(new Blob([msg.msg + "\n"], {type: 'text/plain'}));
+                this._waitingResponse = true;
 
                 this._wsQueue.push(msg.tag);
                 this._noRequestsCount = 0;
@@ -156,6 +175,7 @@ class GameClient {
                 }
             }
         }
+        console.debug("Game Client _waitingResponse = " + this._waitingResponse)
         // Repeat endlessly
         //console.debug("Game Client is going to set the timer to fire again in " + timeframe + "ms.");
         window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
