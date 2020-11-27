@@ -129,6 +129,7 @@ class ChatController {
         document.getElementById("chatChannelInput").addEventListener("input", this._validateChannel);
         document.getElementById("chatChannelButton").addEventListener("click", () => {
             this._subscribeChatChannel();
+            document.getElementById("canvas").focus();
         });
 
         document.getElementById("chatSendMessageInput").addEventListener("input", this._validateSend);
@@ -136,6 +137,7 @@ class ChatController {
         document.getElementById("chatSendButton").addEventListener("click", () => {
             this._sendChatMessage();
             document.getElementById("chatSendMessageInput").value = "";
+            document.getElementById("canvas").focus();
         });
         
         document.addEventListener("MODEL_RUN_GAME", () => {
@@ -163,6 +165,8 @@ class ChatController {
             this._chat_client.leaveChannel(channel);
             popupMsg("Channel " + channel + " left", "success");
             model.removeSubscribedChannel(channel);
+            document.getElementById("canvas").focus();
+
         });
 
     };

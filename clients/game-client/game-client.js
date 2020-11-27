@@ -18,7 +18,8 @@ class GameClient {
     _wsRequests = [];
     _wsRequests_look = [];
     _wsRequests_cmd = [];
-    _waitingResponse = false;
+    _waitingResponse;
+    _lastResponse;
     _nopTime;
     __noRequestsTime;
     constructor(clientType) {
@@ -45,25 +46,21 @@ class GameClient {
         this._wsQueue = [];
         this._ws.onmessage = async function(evt) {
             this._waitingResponse = false;
+            this._lastResponse;
             let msg = await evt.data.text();
             let msgtag = this._wsQueue.shift()
-            console.debug(this._clientType + " received a message - " + msgtag);
-            
-            //console.debug("Game Client: Dispatching event" + msgtag);
+            //console.debug(this._clientType + " received a message - " + msgtag);
+            console.debug("Game Client: Dispatching event" + msg);
             document.dispatchEvent(new CustomEvent(msgtag, {detail: msg }));
-
-            // Check too fast error
-            if(msg == "ERROR 401 Too fast") {
-                popupMsg("Connection closed by the server - too fast.","danger")
-                console.error("Too fast :(");
-            }
-
         }.bind(this)
 
         this._nopTime = new Date();
         console.debug("Game Client is initializing the request queue.");
         this._wsRequests = [];
         this._noRequestsTime = new Date();
+        this._waitingResponse = false;
+        this._lastResponse = new Date();
+        
         window.setTimeout(function(){ this._requestHandler() }.bind(this), model.connectionTimeframe);
         // window.setTimeout(function(){ this._requestCmdHandler() }.bind(this), model.connectionTimeframe);
         // window.setTimeout(function(){ this._requestLookHandler() }.bind(this), model.connectionTimeframe);
@@ -101,16 +98,18 @@ class GameClient {
     isOdd(num) { return num % 2;}
     // _requestHandler is called the timer to avoid sending messages too fast
     _requestHandler() {
+        let timeframe = model.connectionTimeframe;
         //console.debug("Game Client is going to send a message to the server, the clock tick'd!");
         //console.debug("_requestHandler Time: " + new Date());
-        let timeframe = model.connectionTimeframe;
-        if (this._waitingResponse) {
-            timeframe = 600; // wait other 100 ms 
-            console.debug("_requetHandler waiting " + timeframe + " ms")
-            window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
+        let now = new Date()
+        let elapsed = now - this._lastResponse;
+        if (elapsed < timeframe) {
+            let deltaTimeframe = timeframe - elapsed + 50; // add a little more waiting time
+            console.debug("_requetHandler waiting " + deltaTimeframe + " ms")
+            window.setTimeout(function(){ this._requestHandler() }.bind(this), deltaTimeframe);
             return;
         }
-
+        
         if(this.isOdd(this._schedulerCounter) ){
             if(this._wsRequests_cmd.length > 0) {
                 //console.debug("Game Client's request queue is not empty.");
