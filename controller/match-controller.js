@@ -12,9 +12,15 @@ class MatchController {
     _gameClient;
     _lastDirection = {direction: GameClient.UP}; // Not in model because it's intended to be part of the interaction. The server actually allows to shoot in a different direction.
 
+    // 
+    dragStart=null
+    dragged;
+    scaleFactor = 1.01;
+    
     constructor(gameClient) {
         this._gameClient = gameClient;
         this.load();
+        this._trackTransforms(document.getElementById("canvas").getContext("2d"))
     }
 
     /* PHYSICAL GAME */
@@ -322,6 +328,113 @@ class MatchController {
         model.status.pl_list[choice.name].touring = choice.touring;
     }
 
+
+    /* MAP TRANSFORMATIONS AND MAP HANDLERS */
+
+    _clearCanvas() {
+        let ctx = document.getElementById("canvas").getContext("2d");
+        ctx.save();
+        ctx.setTransform(1,0,0,1,0,0);
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.restore();
+    }
+
+    _resizeCanvasHandler() {
+        let ctx = document.getElementById("canvas").getContext("2d");
+        let displayWidth  = window.innerHeight * 0.9
+        let displayHeight = window.innerWidth * 0.9
+        let sz = 0;
+        if(displayWidth<displayHeight) {sz=displayWidth;} else {sz=displayHeight;}
+        displayHeight = displayWidth = sz;
+        this._tsizeMap = Math.floor(displayHeight / model._map.rows)
+        ctx.canvas.width  = this._tsizeMap * model._map.rows;
+        ctx.canvas.height = this._tsizeMap * model._map.cols;
+    }
+
+    _zoom = function(clicks){
+        let ctx = document.getElementById("canvas").getContext("2d");
+        let pt = ctx.transformedPoint(this.lastX,this.lastY);
+        ctx.translate(pt.x,pt.y);
+        let factor = Math.pow(this.scaleFactor,clicks);
+        ctx.scale(factor,factor);
+        ctx.translate(-pt.x,-pt.y);
+        this._clearCanvas();
+    }
+
+    _handleScroll = function(evt){
+        let delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
+        if (delta) this._zoom(delta);
+        this._clearCanvas();
+        return evt.preventDefault() && false;
+    };
+    
+
+    // Adds ctx.getTransform() - returns an SVGMatrix
+    // Adds ctx.transformedPoint(x,y) - returns an SVGPoint
+    _trackTransforms = function(ctx) {
+        let svg = document.createElementNS("http://www.w3.org/2000/svg",'svg');
+        let xform = svg.createSVGMatrix();
+        ctx.getTransform = function(){ return xform; };
+        
+        let savedTransforms = [];
+        let save = ctx.save;
+        ctx.save = function(){
+            savedTransforms.push(xform.translate(0,0));
+            return save.call(ctx);
+        };
+        
+        let restore = ctx.restore;
+        ctx.restore = function(){
+        xform = savedTransforms.pop();
+        return restore.call(ctx);
+                };
+        
+        let scale = ctx.scale;
+        ctx.scale = function(sx,sy){
+        xform = xform.scaleNonUniform(sx,sy);
+        return scale.call(ctx,sx,sy);
+                };
+        
+        let rotate = ctx.rotate;
+        ctx.rotate = function(radians){
+            xform = xform.rotate(radians*180/Math.PI);
+            return rotate.call(ctx,radians);
+        };
+        
+        let translate = ctx.translate;
+        ctx.translate = function(dx,dy){
+            xform = xform.translate(dx,dy);
+            return translate.call(ctx,dx,dy);
+        };
+        
+        let transform = ctx.transform;
+        ctx.transform = function(a,b,c,d,e,f){
+            let m2 = svg.createSVGMatrix();
+            m2.a=a; m2.b=b; m2.c=c; m2.d=d; m2.e=e; m2.f=f;
+            xform = xform.multiply(m2);
+            return transform.call(ctx,a,b,c,d,e,f);
+        };
+        
+        let setTransform = ctx.setTransform;
+        ctx.setTransform = function(a,b,c,d,e,f){
+            xform.a = a;
+            xform.b = b;
+            xform.c = c;
+            xform.d = d;
+            xform.e = e;
+            xform.f = f;
+            return setTransform.call(ctx,a,b,c,d,e,f);
+        };
+        
+        let pt  = svg.createSVGPoint();
+        ctx.transformedPoint = function(x,y){
+            pt.x=x; pt.y=y;
+            return pt.matrixTransform(xform.inverse());
+        }
+    }.bind(this)
+
+
+
     /* LISTENERS */
 
     // All listeners common to every kind of user
@@ -351,8 +464,6 @@ class MatchController {
                 this._gameClient.startGame(model.status.ga);
                 // memorize game start time
             });
-            // let canvas = document.getElementById("canvas");
-            canvas.addEventListener("keyup", this.startHandler.bind(this), false); // TODO REMOVE
             
             // Init map polling
             this._pollOnce(); // TODO POLLING: this._poller(); 
@@ -371,6 +482,38 @@ class MatchController {
                     popupMsg("Are you a PLAYER or a SPECTATOR?", "danger");
             }
         }, false);
+
+        let canvas = document.getElementById("canvas");
+        canvas.addEventListener('mousedown',function(evt){
+            let ctx = document.getElementById("canvas").getContext("2d");
+            // canvas.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
+            this.lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
+            this.lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
+            this.dragStart = ctx.transformedPoint(this.lastX,this.lastY);
+            this.dragged = false;
+        }.bind(this),false);
+
+        canvas.addEventListener('mousemove',function(evt){
+            let ctx = document.getElementById("canvas").getContext("2d");
+
+            this.lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
+            this.lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
+            this.dragged = true;
+            if (this.dragStart){
+              let pt = ctx.transformedPoint(this.lastX,this.lastY);
+              ctx.translate(pt.x-this.dragStart.x,pt.y-this.dragStart.y);
+              this._clearCanvas();
+            }
+        }.bind(this),false);
+
+        canvas.addEventListener('mouseup',function(evt){
+            this.dragStart = null;
+        }.bind(this),false);
+
+        canvas.addEventListener('DOMMouseScroll',this._handleScroll.bind(this),false);
+        canvas.addEventListener('mousewheel',this._handleScroll.bind(this),false);
+
+        window.addEventListener("resize", this._resizeCanvasHandler.bind(this), false);
     };
 
     // Player-specific listeners
