@@ -50,7 +50,7 @@ class GameClient {
             let msg = await evt.data.text();
             let msgtag = this._wsQueue.shift()
             //console.debug(this._clientType + " received a message - " + msgtag);
-            console.debug("Game Client: Dispatching event" + msg);
+            // console.debug("Game Client: Dispatching event" + msgtag);
             document.dispatchEvent(new CustomEvent(msgtag, {detail: msg }));
         }.bind(this)
 
