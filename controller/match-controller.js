@@ -63,6 +63,17 @@ class MatchController {
         }
     }
 
+    _moveHandler(event, gameClient) {
+        // if pathfing exist recompute it or continue till end? TODO
+        let nextMove = model.popNextPathfindingMove();
+        if(nextMove != undefined) {
+            console.debug("MatchController is asking the game client to pathfinding-move " + nextMove);
+            gameClient.move(nextMove);
+            this._lastDirection = nextMove;
+        }
+    }
+
+
     // Laser
 
     shootHandler(evt) { // TODO LUCA
@@ -137,7 +148,6 @@ class MatchController {
         };
         console.debug("Match Controller: shot over " + cells + " cells.");
     };
-
 
     /* MAP HANDLING */
 
@@ -291,6 +301,18 @@ class MatchController {
         model.status.pl_list[choice.name].touring = choice.touring;
     }
 
+    /* PATHFINDING */
+
+    _pathfindingMove(evt, gameClient) {
+        let nextMove = model.popNextPathfindingMove();
+        if(nextMove != undefined) {
+            console.debug("MatchController is asking the game client to pathfinding-move " + nextMove);
+            gameClient.move(nextMove);
+            this._lastDirection = nextMove;
+        }
+    }
+
+
 
     /* MAP TRANSFORMATIONS AND MAP HANDLERS */
 
@@ -336,7 +358,7 @@ class MatchController {
     };
     
     _mouseDownHandler(evt) {
-        if (!(e.shiftKey && e.which == 1)) {
+        if (!(evt.shiftKey && evt.which == 1)) {
             let ctx = document.getElementById("canvas").getContext("2d");
             // canvas.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
             this.lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
@@ -363,11 +385,12 @@ class MatchController {
         this._dragStart = null;
     };
 
+
     _clickHandler(evt) {
         // SHIFT + mouse click
         if (evt.shiftKey && evt.which == 1) {
             let ctx = document.getElementById("canvas").getContext("2d");
-
+            let gameClient = this._gameClient;
             let canvasHeigh = ctx.canvas.height;
             let canvasWidth = ctx.canvas.width;
             let mapC = model._map.cols;
@@ -378,16 +401,16 @@ class MatchController {
             // check square position
             let targetC = Math.floor(pt.x / tsizeMap);
             let targetR = Math.floor(pt.y / tsizeMap);
+
             let start = model.findMyPosition();
             if(start == undefined)
                 return 
-            let startR = Math.floor(pt.y / tsizeMap);
             let jp = new PathFinder(model._map);
             let path = jp.findPath(start.x, start.y, targetC, targetR); 
             if(path) { 
                 // update the model
                 model.setPath(path);
-            }  
+            }
             console.debug("_clickHandler: from " + "(" + start.x + ", " + start.y + ")" + " to " + "(" + targetR + ", " + targetC + ")");
         }
     }
@@ -464,6 +487,12 @@ class MatchController {
     // All listeners common to every kind of user
 
     load() {
+        // MOVE 
+        document.addEventListener("miticoOggettoCheNonEsiste.MOVE", ((evt) => {this._moveHandler(evt, this._gameClient)}).bind(this), false);
+
+        // PATHFINDING
+        document.addEventListener("MODEL_SETPATHFINDING",  ((evt) => {this._pathfindingMove(evt, this._gameClient)}).bind(this), false);
+
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", (this.lookMapHandler).bind(this), false);
 
         // Shoot OK event is handled by chat for every player (included "me")
@@ -520,6 +549,7 @@ class MatchController {
         window.addEventListener("resize", ((evt) => {this._resizeCanvasHandler(evt)}).bind(this),false);
 
         canvas.addEventListener("click", ((evt) => {this._clickHandler(evt)}).bind(this),false);
+        
     };
 
     // Player-specific listeners

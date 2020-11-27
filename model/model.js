@@ -76,12 +76,45 @@ var model = {
         this._map = map;
         // remove exausted shoots
         this._removeExaustedShoots();
+        // update player position
+        let tmpMap = map.tiles;
+        for(let i = 0; i<tmpMap.length; i++) {
+            let symbol_code = tmpMap[i].charCodeAt(0);
+            if(symbol_code >= 65 && symbol_code <= 84 || symbol_code >= 97 && symbol_code <= 116) { 
+                let pl = this.findPlayerBySymbol(tmpMap[i]);
+                if(pl != undefined) {
+                    pl.x = i % map.cols;
+                    pl.y = Math.floor(i / map.cols);
+                } 
+            }
+        }
         document.dispatchEvent(new CustomEvent("MODEL_SETMAP", {detail: {map:map}}));
     },
 
     setPath(steps) {
         let reverseSteps = steps.reverse();
+        reverseSteps.shift();
         this.path = reverseSteps.map(step => {return {x: step.x, y: step.y, counter: 7}});
+        // attach first step to the event
+        document.dispatchEvent(new CustomEvent("MODEL_SETPATHFINDING", {detail: {step:this.path}}));
+    },
+
+    popNextPathfindingMove() {
+        if(this.path.length <= 0)
+            return undefined
+        let nextStep = this.path.shift();
+        let nextMove;
+        start = model.findMyPosition();
+        if(start.x > nextStep.x)
+            nextMove = "W";
+        else if (start.x < nextStep.x)
+            nextMove="E";
+        else if (start.y < nextStep.y)
+            nextMove="S";
+        else if (start.y > nextStep.y)
+            nextMove="N";
+        console.debug("popNextPathfindingMove: pos " + "(" + start.x + ", " + start.y + ")" + " to " + "(" + nextStep.x + ", " + nextStep.y + "); MOVE: " + nextMove);
+        return nextMove;
     },
 
     _removeExaustedShoots() {
