@@ -48,7 +48,7 @@ class ChatController {
         }
 
         // GAME start
-        if(msg == "Now starting!\n") { 
+        if(msg == "Now starting!") { 
             model.setGameActive();
             model.addMessageChat(channel, name, msg);
             return;

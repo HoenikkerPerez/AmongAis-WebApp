@@ -4,6 +4,7 @@ var model = {
     spectatorTimeframe: 600, // Spectator's map polling rate
     playerTimeframe: 600, // Player's map polling rate
     connectionTimeframe: 600, // Minimum delay between requests
+    nopTimeframe: 30000,
     net: {
         game: {
             ws: "ws://93.39.188.250:8521"

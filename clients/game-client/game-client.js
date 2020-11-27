@@ -1,4 +1,5 @@
 class GameClient {
+    _clientType;
 
     // WebSocket abstracts the connection to the Game Server.
     _ws;
@@ -17,13 +18,13 @@ class GameClient {
     _wsRequests = [];
     _wsRequests_look = [];
     _wsRequests_cmd = [];
-    _noRequestsCount = 0;
     _waitingResponse = false;
-
-    constructor() {
+    _nopTime;
+    __noRequestsTime;
+    constructor(clientType) {
         this._connect();
         this._lobby = new LobbyManager();
-
+        this._clientType = clientType;
         // TODO: Change with real login _send/_receive functions
         this._auth = new AuthManager();
         this._sync = new MatchSync();
@@ -43,14 +44,13 @@ class GameClient {
 
         this._wsQueue = [];
         this._ws.onmessage = async function(evt) {
+            this._waitingResponse = false;
             let msg = await evt.data.text();
-            console.debug("Game Client received a message - " + msg);
             let msgtag = this._wsQueue.shift()
+            console.debug(this._clientType + " received a message - " + msgtag);
             
             //console.debug("Game Client: Dispatching event" + msgtag);
             document.dispatchEvent(new CustomEvent(msgtag, {detail: msg }));
-            this._waitingResponse = false;
-            console.debug("Game Client onmesage _waitingResponse = " + this._waitingResponse)
 
             // Check too fast error
             if(msg == "ERROR 401 Too fast") {
@@ -60,8 +60,10 @@ class GameClient {
 
         }.bind(this)
 
+        this._nopTime = new Date();
         console.debug("Game Client is initializing the request queue.");
         this._wsRequests = [];
+        this._noRequestsTime = new Date();
         window.setTimeout(function(){ this._requestHandler() }.bind(this), model.connectionTimeframe);
         // window.setTimeout(function(){ this._requestCmdHandler() }.bind(this), model.connectionTimeframe);
         // window.setTimeout(function(){ this._requestLookHandler() }.bind(this), model.connectionTimeframe);
@@ -103,7 +105,7 @@ class GameClient {
         //console.debug("_requestHandler Time: " + new Date());
         let timeframe = model.connectionTimeframe;
         if (this._waitingResponse) {
-            timeframe = 100; // wait other 100 ms 
+            timeframe = 600; // wait other 100 ms 
             console.debug("_requetHandler waiting " + timeframe + " ms")
             window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
             return;
@@ -118,7 +120,7 @@ class GameClient {
                 this._waitingResponse = true;
 
                 this._wsQueue.push(msg.tag);
-                this._noRequestsCount = 0;
+                this._noRequestsTime = new Date();
                 this._schedulerCounter++;
                 //console.debug("Game Client actually sent " + msg);
             } else if(this._wsRequests_look.length > 0) {
@@ -129,16 +131,17 @@ class GameClient {
                     this._waitingResponse = true;
 
                     this._wsQueue.push(msg.tag);
-                    this._noRequestsCount = 0;
+                    this._noRequestsTime = new Date();
                     //console.debug("Game Client actually sent " + msg);
             } else {
                 timeframe = 100;
                 this._noRequestsCount++;
-                if(this._noRequestsCount >= 300) {
+                // if(this._noRequestsCount >= 300) {
+                if((new Date() - this._noRequestsTime) >= model.nopTimeframe) { 
                     //console.debug("_requestHandler isOdd && NOP");
-                    this._noRequestsCount = 0;
                     this.nop(); // TODO gamename nop
                     timeframe = model.connectionTimeframe;
+                    this._noRequestsTime = new Date();
                 }
             }
         } else {
@@ -151,7 +154,7 @@ class GameClient {
 
                 this._wsQueue.push(msg.tag);
                 
-                this._noRequestsCount = 0;
+                this._noRequestsTime = new Date();
                 this._schedulerCounter++;
                 //console.debug("Game Client actually sent " + msg);
             } else if(this._wsRequests_cmd.length > 0) {
@@ -162,20 +165,20 @@ class GameClient {
                 this._waitingResponse = true;
 
                 this._wsQueue.push(msg.tag);
-                this._noRequestsCount = 0;
+                this._noRequestsTime = new Date();
                 //console.debug("Game Client actually sent " + msg);
             } else {
                 timeframe = 100;
                 this._noRequestsCount++;
-                if(this._noRequestsCount >= 300) {
-                    this._noRequestsCount = 0;
+                if((new Date() - this._noRequestsTime) >= model.nopTimeframe) {
                     this.nop(); // TODO gamename nop
                     //console.debug("_requestHandler isEven && NOP");
                     timeframe = model.connectionTimeframe;
+                    this._noRequestsTime = new Date();
                 }
             }
         }
-        console.debug("Game Client _waitingResponse = " + this._waitingResponse)
+        // console.debug("Game Client _waitingResponse = " + this._waitingResponse)
         // Repeat endlessly
         //console.debug("Game Client is going to set the timer to fire again in " + timeframe + "ms.");
         window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
@@ -236,6 +239,8 @@ class GameClient {
     }
 
     nop() {
+        console.debug("nopElapsed: " + (new Date() - this._nopTime))
+        this._nopTime = new Date();
         console.debug("Game Client is requesting a nop");
         let msg = this._sync.nop(model.status.ga);
         this._send("miticoOggettoCheNonEsiste.NOP", msg);

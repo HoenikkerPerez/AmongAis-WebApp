@@ -354,7 +354,7 @@ class MatchController {
             canvas.addEventListener("keyup", this.startHandler.bind(this), false); // TODO REMOVE
             
             // Init map polling
-            this._poller(); // TODO this._pollOnce();
+            this._pollOnce(); // TODO POLLING: this._poller(); 
             // Loads the specialized listeners
             switch(model.kind) {
                 case model.PLAYER:
@@ -400,7 +400,7 @@ class MatchController {
         }, false);
         
         document.addEventListener("MODEL_PLAYER_JOINED", () => {
-            this._poller(); // TODO this._pollOnce();
+             this._pollOnce(); // TODO POLLING: this._poller(); 
         }, false);
     }
 
