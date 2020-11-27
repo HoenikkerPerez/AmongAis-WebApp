@@ -13,10 +13,8 @@ class MatchController {
     _lastDirection = {direction: GameClient.UP}; // Not in model because it's intended to be part of the interaction. The server actually allows to shoot in a different direction.
 
     // 
-    dragStart=null
-    dragged;
-    scaleFactor = 1.01;
-    
+
+
     constructor(gameClient) {
         this._gameClient = gameClient;
         this.load();
@@ -166,41 +164,6 @@ class MatchController {
         // extract local interesting information from the map
     };
 
-
-    /**
-     * This function was once used with this code:
-     * 
-     *         this.applyOnMapEntities([
-            [model.status.me.symbol,
-                (x,y) => { model.status.me.position = {x:x, y:y} }],
-            // [symbol, (x,y) => { handlers }],
-        ]);
-     *
-     * I hope it'll be needed again. I had a lot of fun in writing it.
-     * 
-
-    applyOnMapEntities(symbolFunctionList) {
-        let map = model._map;
-        // foreach element in map
-        for(let r = 0; r < map.rows; r++) {
-            for(let c = 0; c < map.cols; c++) {
-                // Compute cell index
-                let idx = r * map.cols + c;
-                let tile = map.tiles[idx];
-                // Check foreach symbol in the list
-                for(let sf of symbolFunctionList) {
-                    //console.debug(map[idx] + "=?=" + sf[0]);
-                    if(tile == sf[0]) {
-                        console.debug("Match Controller found " + sf[0] + " AT " + c + "," + r + " in map. Applying now " + sf[1] + " on that position.");
-                        sf[1](c,r);
-                    }
-                }
-            }
-        }
-    }
-
-    */
-
     
     /* STATUS HANDLING */
 
@@ -331,6 +294,10 @@ class MatchController {
 
     /* MAP TRANSFORMATIONS AND MAP HANDLERS */
 
+    _dragStart = null
+    _dragged = false;
+    _scaleFactor = 1.01;
+
     _clearCanvas() {
         let ctx = document.getElementById("canvas").getContext("2d");
         ctx.save();
@@ -351,23 +318,52 @@ class MatchController {
         ctx.canvas.height = this._tsizeMap * model._map.cols;
     }
 
-    _zoom = function(clicks){
+    _zoom(clicks){
         let ctx = document.getElementById("canvas").getContext("2d");
         let pt = ctx.transformedPoint(this.lastX,this.lastY);
         ctx.translate(pt.x,pt.y);
-        let factor = Math.pow(this.scaleFactor,clicks);
+        let factor = Math.pow(this._scaleFactor,clicks);
         ctx.scale(factor,factor);
         ctx.translate(-pt.x,-pt.y);
         this._clearCanvas();
     }
 
-    _handleScroll = function(evt){
+    _handleScroll(evt){
         let delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
         if (delta) this._zoom(delta);
         this._clearCanvas();
         return evt.preventDefault() && false;
     };
     
+    _mouseDownHandler(evt) {
+        let ctx = document.getElementById("canvas").getContext("2d");
+        // canvas.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
+        this.lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
+        this.lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
+        this._dragStart = ctx.transformedPoint(this.lastX,this.lastY);
+        this._dragged = false;
+    };
+
+    _mouseMoveHandler(evt) {
+        let ctx = document.getElementById("canvas").getContext("2d");
+
+        this.lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
+        this.lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
+        this._dragged = true;
+        if (this._dragStart){
+            let pt = ctx.transformedPoint(this.lastX,this.lastY);
+            ctx.translate(pt.x-this._dragStart.x,pt.y-this._dragStart.y);
+            this._clearCanvas();
+        }
+    }
+
+    _mouseUpHandler(evt) {
+        this._dragStart = null;
+    };
+
+    _clickHandler(evt) {
+        return;
+    }
 
     // Adds ctx.getTransform() - returns an SVGMatrix
     // Adds ctx.transformedPoint(x,y) - returns an SVGPoint
@@ -484,36 +480,18 @@ class MatchController {
         }, false);
 
         let canvas = document.getElementById("canvas");
-        canvas.addEventListener('mousedown',function(evt){
-            let ctx = document.getElementById("canvas").getContext("2d");
-            // canvas.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
-            this.lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
-            this.lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
-            this.dragStart = ctx.transformedPoint(this.lastX,this.lastY);
-            this.dragged = false;
-        }.bind(this),false);
+        canvas.addEventListener('mousedown', ((evt) => {this._mouseDownHandler(evt)}).bind(this),false);
 
-        canvas.addEventListener('mousemove',function(evt){
-            let ctx = document.getElementById("canvas").getContext("2d");
+        canvas.addEventListener('mousemove', ((evt) => {this._mouseMoveHandler(evt)}).bind(this),false);
 
-            this.lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
-            this.lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
-            this.dragged = true;
-            if (this.dragStart){
-              let pt = ctx.transformedPoint(this.lastX,this.lastY);
-              ctx.translate(pt.x-this.dragStart.x,pt.y-this.dragStart.y);
-              this._clearCanvas();
-            }
-        }.bind(this),false);
+        canvas.addEventListener('mouseup', ((evt) => {this._mouseUpHandler(evt)}).bind(this),false);
 
-        canvas.addEventListener('mouseup',function(evt){
-            this.dragStart = null;
-        }.bind(this),false);
+        canvas.addEventListener('DOMMouseScroll', ((evt) => {this._handleScroll(evt)}).bind(this),false);
+        canvas.addEventListener('mousewheel', ((evt) => {this._handleScroll(evt)}).bind(this),false);
 
-        canvas.addEventListener('DOMMouseScroll',this._handleScroll.bind(this),false);
-        canvas.addEventListener('mousewheel',this._handleScroll.bind(this),false);
+        window.addEventListener("resize", ((evt) => {this._resizeCanvasHandler(evt)}).bind(this),false);
 
-        window.addEventListener("resize", this._resizeCanvasHandler.bind(this), false);
+        canvas.addEventListener("click", ((evt) => {this._clickHandler(evt)}).bind(this),false);
     };
 
     // Player-specific listeners
