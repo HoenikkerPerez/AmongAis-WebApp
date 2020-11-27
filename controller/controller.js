@@ -1,11 +1,11 @@
 // Controller
 
-mapClient = new GameClient();
+mapClient = new GameClient("MAPCLIENT");
 
 window.onload = function () {
    // Loading session
    console.debug("Controller: loading GameClient...");
-   let gameClient = new GameClient();
+   let gameClient = new GameClient("GAMECLIENT");
    console.debug("Controller: loading SessionController...");
    this.session = new SessionController(gameClient);
    // Loading match

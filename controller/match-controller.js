@@ -142,6 +142,7 @@ class MatchController {
         //console.debug("LOOKMAPHANDLER " + evt.detail);
         let msgOk = evt.detail.startsWith("OK");
         if(!msgOk){
+            popupMsg(evt.detail, "danger");
             return;
         }
         // parse map
@@ -219,7 +220,7 @@ class MatchController {
         let msgOk = evt.detail.startsWith("OK");
         if(!msgOk){
             // alert("HUD[!]" + evt.detail);
-            popupMsg("[!] getStatusHandler" + evt.detail, "danger");
+            popupMsg(evt.detail, "danger");
             return;
         }
         let status = {};
@@ -354,7 +355,7 @@ class MatchController {
             canvas.addEventListener("keyup", this.startHandler.bind(this), false); // TODO REMOVE
             
             // Init map polling
-            this._poller(); // TODO this._pollOnce();
+            this._pollOnce(); // TODO POLLING: this._poller(); 
             // Loads the specialized listeners
             switch(model.kind) {
                 case model.PLAYER:
@@ -383,7 +384,7 @@ class MatchController {
             // Accuse Button
             document.addEventListener("BUTTON_ACCUSE", (evt) => {
                 let teammateName = evt.detail;
-                popupMsg("A vote of no confidence for teammate: " + teammateName, "warning");
+                // popupMsg("A vote of no confidence for teammate: " + teammateName, "warning");
                 this._gameClient.accuse(evt.detail);
             }, false);
             // Touring Button
@@ -396,11 +397,12 @@ class MatchController {
             // Start game
             model.timeframe = model.playerTimeframe;
             model.setStartGameTime();
+            canvas.focus();
             this._poller();
         }, false);
         
         document.addEventListener("MODEL_PLAYER_JOINED", () => {
-            this._poller(); // TODO this._pollOnce();
+             this._pollOnce(); // TODO POLLING: this._poller(); 
         }, false);
     }
 
@@ -410,6 +412,7 @@ class MatchController {
         document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
             // Init human commands
             model.timeframe = model.spectatorTimeframe;
+            document.getElementById("canvas").focus();
             this._poller();
         }, false);
     }

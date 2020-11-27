@@ -99,7 +99,6 @@ class SessionController {
 
         document.addEventListener("miticoOggettoCheNonEsiste.JOIN_GAME", (evt) => {
             console.debug("SessionController has received a JOIN_GAME response from WS. " + evt.detail);
-            console.debug(evt);
             let msg = evt.detail;
             let msgOk= msg.startsWith("OK");
             if(msgOk) {
@@ -113,7 +112,6 @@ class SessionController {
 
         document.addEventListener("miticoOggettoCheNonEsiste.SPECTATE_GAME", (evt) => {
             console.debug("SessionController has received a SPECTATE_GAME response from WS. " + evt.detail);
-            console.debug(evt);
             let msg = evt.detail;
             let msgOk= msg.startsWith("OK");
 
@@ -129,7 +127,6 @@ class SessionController {
 
         document.addEventListener("miticoOggettoCheNonEsiste.START_GAME", (evt) => {
             console.debug("SessionController has received a START_GAME response from WS. " + evt.detail);
-            console.debug(evt);
             let msg = evt.detail;
             let msgOk= msg.startsWith("OK");
 
@@ -150,7 +147,6 @@ class SessionController {
     }
 
     _keydownLogin(evt) {
-        console.debug("Pressed " + evt.key);
         if(evt.key == "Enter")
             document.getElementById("loginButton").click();
     }

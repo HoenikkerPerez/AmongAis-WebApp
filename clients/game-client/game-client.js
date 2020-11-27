@@ -1,4 +1,5 @@
 class GameClient {
+    _clientType;
 
     // WebSocket abstracts the connection to the Game Server.
     _ws;
@@ -17,12 +18,14 @@ class GameClient {
     _wsRequests = [];
     _wsRequests_look = [];
     _wsRequests_cmd = [];
-    _noRequestsCount = 0;
-
-    constructor() {
+    _waitingResponse;
+    _lastResponse;
+    _nopTime;
+    __noRequestsTime;
+    constructor(clientType) {
         this._connect();
         this._lobby = new LobbyManager();
-
+        this._clientType = clientType;
         // TODO: Change with real login _send/_receive functions
         this._auth = new AuthManager();
         this._sync = new MatchSync();
@@ -42,20 +45,22 @@ class GameClient {
 
         this._wsQueue = [];
         this._ws.onmessage = async function(evt) {
+            this._waitingResponse = false;
+            this._lastResponse;
             let msg = await evt.data.text();
-            //console.debug("Game Client received a message - " + msg);
             let msgtag = this._wsQueue.shift()
-            //console.debug("Game Client: Dispatching event" + msgtag);
+            //console.debug(this._clientType + " received a message - " + msgtag);
+            // console.debug("Game Client: Dispatching event" + msgtag);
             document.dispatchEvent(new CustomEvent(msgtag, {detail: msg }));
-            // Check too fast error
-            if(msg == "ERROR 401 Too fast") {
-                popupMsg("Connection closed by the server - too fast.","danger")
-                console.error("Too fast :(");
-            }
         }.bind(this)
 
+        this._nopTime = new Date();
         console.debug("Game Client is initializing the request queue.");
         this._wsRequests = [];
+        this._noRequestsTime = new Date();
+        this._waitingResponse = false;
+        this._lastResponse = new Date();
+        
         window.setTimeout(function(){ this._requestHandler() }.bind(this), model.connectionTimeframe);
         // window.setTimeout(function(){ this._requestCmdHandler() }.bind(this), model.connectionTimeframe);
         // window.setTimeout(function(){ this._requestLookHandler() }.bind(this), model.connectionTimeframe);
@@ -93,18 +98,28 @@ class GameClient {
     isOdd(num) { return num % 2;}
     // _requestHandler is called the timer to avoid sending messages too fast
     _requestHandler() {
+        let timeframe = model.connectionTimeframe;
         //console.debug("Game Client is going to send a message to the server, the clock tick'd!");
         //console.debug("_requestHandler Time: " + new Date());
-        let timeframe = model.connectionTimeframe;
+        let now = new Date()
+        let elapsed = now - this._lastResponse;
+        if (elapsed < timeframe) {
+            let deltaTimeframe = timeframe - elapsed + 50; // add a little more waiting time
+            console.debug("_requetHandler waiting " + deltaTimeframe + " ms")
+            window.setTimeout(function(){ this._requestHandler() }.bind(this), deltaTimeframe);
+            return;
+        }
+        
         if(this.isOdd(this._schedulerCounter) ){
             if(this._wsRequests_cmd.length > 0) {
                 //console.debug("Game Client's request queue is not empty.");
                 let msg = this._wsRequests_cmd.shift();
                 //console.debug("_requestHandler isOdd && CMD");
                 this._ws.send(new Blob([msg.msg + "\n"], {type: 'text/plain'}));
-                
+                this._waitingResponse = true;
+
                 this._wsQueue.push(msg.tag);
-                this._noRequestsCount = 0;
+                this._noRequestsTime = new Date();
                 this._schedulerCounter++;
                 //console.debug("Game Client actually sent " + msg);
             } else if(this._wsRequests_look.length > 0) {
@@ -112,17 +127,20 @@ class GameClient {
                     let msg = this._wsRequests_look.shift();
                     //console.debug("_requestHandler isOdd && LOOK");
                     this._ws.send(new Blob([msg.msg + "\n"], {type: 'text/plain'}));
+                    this._waitingResponse = true;
+
                     this._wsQueue.push(msg.tag);
-                    this._noRequestsCount = 0;
+                    this._noRequestsTime = new Date();
                     //console.debug("Game Client actually sent " + msg);
             } else {
                 timeframe = 100;
                 this._noRequestsCount++;
-                if(this._noRequestsCount >= 300) {
+                // if(this._noRequestsCount >= 300) {
+                if((new Date() - this._noRequestsTime) >= model.nopTimeframe) { 
                     //console.debug("_requestHandler isOdd && NOP");
-                    this._noRequestsCount = 0;
                     this.nop(); // TODO gamename nop
                     timeframe = model.connectionTimeframe;
+                    this._noRequestsTime = new Date();
                 }
             }
         } else {
@@ -131,9 +149,11 @@ class GameClient {
                 let msg = this._wsRequests_look.shift();
                 //console.debug("_requestHandler isEven && LOOK");
                 this._ws.send(new Blob([msg.msg + "\n"], {type: 'text/plain'}));
+                this._waitingResponse = true;
 
                 this._wsQueue.push(msg.tag);
-                this._noRequestsCount = 0;
+                
+                this._noRequestsTime = new Date();
                 this._schedulerCounter++;
                 //console.debug("Game Client actually sent " + msg);
             } else if(this._wsRequests_cmd.length > 0) {
@@ -141,21 +161,23 @@ class GameClient {
                 let msg = this._wsRequests_cmd.shift();
                 //console.debug("Game Client is going to actually send the message " + msg);
                 this._ws.send(new Blob([msg.msg + "\n"], {type: 'text/plain'}));
+                this._waitingResponse = true;
 
                 this._wsQueue.push(msg.tag);
-                this._noRequestsCount = 0;
+                this._noRequestsTime = new Date();
                 //console.debug("Game Client actually sent " + msg);
             } else {
                 timeframe = 100;
                 this._noRequestsCount++;
-                if(this._noRequestsCount >= 300) {
-                    this._noRequestsCount = 0;
+                if((new Date() - this._noRequestsTime) >= model.nopTimeframe) {
                     this.nop(); // TODO gamename nop
                     //console.debug("_requestHandler isEven && NOP");
                     timeframe = model.connectionTimeframe;
+                    this._noRequestsTime = new Date();
                 }
             }
         }
+        // console.debug("Game Client _waitingResponse = " + this._waitingResponse)
         // Repeat endlessly
         //console.debug("Game Client is going to set the timer to fire again in " + timeframe + "ms.");
         window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
@@ -216,6 +238,8 @@ class GameClient {
     }
 
     nop() {
+        console.debug("nopElapsed: " + (new Date() - this._nopTime))
+        this._nopTime = new Date();
         console.debug("Game Client is requesting a nop");
         let msg = this._sync.nop(model.status.ga);
         this._send("miticoOggettoCheNonEsiste.NOP", msg);
