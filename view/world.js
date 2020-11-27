@@ -157,6 +157,7 @@ class WorldUi {
             // this._clearCanvas();
             this._drawMap();
             this._drawShoots();
+            this._drawPathfinding();
             this._drawPlayerNames();
         };
         window.requestAnimationFrame(this.renderMap.bind(this));
@@ -255,6 +256,33 @@ class WorldUi {
             }
         }
     }
+
+    _drawPathfinding() {
+        let path = model.path;
+        let map = model._map;
+        for (let i=0; i<path.length; i++) {
+            let x = path[i].x;
+            let y = path[i].y;
+            let counter = path[i].counter;
+            let tile = Terrain.BULLET;
+            if (counter > 0) {
+                this.ctx.drawImage(
+                    this.tileAtlas, // image
+                    tile[0] * map.tsize, // source x
+                    tile[1] * map.tsize, // source y
+                    map.tsize, // source width
+                    map.tsize, // source height
+                    x * this._tsizeMap,  // target x
+                    y * this._tsizeMap, // target y
+                    this._tsizeMap, // target width
+                    this._tsizeMap // target height
+                );
+                model.path[i].counter--;
+            }
+
+        }
+    }
+
 
     _loadWsMessages() {
         document.addEventListener("MODEL_SETMAP", () => {

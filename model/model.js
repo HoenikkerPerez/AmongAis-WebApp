@@ -65,6 +65,8 @@ var model = {
         iVote: false,
     },
     shoots: [],
+    pathfindigMoves: [],
+    path: [],
 
     setLogin: function(lg) {this.login=lg},
     setUsername(uName){this.username=uName},
@@ -75,6 +77,11 @@ var model = {
         // remove exausted shoots
         this._removeExaustedShoots();
         document.dispatchEvent(new CustomEvent("MODEL_SETMAP", {detail: {map:map}}));
+    },
+
+    setPath(steps) {
+        let reverseSteps = steps.reverse();
+        this.path = reverseSteps.map(step => {return {x: step.x, y: step.y, counter: 7}});
     },
 
     _removeExaustedShoots() {
@@ -222,6 +229,17 @@ var model = {
             let player = playerList[p];
             if(player.symbol === symb)
                 return player;
+        }
+        return undefined;
+    },
+
+    findMyPosition() {
+        let me = this.inGameName;
+        let playerList = this.status.pl_list;
+        for(let p in playerList) {
+            let player = playerList[p];
+            if(player.name === me)
+                return {x: player.x, y: player.y};
         }
         return undefined;
     },

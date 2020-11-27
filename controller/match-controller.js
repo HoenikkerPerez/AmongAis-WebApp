@@ -336,12 +336,14 @@ class MatchController {
     };
     
     _mouseDownHandler(evt) {
-        let ctx = document.getElementById("canvas").getContext("2d");
-        // canvas.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
-        this.lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
-        this.lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
-        this._dragStart = ctx.transformedPoint(this.lastX,this.lastY);
-        this._dragged = false;
+        if (!(e.shiftKey && e.which == 1)) {
+            let ctx = document.getElementById("canvas").getContext("2d");
+            // canvas.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
+            this.lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
+            this.lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
+            this._dragStart = ctx.transformedPoint(this.lastX,this.lastY);
+            this._dragged = false;
+        }
     };
 
     _mouseMoveHandler(evt) {
@@ -362,7 +364,32 @@ class MatchController {
     };
 
     _clickHandler(evt) {
-        return;
+        // SHIFT + mouse click
+        if (evt.shiftKey && evt.which == 1) {
+            let ctx = document.getElementById("canvas").getContext("2d");
+
+            let canvasHeigh = ctx.canvas.height;
+            let canvasWidth = ctx.canvas.width;
+            let mapC = model._map.cols;
+            let mapR = model._map.rows;
+            let tsizeMap = canvasHeigh / mapR;
+
+            let pt = ctx.transformedPoint(evt.offsetX,evt.offsetY);
+            // check square position
+            let targetC = Math.floor(pt.x / tsizeMap);
+            let targetR = Math.floor(pt.y / tsizeMap);
+            let start = model.findMyPosition();
+            if(start == undefined)
+                return 
+            let startR = Math.floor(pt.y / tsizeMap);
+            let jp = new PathFinder(model._map);
+            let path = jp.findPath(start.x, start.y, targetC, targetR); 
+            if(path) { 
+                // update the model
+                model.setPath(path);
+            }  
+            console.debug("_clickHandler: from " + "(" + start.x + ", " + start.y + ")" + " to " + "(" + targetR + ", " + targetC + ")");
+        }
     }
 
     // Adds ctx.getTransform() - returns an SVGMatrix
@@ -429,7 +456,8 @@ class MatchController {
         }
     }.bind(this)
 
-
+    // NAIVE PATHFIND http://ashblue.github.io/javascript-pathfinding/
+    
 
     /* LISTENERS */
 
@@ -539,3 +567,4 @@ class MatchController {
     }
     
 };
+
