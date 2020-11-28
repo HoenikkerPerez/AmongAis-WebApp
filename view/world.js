@@ -28,14 +28,15 @@ const Terrain = {
     BULLET_VERTICAL: [21,21],
     BULLET_HORIZONTAL: [21,21], //TODO laser tile
     PATHFINDING: [21, 21], // TODO path tile
-    PLAYER_BLUE_KILLED: [21, 21],
-    PLAYER_RED_KILLED: [21, 21]
+    // GRAVES
+    PLAYER_BLUE_KILLED: [3, 0],
+    PLAYER_RED_KILLED: [3, 1]
 }
 
 class WorldUi {
 
     imgTileSet = './assets/mod32x32_map_tilev2.png'    
-    
+    imgTileSetGraves = './assets/grave_markers-shadow.png'   
     images = {}
 
     _rendering = false
@@ -53,6 +54,7 @@ class WorldUi {
         let p = this._loads();
         Promise.all(p).then(function (loaded) {
             this.tileAtlas = this._getImage('tiles');
+            this.tileGraves = this._getImage('graves');
             this._imageLoaded = true;
         }.bind(this));
         
@@ -84,12 +86,14 @@ class WorldUi {
             type = "flag";
         }        
         else if(symbol_code >= 65 && symbol_code <= 84) {  // uppercase letter team 0
-            tile = Terrain.PLAYER_RED;
+            // use background grass
+            tile = Terrain.GRASS;
             team = 0;
             type = "player";
         }
         else if (symbol_code >= 97 && symbol_code <= 116) {// lowecase letter team 1
-            tile = Terrain.PLAYER_BLUE;
+            // use background grass
+            tile = Terrain.GRASS;
             team = 1;
             type = "player";
         }
@@ -172,22 +176,19 @@ class WorldUi {
         this.tmp_players = [];
         for (let c = 0; c < map.cols; c++) {
             for (let r = 0; r < map.rows; r++) {
-                let [tile, symbol, team, type] = this._getTile(c, r);
-                if (tile !== (0,0)) { // 0 => empty tile
-                    this.ctx.drawImage(
-                        this.tileAtlas, // image
-                        tile[0] * map.tsize, // source x
-                        tile[1] * map.tsize, // source y
-                        map.tsize, // source width
-                        map.tsize, // source height
-                        c * this._tsizeMap,  // target x
-                        r * this._tsizeMap, // target y
-                        this._tsizeMap, // target width
-                        this._tsizeMap // target height
-                    );
-                    if (type === "player") {
-                        this.tmp_players.push([symbol, team, c, r]);
-                    }
+                let [tile, symbol, team, type] = this._getTile(c, r); // TODO do not draw players!
+                this.ctx.drawImage(this.tileAtlas, // image
+                                    tile[0] * map.tsize, // source x
+                                    tile[1] * map.tsize, // source y
+                                    map.tsize, // source width
+                                    map.tsize, // source height
+                                    c * this._tsizeMap,  // target x
+                                    r * this._tsizeMap, // target y
+                                    this._tsizeMap, // target width
+                                    this._tsizeMap // target height
+                                );
+                if (type === "player") {
+                    this.tmp_players.push([symbol, team, c, r]);
                 }
             }
         }
@@ -196,17 +197,21 @@ class WorldUi {
     _drawPlayers() {
         let map = model._map;
         let tile;
+        let atlas;
         this.tmp_players.forEach( (map_pl) => {
                         let [symbol, team, c, r] = map_pl;
                         let pl = model.findPlayerBySymbol(symbol);
                         if(pl != undefined) {
                             if (pl.state == "KILLED") {
                                 tile = (team == 0 ? Terrain.PLAYER_RED_KILLED : Terrain.PLAYER_BLUE_KILLED);
+                                atlas = this.tileGraves;
                             } else {
                                 tile = (team == 0 ? Terrain.PLAYER_RED : Terrain.PLAYER_BLUE);
+                                atlas = this.tileAtlas;
                             }
+
                             this.ctx.drawImage(
-                                this.tileAtlas, // image
+                                atlas, // image
                                 tile[0] * map.tsize, // source x
                                 tile[1] * map.tsize, // source y
                                 map.tsize, // source width
@@ -347,7 +352,8 @@ class WorldUi {
 
     _loads = function () {
         return [
-            this._loadImage('tiles', this.imgTileSet)
+            this._loadImage('tiles', this.imgTileSet),
+            this._loadImage('graves', this.imgTileSetGraves)
         ];
     }.bind(this);
 
