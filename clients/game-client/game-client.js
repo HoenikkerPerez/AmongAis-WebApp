@@ -47,7 +47,7 @@ class GameClient {
         this._wsQueue = [];
         this._ws.onmessage = async function(evt) {
             this._waitingResponse = false;
-            this._lastResponse;
+            this._lastResponse = new Date();
             let msg = await evt.data.text();
             let msgtag = this._wsQueue.shift()
             //console.debug(this._clientType + " received a message - " + msgtag);
@@ -90,7 +90,7 @@ class GameClient {
         // console.debug("_requestHandler _waiting: " + this._waitingResponse)
         let now = new Date()
         let elapsed = now - this._lastResponse;
-
+        console.debug("EL - TF: " + ( elapsed - timeframe))
         if(this._waitingResponse) {
             console.debug("_requetHandler waitingResponse: " + this._waitingResponse)
             window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
