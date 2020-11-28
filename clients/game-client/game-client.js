@@ -93,11 +93,11 @@ class GameClient {
 
         if(this._waitingResponse) {
             console.debug("_requetHandler waitingResponse: " + this._waitingResponse)
-            window.setTimeout(function(){ this._requestHandler() }.bind(this), deltaTimeframe);
+            window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
             return;
-        } else  if (elapsed < timeframe) {
-
- 
+        }
+        
+        if (elapsed < timeframe) {
             let deltaTimeframe = timeframe - elapsed + 50; // add a little more waiting time
             console.debug("_requetHandler waiting " + deltaTimeframe + " ms, waitingResponse: " + this._waitingResponse)
             window.setTimeout(function(){ this._requestHandler() }.bind(this), deltaTimeframe);
