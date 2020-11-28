@@ -98,7 +98,7 @@ var model = {
                                     return {
                                         x: step.x, 
                                         y: step.y, 
-                                        nextMove: "",
+                                        nextMove: undefined,
                                         counter: 7}});
         let path = this.path;
         for(let i=0; i<path.length-1; i++) {
@@ -115,6 +115,8 @@ var model = {
             return undefined
         
         let nextStep =  this.path.shift();
+        if(nextStep.nextMove == undefined)
+            return undefined
         let nextMove = nextStep.nextMove;
         console.debug("popNextPathfindingMove: MOVE: " + nextMove);
         return nextMove;
