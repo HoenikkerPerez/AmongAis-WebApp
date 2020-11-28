@@ -21,7 +21,8 @@ class GameClient {
     _waitingResponse;
     _lastResponse;
     _nopTime;
-    __noRequestsTime;
+    _noRequestsTime;
+
     constructor(clientType) {
         this._connect();
         this._lobby = new LobbyManager();
@@ -46,7 +47,7 @@ class GameClient {
         this._wsQueue = [];
         this._ws.onmessage = async function(evt) {
             this._waitingResponse = false;
-            this._lastResponse;
+            this._lastResponse = new Date();
             let msg = await evt.data.text();
             let msgtag = this._wsQueue.shift()
             //console.debug(this._clientType + " received a message - " + msgtag);
@@ -79,38 +80,30 @@ class GameClient {
         }
     }
 
-    // _requestLookHandler () {
-    //     if(this._wsRequests_look.length>0){
-    //         let msg_tag = this._wsRequests_look.shift();
-    //         this._wsRequests.push(msg_tag);
-    //     }
-    //     window.setTimeout(function(){ this._requestLookHandler() }.bind(this), 1000);
-    // }
-
-    // _requestCmdHandler () {
-    //     if(this._wsRequests_cmd.length>0){
-    //         let msg_tag = this._wsRequests_cmd.shift();
-    //         this._wsRequests.push(msg_tag);
-    //     }
-    //     window.setTimeout(function(){ this._requestCmdHandler() }.bind(this), 200);
-
-    // }
     isOdd(num) { return num % 2;}
     // _requestHandler is called the timer to avoid sending messages too fast
     _requestHandler() {
         let timeframe = model.connectionTimeframe;
         //console.debug("Game Client is going to send a message to the server, the clock tick'd!");
-        //console.debug("_requestHandler Time: " + new Date());
+        // console.debug("_requestHandler Time: " + new Date());
+        // console.debug("_requestHandler _lastTesponse: " + this._lastResponse)
+        // console.debug("_requestHandler _waiting: " + this._waitingResponse)
         let now = new Date()
         let elapsed = now - this._lastResponse;
+        if(this._waitingResponse) {
+            console.debug("_requetHandler waitingResponse: " + this._waitingResponse)
+            window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
+            return;
+        }
+        
         if (elapsed < timeframe) {
             let deltaTimeframe = timeframe - elapsed + 50; // add a little more waiting time
-            console.debug("_requetHandler waiting " + deltaTimeframe + " ms")
+            console.debug("_requetHandler waiting " + deltaTimeframe + " ms, waitingResponse: " + this._waitingResponse)
             window.setTimeout(function(){ this._requestHandler() }.bind(this), deltaTimeframe);
             return;
         }
         
-        if(this.isOdd(this._schedulerCounter) ){
+        if(this.isOdd(this._schedulerCounter)) {
             if(this._wsRequests_cmd.length > 0) {
                 //console.debug("Game Client's request queue is not empty.");
                 let msg = this._wsRequests_cmd.shift();
@@ -133,9 +126,6 @@ class GameClient {
                     this._noRequestsTime = new Date();
                     //console.debug("Game Client actually sent " + msg);
             } else {
-                timeframe = 100;
-                this._noRequestsCount++;
-                // if(this._noRequestsCount >= 300) {
                 if((new Date() - this._noRequestsTime) >= model.nopTimeframe) { 
                     //console.debug("_requestHandler isOdd && NOP");
                     this.nop(); // TODO gamename nop
@@ -167,8 +157,6 @@ class GameClient {
                 this._noRequestsTime = new Date();
                 //console.debug("Game Client actually sent " + msg);
             } else {
-                timeframe = 100;
-                this._noRequestsCount++;
                 if((new Date() - this._noRequestsTime) >= model.nopTimeframe) {
                     this.nop(); // TODO gamename nop
                     //console.debug("_requestHandler isEven && NOP");
