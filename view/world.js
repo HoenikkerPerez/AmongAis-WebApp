@@ -157,6 +157,7 @@ class WorldUi {
             }
             // this._clearCanvas();
             this._drawMap();
+            this._drawPlayers();
             this._drawShoots();
             this._drawPathfinding();
             this._drawPlayerNames();
@@ -196,23 +197,27 @@ class WorldUi {
         let map = model._map;
         let tile;
         this.tmp_players.forEach( (map_pl) => {
-            let [symbol, team, c, r] = map_pl;
-            let pl = model.findPlayerBySymbol(symbol);
-            if (pl.state == "KILLED") {
-                tile = (team == 0 ? Terrain.PLAYER_RED_KILLED : Terrain.PLAYER_BLUE_KILLED);
-            }
-            this.ctx.drawImage(
-                this.tileAtlas, // image
-                tile[0] * map.tsize, // source x
-                tile[1] * map.tsize, // source y
-                map.tsize, // source width
-                map.tsize, // source height
-                c * this._tsizeMap,  // target x
-                r * this._tsizeMap, // target y
-                this._tsizeMap, // target width
-                this._tsizeMap // target height
-            );
-        })
+                        let [symbol, team, c, r] = map_pl;
+                        let pl = model.findPlayerBySymbol(symbol);
+                        if(pl != undefined) {
+                            if (pl.state == "KILLED") {
+                                tile = (team == 0 ? Terrain.PLAYER_RED_KILLED : Terrain.PLAYER_BLUE_KILLED);
+                            } else {
+                                tile = (team == 0 ? Terrain.PLAYER_RED : Terrain.PLAYER_BLUE);
+                            }
+                            this.ctx.drawImage(
+                                this.tileAtlas, // image
+                                tile[0] * map.tsize, // source x
+                                tile[1] * map.tsize, // source y
+                                map.tsize, // source width
+                                map.tsize, // source height
+                                c * this._tsizeMap,  // target x
+                                r * this._tsizeMap, // target y
+                                this._tsizeMap, // target width
+                                this._tsizeMap // target height
+                            );
+                        }
+                        });
     }
 
     _drawPlayerNames() {
