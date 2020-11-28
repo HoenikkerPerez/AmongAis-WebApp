@@ -25,7 +25,11 @@ const Terrain = {
     BARRIER: [21,3],
     PLAYER_BLUE: [0, 8],
     PLAYER_RED: [1, 8],
-    BULLET: [21,21] //TODO laser tile
+    BULLET_VERTICAL: [21,21],
+    BULLET_HORIZONTAL: [21,21], //TODO laser tile
+    PATHFINDING: [21, 21], // TODO path tile
+    PLAYER_BLUE_KILLED: [21, 21],
+    PLAYER_RED_KILLED: [21, 21]
 }
 
 class WorldUi {
@@ -112,9 +116,6 @@ class WorldUi {
                 case "&":
                     tile = Terrain.BARRIER;
                     break;
-                case "*": // TODO LUCA // not a terrain, actually
-                    tile = Terrain.BULLET;
-                    break;
                 default:
                     console.debug("ERROR map symbol: " + x)
                     break;
@@ -190,6 +191,29 @@ class WorldUi {
             }
         }
     }
+    
+    _drawPlayers() {
+        let map = model._map;
+        let tile;
+        this.tmp_players.forEach( (map_pl) => {
+            let [symbol, team, c, r] = map_pl;
+            let pl = model.findPlayerBySymbol(symbol);
+            if (pl.state == "KILLED") {
+                tile = (team == 0 ? Terrain.PLAYER_RED_KILLED : Terrain.PLAYER_BLUE_KILLED);
+            }
+            this.ctx.drawImage(
+                this.tileAtlas, // image
+                tile[0] * map.tsize, // source x
+                tile[1] * map.tsize, // source y
+                map.tsize, // source width
+                map.tsize, // source height
+                c * this._tsizeMap,  // target x
+                r * this._tsizeMap, // target y
+                this._tsizeMap, // target width
+                this._tsizeMap // target height
+            );
+        })
+    }
 
     _drawPlayerNames() {
         for (let i=0; i<this.tmp_players.length; i++) {
@@ -238,9 +262,9 @@ class WorldUi {
                 console.debug("drawing shoots: " + x +", " + " " + direction + " " + counter);
                 // choose tile
                 if (direction == "vertical") 
-                    tile = Terrain.BULLET;
+                    tile = Terrain.BULLET_VERTICAL;
                 else 
-                    tile = Terrain.BULLET;
+                    tile = Terrain.BULLET_HORIZONTAL;
                 this.ctx.drawImage(
                     this.tileAtlas, // image
                     tile[0] * map.tsize, // source x
@@ -264,7 +288,7 @@ class WorldUi {
             let x = path[i].x;
             let y = path[i].y;
             let counter = path[i].counter;
-            let tile = Terrain.BULLET;
+            let tile = Terrain.PATHFINDING;
             if (counter > 0) {
                 this.ctx.drawImage(
                     this.tileAtlas, // image
