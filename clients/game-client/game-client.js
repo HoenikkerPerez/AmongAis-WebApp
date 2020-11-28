@@ -85,12 +85,21 @@ class GameClient {
     _requestHandler() {
         let timeframe = model.connectionTimeframe;
         //console.debug("Game Client is going to send a message to the server, the clock tick'd!");
-        //console.debug("_requestHandler Time: " + new Date());
+        // console.debug("_requestHandler Time: " + new Date());
+        // console.debug("_requestHandler _lastTesponse: " + this._lastResponse)
+        // console.debug("_requestHandler _waiting: " + this._waitingResponse)
         let now = new Date()
         let elapsed = now - this._lastResponse;
-        if (elapsed < timeframe) {
+
+        if(this._waitingResponse) {
+            console.debug("_requetHandler waitingResponse: " + this._waitingResponse)
+            window.setTimeout(function(){ this._requestHandler() }.bind(this), deltaTimeframe);
+            return;
+        } else  if (elapsed < timeframe) {
+
+ 
             let deltaTimeframe = timeframe - elapsed + 50; // add a little more waiting time
-            console.debug("_requetHandler waiting " + deltaTimeframe + " ms")
+            console.debug("_requetHandler waiting " + deltaTimeframe + " ms, waitingResponse: " + this._waitingResponse)
             window.setTimeout(function(){ this._requestHandler() }.bind(this), deltaTimeframe);
             return;
         }
