@@ -90,7 +90,6 @@ class GameClient {
         // console.debug("_requestHandler _waiting: " + this._waitingResponse)
         let now = new Date()
         let elapsed = now - this._lastResponse;
-        console.debug("EL - TF: " + ( elapsed - timeframe))
         if(this._waitingResponse) {
             console.debug("_requetHandler waitingResponse: " + this._waitingResponse)
             window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
@@ -127,9 +126,6 @@ class GameClient {
                     this._noRequestsTime = new Date();
                     //console.debug("Game Client actually sent " + msg);
             } else {
-                timeframe = 100;
-                this._noRequestsCount++;
-                // if(this._noRequestsCount >= 300) {
                 if((new Date() - this._noRequestsTime) >= model.nopTimeframe) { 
                     //console.debug("_requestHandler isOdd && NOP");
                     this.nop(); // TODO gamename nop
@@ -161,8 +157,6 @@ class GameClient {
                 this._noRequestsTime = new Date();
                 //console.debug("Game Client actually sent " + msg);
             } else {
-                timeframe = 100;
-                this._noRequestsCount++;
                 if((new Date() - this._noRequestsTime) >= model.nopTimeframe) {
                     this.nop(); // TODO gamename nop
                     //console.debug("_requestHandler isEven && NOP");
