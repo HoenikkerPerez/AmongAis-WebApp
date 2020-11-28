@@ -21,7 +21,8 @@ class GameClient {
     _waitingResponse;
     _lastResponse;
     _nopTime;
-    __noRequestsTime;
+    _noRequestsTime;
+
     constructor(clientType) {
         this._connect();
         this._lobby = new LobbyManager();
@@ -79,22 +80,6 @@ class GameClient {
         }
     }
 
-    // _requestLookHandler () {
-    //     if(this._wsRequests_look.length>0){
-    //         let msg_tag = this._wsRequests_look.shift();
-    //         this._wsRequests.push(msg_tag);
-    //     }
-    //     window.setTimeout(function(){ this._requestLookHandler() }.bind(this), 1000);
-    // }
-
-    // _requestCmdHandler () {
-    //     if(this._wsRequests_cmd.length>0){
-    //         let msg_tag = this._wsRequests_cmd.shift();
-    //         this._wsRequests.push(msg_tag);
-    //     }
-    //     window.setTimeout(function(){ this._requestCmdHandler() }.bind(this), 200);
-
-    // }
     isOdd(num) { return num % 2;}
     // _requestHandler is called the timer to avoid sending messages too fast
     _requestHandler() {
@@ -110,7 +95,7 @@ class GameClient {
             return;
         }
         
-        if(this.isOdd(this._schedulerCounter) ){
+        if(this.isOdd(this._schedulerCounter)) {
             if(this._wsRequests_cmd.length > 0) {
                 //console.debug("Game Client's request queue is not empty.");
                 let msg = this._wsRequests_cmd.shift();
