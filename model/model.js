@@ -1,10 +1,10 @@
 var model = {
     _map: [],
-    timeframe: 600, // Default map polling rate
-    spectatorTimeframe: 600, // Spectator's map polling rate
-    playerTimeframe: 600, // Player's map polling rate
-    connectionTimeframe: 600, // Minimum delay between requests
-    nopTimeframe: 30000,
+    timeframe: 500, // Default map polling rate
+    spectatorTimeframe: 500, // Spectator's map polling rate
+    playerTimeframe: 500, // Player's map polling rate
+    connectionTimeframe: 500, // Minimum delay between requests
+    nopTimeframe: 20000,
     net: {
         game: {
             ws: "ws://93.39.188.250:8521"
@@ -104,7 +104,8 @@ var model = {
         for(let i=0; i<path.length-1; i++) {
             this.path[i].nextMove = this._computeNextPathfindingMove(path[i].x, path[i].y, path[i+1].x, path[i+1].y);
         }
-
+        // remove last move 
+        // this.path.pop();
         // attach first step to the event
         document.dispatchEvent(new CustomEvent("MODEL_SETPATHFINDING", {detail: {step:this.path}}));
     },
@@ -112,18 +113,10 @@ var model = {
     popNextPathfindingMove() {
         if(this.path.length <= 0)
             return undefined
-        let nextStep = this.path.shift();
-        let nextMove;
-        start = model.findMyPosition();
-        if(start.x > nextStep.x)
-            nextMove = "W";
-        else if (start.x < nextStep.x)
-            nextMove="E";
-        else if (start.y < nextStep.y)
-            nextMove="S";
-        else if (start.y > nextStep.y)
-            nextMove="N";
-        console.debug("popNextPathfindingMove: pos " + "(" + start.x + ", " + start.y + ")" + " to " + "(" + nextStep.x + ", " + nextStep.y + "); MOVE: " + nextMove);
+        
+        let nextStep =  this.path.shift();
+        let nextMove = nextStep.nextMove;
+        console.debug("popNextPathfindingMove: MOVE: " + nextMove);
         return nextMove;
     },
 
@@ -136,7 +129,7 @@ var model = {
             nextMove="S";
         else if (startY > nextStepY)
             nextMove="N";
-        console.debug("popNextPathfindingMove: pos " + "(" + startX + ", " + startY + ")" + " to " + "(" + nextStepX + ", " + nextStepY + "); MOVE: " + nextMove);
+        console.debug("_computeNextPathfindingMove: pos " + "(" + startX + ", " + startY + ")" + " to " + "(" + nextStepX + ", " + nextStepY + "); MOVE: " + nextMove);
         return nextMove;
     },
 

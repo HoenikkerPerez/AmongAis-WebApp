@@ -63,15 +63,7 @@ class MatchController {
         }
     }
 
-    _moveHandler(event, gameClient) {
-        // if pathfing exist recompute it or continue till end? TODO
-        let nextMove = model.popNextPathfindingMove();
-        if(nextMove != undefined) {
-            console.debug("MatchController is asking the game client to pathfinding-move " + nextMove);
-            gameClient.move(nextMove);
-            this._lastDirection = nextMove;
-        }
-    }
+
 
 
     // Laser
@@ -305,13 +297,22 @@ class MatchController {
 
     _pathfindingMove(evt, gameClient) {
         let nextMove = model.popNextPathfindingMove();
+        if(nextMove != undefined) { // no path to follow
+            console.debug("MatchController _pathfindingMove is asking the game client to pathfinding-move " + nextMove);
+            gameClient.move(nextMove);
+            this._lastDirection = nextMove;
+        } 
+    }
+
+    _moveHandler(event, gameClient) {
+        // if pathfing exist recompute it or continue till end? TODO
+        let nextMove = model.popNextPathfindingMove();
         if(nextMove != undefined) {
-            console.debug("MatchController is asking the game client to pathfinding-move " + nextMove);
+            console.debug("MatchController _moveHandler is asking the game client to pathfinding-move " + nextMove);
             gameClient.move(nextMove);
             this._lastDirection = nextMove;
         }
     }
-
 
 
     /* MAP TRANSFORMATIONS AND MAP HANDLERS */
@@ -487,12 +488,12 @@ class MatchController {
     // All listeners common to every kind of user
 
     load() {
-        // MOVE 
+        // PATHFINDING
         document.addEventListener("miticoOggettoCheNonEsiste.MOVE", ((evt) => {this._moveHandler(evt, this._gameClient)}).bind(this), false);
 
-        // PATHFINDING
         document.addEventListener("MODEL_SETPATHFINDING",  ((evt) => {this._pathfindingMove(evt, this._gameClient)}).bind(this), false);
 
+        // MAP
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", (this.lookMapHandler).bind(this), false);
 
         // Shoot OK event is handled by chat for every player (included "me")

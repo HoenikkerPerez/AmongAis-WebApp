@@ -50,7 +50,8 @@ class PathFinder  {
                 return true;
             }
             let idx = x + y*map.rows;
-            if (map.tiles[idx] != ".") {
+            let tile = map.tiles[idx];
+            if (tile == "#" || tile == "@" || tile == "!") {
                 return true;
             }
             return false;
