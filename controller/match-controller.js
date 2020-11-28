@@ -300,7 +300,7 @@ class MatchController {
         if(nextMove != undefined) { // no path to follow
             console.debug("MatchController _pathfindingMove is asking the game client to pathfinding-move " + nextMove);
             gameClient.move(nextMove);
-            this._lastDirection = nextMove;
+            this._lastDirection.direction = nextMove;
         } 
     }
 
@@ -310,7 +310,7 @@ class MatchController {
         if(nextMove != undefined) {
             console.debug("MatchController _moveHandler is asking the game client to pathfinding-move " + nextMove);
             gameClient.move(nextMove);
-            this._lastDirection = nextMove;
+            this._lastDirection.direction = nextMove;
         }
     }
 
