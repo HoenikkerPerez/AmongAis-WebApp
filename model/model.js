@@ -93,8 +93,18 @@ var model = {
 
     setPath(steps) {
         let reverseSteps = steps.reverse();
-        reverseSteps.shift();
-        this.path = reverseSteps.map(step => {return {x: step.x, y: step.y, counter: 7}});
+        // reverseSteps.shift();
+        this.path = reverseSteps.map(step => {
+                                    return {
+                                        x: step.x, 
+                                        y: step.y, 
+                                        nextMove: "",
+                                        counter: 7}});
+        let path = this.path;
+        for(let i=0; i<path.length-1; i++) {
+            this.path[i].nextMove = this._computeNextPathfindingMove(path[i].x, path[i].y, path[i+1].x, path[i+1].y);
+        }
+
         // attach first step to the event
         document.dispatchEvent(new CustomEvent("MODEL_SETPATHFINDING", {detail: {step:this.path}}));
     },
@@ -116,6 +126,20 @@ var model = {
         console.debug("popNextPathfindingMove: pos " + "(" + start.x + ", " + start.y + ")" + " to " + "(" + nextStep.x + ", " + nextStep.y + "); MOVE: " + nextMove);
         return nextMove;
     },
+
+    _computeNextPathfindingMove(startX, startY, nextStepX, nextStepY) {
+        if(startX > nextStepX)
+            nextMove = "W";
+        else if (startX < nextStepX)
+            nextMove="E";
+        else if (startY < nextStepY)
+            nextMove="S";
+        else if (startY > nextStepY)
+            nextMove="N";
+        console.debug("popNextPathfindingMove: pos " + "(" + startX + ", " + startY + ")" + " to " + "(" + nextStepX + ", " + nextStepY + "); MOVE: " + nextMove);
+        return nextMove;
+    },
+
 
     _removeExaustedShoots() {
         let shoots = this.shoots;
