@@ -54,14 +54,14 @@ class WorldUi {
     imgWall6        = './assets/Terrain/wall_6.png'
     imgWall7        = './assets/Terrain/wall_7.png'
 
-    imgFlagRed        = './assets/Terrain/flag.png'
-    imgFlagBlue        = './assets/Terrain/flag.png'
+    imgFlagRed        = './assets/Terrain/flag_red.png'
+    imgFlagBlue        = './assets/Terrain/flag_blue.png'
 
     imgRiver       = './assets/Terrain/river.png'
     imgOcean       = './assets/Terrain/ocean.png'
     
     imgTrap        = './assets/Terrain/trap.png'
-    imgBarrier     = './assets/Terrain/barrier.png'
+    imgBarrier     = './assets/Terrain/barrier0.png'
     imgRecharge    = './assets/Terrain/recharge.png'
 
     imgPlayerBlue  = './assets/Player/player_blue.png'
@@ -193,8 +193,8 @@ class WorldUi {
                     type = "trap"
                     break;
                 case "$":
-                    tile = Terrain.RECHARGE;
-                    atlas = this.tileRecharge;
+                    tile = Terrain.GRASS;
+                    atlas = this.tileGrass[0];
                     type = "recharge"
                     break;
                 case "&":
