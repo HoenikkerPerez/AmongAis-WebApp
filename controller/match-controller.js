@@ -134,7 +134,7 @@ class MatchController {
             if(!bulletStopped) {
                 let dirLinear = (direction == "E" || direction == "W") ? "horizontal" : "vertical";
 
-                model.shoots.push({x:c, y:r, direction: dirLinear, counter:2}); // direction vertical, horizontal
+                model.shoots.push({x:c, y:r, direction: dirLinear, counter:6}); // direction vertical, horizontal
                 cells++;
             };
         };
@@ -245,7 +245,7 @@ class MatchController {
 
     /* POLLING */
 
-    mapPoller() {
+    _getMap() {
         //console.debug("Polling map")
         if(model.status.ga != undefined) {
             let gameName = model.status.ga;
@@ -254,7 +254,7 @@ class MatchController {
         // setMap()
     };
 
-    statusPoller(){
+    _getStatus(){
         //console.debug("status poller run");
         let gameName = model.status.ga;
         //console.debug("matchController: try to get status for " + gameName);
@@ -262,15 +262,33 @@ class MatchController {
     };
 
     _pollOnce() {
-        this.mapPoller();
-        this.statusPoller();
+        this._getMap();
+        this._getStatus();
     };
 
     _poller() {
-        let timeframe = model.timeframe;
-        this._pollOnce();
-        window.setTimeout(function(){ this._poller() }.bind(this), timeframe);
-    }
+        this._statusPoller();
+        this._mapPoller();
+    };
+
+    // _poller() {
+    //     let timeframe = model.timeframe;
+    //     this._pollOnce();
+    //     window.setTimeout(function(){ this._poller() }.bind(this), timeframe);
+    // };
+
+
+    _statusPoller() {
+        let timeframe = model.timeframeStatus;
+        this._getStatus();
+        window.setTimeout(function(){ this._statusPoller() }.bind(this), timeframe);
+    };
+
+    _mapPoller() {
+        let timeframe = model.timeframeMap;
+        this._getMap();
+        window.setTimeout(function(){ this._mapPoller() }.bind(this), timeframe);
+    };
 
     /* SOCIAL DEDUCTION GAME */
 

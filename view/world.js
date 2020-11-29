@@ -14,29 +14,68 @@
 // RECHARGE: [0,0],
 // BARRIER: [0,0]
 const Terrain = {
-    GRASS: [1,2],
-    WALL: [3,3],
-    RIVER: [3,21],
-    OCEAN: [5,21],
-    TRAP: [0, 9],
-    FLAG_BLUE: [0, 10],
-    FLAG_RED: [1, 10],
-    RECHARGE: [1,9],
-    BARRIER: [21,3],
-    PLAYER_BLUE: [0, 8],
-    PLAYER_RED: [1, 8],
-    BULLET_VERTICAL: [21,21],
-    BULLET_HORIZONTAL: [21,21], //TODO laser tile
-    PATHFINDING: [21, 21], // TODO path tile
+    GRASS: [0,0],
+    WALL: [0,0],
+    RIVER: [0,0],
+    OCEAN: [0,0],
+    TRAP: [0,0],
+    FLAG_BLUE: [0,0],
+    FLAG_RED: [0,0],
+    RECHARGE: [0,0],
+    BARRIER: [0,0],
+    PLAYER_BLUE: [0,0],
+    PLAYER_RED: [0,0],
+    BULLET_VERTICAL: [0,0],
+    BULLET_HORIZONTAL: [0,0], //TODO laser tile
+    PATHFINDING: [0,0], // TODO path tile
     // GRAVES
     PLAYER_BLUE_KILLED: [3, 0],
     PLAYER_RED_KILLED: [3, 1]
 }
 
+// TODO ADD GRASS TYPES 
+
 class WorldUi {
+    imgGrass0       = './assets/Terrain/grass_0.png'
+    imgGrass1       = './assets/Terrain/grass_1.png'
+    imgGrass2       = './assets/Terrain/grass_2.png'
+    imgGrass3       = './assets/Terrain/grass_3.png'
+    imgGrass4       = './assets/Terrain/grass_4.png'
+    imgGrass5       = './assets/Terrain/grass_5.png'
+    imgGrass6       = './assets/Terrain/grass_6.png'
+    imgGrass7       = './assets/Terrain/grass_7.png'
+
+    imgWall0        = './assets/Terrain/wall_0.png'
+    imgWall1        = './assets/Terrain/wall_1.png'
+    imgWall2        = './assets/Terrain/wall_2.png'
+    imgWall3        = './assets/Terrain/wall_3.png'
+    imgWall4        = './assets/Terrain/wall_4.png'
+    imgWall5        = './assets/Terrain/wall_5.png'
+    imgWall6        = './assets/Terrain/wall_6.png'
+    imgWall7        = './assets/Terrain/wall_7.png'
+
+    imgFlagRed        = './assets/Terrain/flag.png'
+    imgFlagBlue        = './assets/Terrain/flag.png'
+
+    imgRiver       = './assets/Terrain/river.png'
+    imgOcean       = './assets/Terrain/ocean.png'
+    
+    imgTrap        = './assets/Terrain/trap.png'
+    imgBarrier     = './assets/Terrain/barrier.png'
+    imgRecharge    = './assets/Terrain/recharge.png'
+
+    imgPlayerBlue  = './assets/Player/player_blue.png'
+    imgPlayerRed   = './assets/Player/player_red.png'
+
+    imgBulletVertical  = './assets/Laser/laser_vertical.png'
+    imgBulletHorizontal   = './assets/Laser/laser_horizontal.png'
+
+    imgPathfinding = './assets/Pathfinding/pathfinding_0.png'
+
 
     imgTileSet = './assets/mod32x32_map_tilev2.png'    
     imgTileSetGraves = './assets/grave_markers-shadow.png'   
+
     images = {}
 
     _rendering = false
@@ -55,6 +94,31 @@ class WorldUi {
         Promise.all(p).then(function (loaded) {
             this.tileAtlas = this._getImage('tiles');
             this.tileGraves = this._getImage('graves');
+            
+            this.tileGrass = [this._getImage('grass_0'), this._getImage('grass_1'), 
+                            this._getImage('grass_2'), this._getImage('grass_3'), 
+                            this._getImage('grass_4'), this._getImage('grass_5'), 
+                            this._getImage('grass_6'),this._getImage('grass_7')];
+
+            this.tileWall = [this._getImage('wall_0'), this._getImage('wall_1'), 
+                            this._getImage('wall_2'), this._getImage('wall_3'), 
+                            this._getImage('wall_4'), this._getImage('wall_5'), 
+                            this._getImage('wall_6'),this._getImage('wall_7')];
+            this.tileFlagRed =  this._getImage('flag-red');
+            this.tileFlagBlue =  this._getImage('flag-blue');
+            
+            this.tileRiver = this._getImage('river');
+            this.tileOcean = this._getImage('ocean');
+            this.tileTrap = this._getImage('trap');
+            this.tileBarrier = this._getImage('barrier');
+            this.tileRecharge = this._getImage('recharge');
+            this.tilePlayerBlue = this._getImage('player-blue');
+            this.tilePlayerRed = this._getImage('player-red');
+            this.tilePathfinding = this._getImage('pathfinding');
+
+            this.tileBulletVertical = this._getImage('bullet-vertical');
+            this.tileBulletHorizontal = this._getImage('bullet-horizontal');
+
             this._imageLoaded = true;
         }.bind(this));
         
@@ -74,60 +138,77 @@ class WorldUi {
         let tile;
         let team = -1;
         let type = "";
+        let atlas;
+
         let symbol_code = symbol.charCodeAt(0);
+
         if (symbol_code == 88) { // X: team RED flag (A)
-            tile = Terrain.FLAG_RED;
+            tile = Terrain.GRASS;
             team = 0;
             type = "flag";
+            atlas = this.tileGrass[0];
         }
         else if (symbol_code == 120) { // x: team BLUE flag (B)
-            tile = Terrain.FLAG_BLUE;
+            tile = Terrain.GRASS;
             team = 1;
             type = "flag";
+            atlas = this.tileGrass[0];
         }        
         else if(symbol_code >= 65 && symbol_code <= 84) {  // uppercase letter team 0
             // use background grass
             tile = Terrain.GRASS;
             team = 0;
             type = "player";
+            atlas = this.tileGrass[0];
         }
         else if (symbol_code >= 97 && symbol_code <= 116) {// lowecase letter team 1
             // use background grass
             tile = Terrain.GRASS;
             team = 1;
             type = "player";
+            atlas = this.tileGrass[0];
         }
         else { // terrains
+            type = "terrain";
             switch(symbol) {
                 case ".":
                     tile = Terrain.GRASS;
+                    atlas = this.tileGrass[(col+row*col) % this.tileGrass.length]; // maybe random with a seed?
                     break;
                 case "#":
                     tile = Terrain.WALL;
+                    atlas = this.tileWall[(col+row*col) % this.tileWall.length]; // maybe random with a seed?
                     break;
                 case "~":
                     tile = Terrain.RIVER;
+                    atlas = this.tileRiver;
                     break;
                 case "@":
                     tile = Terrain.OCEAN;
+                    atlas = this.tileOcean;
                     break;
                 case "!":
-                    tile = Terrain.TRAP;
+                    tile = Terrain.GRASS;
+                    atlas = this.tileGrass[0];
+                    type = "trap"
                     break;
                 case "$":
                     tile = Terrain.RECHARGE;
+                    atlas = this.tileRecharge;
+                    type = "recharge"
                     break;
                 case "&":
-                    tile = Terrain.BARRIER;
+                    tile = Terrain.GRASS;
+                    atlas = this.tileGrass[0];
+                    type = "barrier"
                     break;
                 default:
                     console.debug("ERROR map symbol: " + x)
                     break;
             }
-            type = "terrain";
         }
         // return correct position in tilemap and the atlas
-        return [tile, symbol, team, type]
+        return [atlas, tile, symbol, team, type]
     };
 
     _initCanvasSize() {
@@ -161,6 +242,7 @@ class WorldUi {
             }
             // this._clearCanvas();
             this._drawMap();
+            this._drawTraps();
             this._drawPlayers();
             this._drawShoots();
             this._drawPathfinding();
@@ -174,10 +256,11 @@ class WorldUi {
         let map = model._map;
         // let tsizeMap = Math.floor(this.ctx.canvas.height / this._N)
         this.tmp_players = [];
+        this.tmp_objects = [];
         for (let c = 0; c < map.cols; c++) {
             for (let r = 0; r < map.rows; r++) {
-                let [tile, symbol, team, type] = this._getTile(c, r); // TODO do not draw players!
-                this.ctx.drawImage(this.tileAtlas, // image
+                let [atlas, tile, symbol, team, type] = this._getTile(c, r); // TODO do not draw players!
+                this.ctx.drawImage(atlas, // image
                                     tile[0] * map.tsize, // source x
                                     tile[1] * map.tsize, // source y
                                     map.tsize, // source width
@@ -189,11 +272,55 @@ class WorldUi {
                                 );
                 if (type === "player") {
                     this.tmp_players.push([symbol, team, c, r]);
+                } else if (type === "trap" || type === "barrier" || type === "recharge" || type === "flag") { 
+                    this.tmp_objects.push([type, c, r, team]);
                 }
             }
         }
     }
-    
+
+    _drawTraps() {
+        let map = model._map;
+        let tile;
+        let atlas;
+
+        this.tmp_objects.forEach( (trap) => {
+                            let [type, c, r, team] = trap;
+                            if (type === "trap") {
+                                tile = Terrain.TRAP;
+                                atlas = this.tileTrap;
+                            }
+                            else if (type === "barrier") {
+                                tile = Terrain.BARRIER;
+                                atlas = this.tileBarrier;
+                            }
+                            else if (type === "recharge") {
+                                tile = Terrain.RECHARGE;
+                                atlas = this.tileRecharge;
+                            } else if (type === "flag") {
+                                if(team == 0) {
+                                    tile = Terrain.FLAG_RED;
+                                    atlas = this.tileFlagRed;
+                                } else {
+                                    tile = Terrain.FLAG_BLUE;
+                                    atlas = this.tileFlagBlue;
+                                }
+                            }
+
+                            this.ctx.drawImage(
+                                atlas, // image
+                                tile[0] * map.tsize, // source x
+                                tile[1] * map.tsize, // source y
+                                map.tsize, // source width
+                                map.tsize, // source height
+                                c * this._tsizeMap,  // target x
+                                r * this._tsizeMap, // target y
+                                this._tsizeMap, // target width
+                                this._tsizeMap // target height
+                            );
+                        });
+    }   
+
     _drawPlayers() {
         let map = model._map;
         let tile;
@@ -206,8 +333,13 @@ class WorldUi {
                                 tile = (team == 0 ? Terrain.PLAYER_RED_KILLED : Terrain.PLAYER_BLUE_KILLED);
                                 atlas = this.tileGraves;
                             } else {
-                                tile = (team == 0 ? Terrain.PLAYER_RED : Terrain.PLAYER_BLUE);
-                                atlas = this.tileAtlas;
+                                if (team == 0) {
+                                    tile = Terrain.PLAYER_RED;
+                                    atlas = this.tilePlayerRed;
+                                } else {
+                                    tile = Terrain.PLAYER_BLUE;
+                                    atlas = this.tilePlayerBlue;
+                                }
                             }
 
                             this.ctx.drawImage(
@@ -267,16 +399,19 @@ class WorldUi {
             let direction = shoot.direction;
             let counter = shoot.counter;
             let tile;
-            
+            let atlas;
             if (counter > 0) {
                 console.debug("drawing shoots: " + x +", " + " " + direction + " " + counter);
                 // choose tile
-                if (direction == "vertical") 
+                if (direction == "vertical") {
                     tile = Terrain.BULLET_VERTICAL;
-                else 
+                    atlas = this.tileBulletVertical;
+                } else { 
                     tile = Terrain.BULLET_HORIZONTAL;
+                    atlas = this.tileBulletHorizontal;
+                }
                 this.ctx.drawImage(
-                    this.tileAtlas, // image
+                    atlas, // image
                     tile[0] * map.tsize, // source x
                     tile[1] * map.tsize, // source y
                     map.tsize, // source width
@@ -299,9 +434,10 @@ class WorldUi {
             let y = path[i].y;
             let counter = path[i].counter;
             let tile = Terrain.PATHFINDING;
+            let atlas = this.tilePathfinding;
             if (counter > 0) {
                 this.ctx.drawImage(
-                    this.tileAtlas, // image
+                    atlas, // image
                     tile[0] * map.tsize, // source x
                     tile[1] * map.tsize, // source y
                     map.tsize, // source width
@@ -353,13 +489,37 @@ class WorldUi {
     _loads = function () {
         return [
             this._loadImage('tiles', this.imgTileSet),
-            this._loadImage('graves', this.imgTileSetGraves)
+            this._loadImage('graves', this.imgTileSetGraves),
+            this._loadImage('grass_0', this.imgGrass0),
+            this._loadImage('grass_1', this.imgGrass1),
+            this._loadImage('grass_2', this.imgGrass2),
+            this._loadImage('grass_3', this.imgGrass3),
+            this._loadImage('grass_4', this.imgGrass4),
+            this._loadImage('grass_5', this.imgGrass5),
+            this._loadImage('grass_6', this.imgGrass6),
+            this._loadImage('grass_7', this.imgGrass7),
+            this._loadImage('wall_0', this.imgWall0),
+            this._loadImage('wall_1', this.imgWall1),
+            this._loadImage('wall_2', this.imgWall2),
+            this._loadImage('wall_3', this.imgWall3),
+            this._loadImage('wall_4', this.imgWall4),
+            this._loadImage('wall_5', this.imgWall5),
+            this._loadImage('wall_6', this.imgWall6),
+            this._loadImage('wall_7', this.imgWall7),
+            this._loadImage('flag-red', this.imgFlagRed),
+            this._loadImage('flag-blue', this.imgFlagBlue),
+            this._loadImage('river', this.imgRiver),
+            this._loadImage('ocean', this.imgOcean),
+            this._loadImage('trap', this.imgTrap),
+            this._loadImage('barrier', this.imgBarrier),
+            this._loadImage('recharge', this.imgRecharge),
+            this._loadImage('player-blue', this.imgPlayerBlue),
+            this._loadImage('player-red', this.imgPlayerRed),
+            this._loadImage('pathfinding', this.imgPathfinding),
+            this._loadImage('bullet-vertical', this.imgBulletVertical),
+            this._loadImage('bullet-horizontal', this.imgBulletHorizontal)
         ];
     }.bind(this);
-
-
-
-
     
 };
 
