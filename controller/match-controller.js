@@ -12,9 +12,13 @@ class MatchController {
     _gameClient;
     _lastDirection = {direction: GameClient.UP}; // Not in model because it's intended to be part of the interaction. The server actually allows to shoot in a different direction.
 
+    // 
+
+
     constructor(gameClient) {
         this._gameClient = gameClient;
         this.load();
+        this._trackTransforms(document.getElementById("canvas").getContext("2d"))
     }
 
     /* PHYSICAL GAME */
@@ -58,6 +62,9 @@ class MatchController {
                 }
         }
     }
+
+
+
 
     // Laser
 
@@ -127,13 +134,12 @@ class MatchController {
             if(!bulletStopped) {
                 let dirLinear = (direction == "E" || direction == "W") ? "horizontal" : "vertical";
 
-                model.shoots.push({x:c, y:r, direction: dirLinear, counter:2}); // direction vertical, horizontal
+                model.shoots.push({x:c, y:r, direction: dirLinear, counter:6}); // direction vertical, horizontal
                 cells++;
             };
         };
         console.debug("Match Controller: shot over " + cells + " cells.");
     };
-
 
     /* MAP HANDLING */
 
@@ -159,41 +165,6 @@ class MatchController {
         model.setMap(map_obj);
         // extract local interesting information from the map
     };
-
-
-    /**
-     * This function was once used with this code:
-     * 
-     *         this.applyOnMapEntities([
-            [model.status.me.symbol,
-                (x,y) => { model.status.me.position = {x:x, y:y} }],
-            // [symbol, (x,y) => { handlers }],
-        ]);
-     *
-     * I hope it'll be needed again. I had a lot of fun in writing it.
-     * 
-
-    applyOnMapEntities(symbolFunctionList) {
-        let map = model._map;
-        // foreach element in map
-        for(let r = 0; r < map.rows; r++) {
-            for(let c = 0; c < map.cols; c++) {
-                // Compute cell index
-                let idx = r * map.cols + c;
-                let tile = map.tiles[idx];
-                // Check foreach symbol in the list
-                for(let sf of symbolFunctionList) {
-                    //console.debug(map[idx] + "=?=" + sf[0]);
-                    if(tile == sf[0]) {
-                        console.debug("Match Controller found " + sf[0] + " AT " + c + "," + r + " in map. Applying now " + sf[1] + " on that position.");
-                        sf[1](c,r);
-                    }
-                }
-            }
-        }
-    }
-
-    */
 
     
     /* STATUS HANDLING */
@@ -274,7 +245,7 @@ class MatchController {
 
     /* POLLING */
 
-    mapPoller() {
+    _getMap() {
         //console.debug("Polling map")
         if(model.status.ga != undefined) {
             let gameName = model.status.ga;
@@ -283,7 +254,7 @@ class MatchController {
         // setMap()
     };
 
-    statusPoller(){
+    _getStatus(){
         //console.debug("status poller run");
         let gameName = model.status.ga;
         //console.debug("matchController: try to get status for " + gameName);
@@ -291,15 +262,33 @@ class MatchController {
     };
 
     _pollOnce() {
-        this.mapPoller();
-        this.statusPoller();
+        this._getMap();
+        this._getStatus();
     };
 
     _poller() {
-        let timeframe = model.timeframe;
-        this._pollOnce();
-        window.setTimeout(function(){ this._poller() }.bind(this), timeframe);
-    }
+        this._statusPoller();
+        this._mapPoller();
+    };
+
+    // _poller() {
+    //     let timeframe = model.timeframe;
+    //     this._pollOnce();
+    //     window.setTimeout(function(){ this._poller() }.bind(this), timeframe);
+    // };
+
+
+    _statusPoller() {
+        let timeframe = model.timeframeStatus;
+        this._getStatus();
+        window.setTimeout(function(){ this._statusPoller() }.bind(this), timeframe);
+    };
+
+    _mapPoller() {
+        let timeframe = model.timeframeMap;
+        this._getMap();
+        window.setTimeout(function(){ this._mapPoller() }.bind(this), timeframe);
+    };
 
     /* SOCIAL DEDUCTION GAME */
 
@@ -322,11 +311,207 @@ class MatchController {
         model.status.pl_list[choice.name].touring = choice.touring;
     }
 
+    /* PATHFINDING */
+
+    _pathfindingMove(evt, gameClient) {
+        let nextMove = model.popNextPathfindingMove();
+        if(nextMove != undefined) { // no path to follow
+            console.debug("MatchController _pathfindingMove is asking the game client to pathfinding-move " + nextMove);
+            gameClient.move(nextMove);
+            this._lastDirection.direction = nextMove;
+        } 
+    }
+
+    _moveHandler(event, gameClient) {
+        // if pathfing exist recompute it or continue till end? TODO
+        let nextMove = model.popNextPathfindingMove();
+        if(nextMove != undefined) {
+            console.debug("MatchController _moveHandler is asking the game client to pathfinding-move " + nextMove);
+            gameClient.move(nextMove);
+            this._lastDirection.direction = nextMove;
+        }
+    }
+
+
+    /* MAP TRANSFORMATIONS AND MAP HANDLERS */
+
+    _dragStart = null
+    _dragged = false;
+    _scaleFactor = 1.01;
+
+    _clearCanvas() {
+        let ctx = document.getElementById("canvas").getContext("2d");
+        ctx.save();
+        ctx.setTransform(1,0,0,1,0,0);
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.restore();
+    }
+
+    _resizeCanvasHandler() {
+        let ctx = document.getElementById("canvas").getContext("2d");
+        let displayWidth  = window.innerHeight * 0.9
+        let displayHeight = window.innerWidth * 0.9
+        let sz = 0;
+        if(displayWidth<displayHeight) {sz=displayWidth;} else {sz=displayHeight;}
+        displayHeight = displayWidth = sz;
+        this._tsizeMap = Math.floor(displayHeight / model._map.rows)
+        ctx.canvas.width  = this._tsizeMap * model._map.rows;
+        ctx.canvas.height = this._tsizeMap * model._map.cols;
+    }
+
+    _zoom(clicks){
+        let ctx = document.getElementById("canvas").getContext("2d");
+        let pt = ctx.transformedPoint(this.lastX,this.lastY);
+        ctx.translate(pt.x,pt.y);
+        let factor = Math.pow(this._scaleFactor,clicks);
+        ctx.scale(factor,factor);
+        ctx.translate(-pt.x,-pt.y);
+        this._clearCanvas();
+    }
+
+    _handleScroll(evt){
+        let delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
+        if (delta) this._zoom(delta);
+        this._clearCanvas();
+        return evt.preventDefault() && false;
+    };
+    
+    _mouseDownHandler(evt) {
+        if (!(evt.shiftKey && evt.which == 1)) {
+            let ctx = document.getElementById("canvas").getContext("2d");
+            // canvas.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
+            this.lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
+            this.lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
+            this._dragStart = ctx.transformedPoint(this.lastX,this.lastY);
+            this._dragged = false;
+        }
+    };
+
+    _mouseMoveHandler(evt) {
+        let ctx = document.getElementById("canvas").getContext("2d");
+
+        this.lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
+        this.lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
+        this._dragged = true;
+        if (this._dragStart){
+            let pt = ctx.transformedPoint(this.lastX,this.lastY);
+            ctx.translate(pt.x-this._dragStart.x,pt.y-this._dragStart.y);
+            this._clearCanvas();
+        }
+    }
+
+    _mouseUpHandler(evt) {
+        this._dragStart = null;
+    };
+
+
+    _clickHandler(evt) {
+        // SHIFT + mouse click
+        if (evt.shiftKey && evt.which == 1) {
+            let ctx = document.getElementById("canvas").getContext("2d");
+            let gameClient = this._gameClient;
+            let canvasHeigh = ctx.canvas.height;
+            let canvasWidth = ctx.canvas.width;
+            let mapC = model._map.cols;
+            let mapR = model._map.rows;
+            let tsizeMap = canvasHeigh / mapR;
+
+            let pt = ctx.transformedPoint(evt.offsetX,evt.offsetY);
+            // check square position
+            let targetC = Math.floor(pt.x / tsizeMap);
+            let targetR = Math.floor(pt.y / tsizeMap);
+
+            let start = model.findMyPosition();
+            if(start == undefined)
+                return 
+            let jp = new PathFinder(model._map);
+            let path = jp.findPath(start.x, start.y, targetC, targetR); 
+            if(path) { 
+                // update the model
+                model.setPath(path);
+            }
+            console.debug("_clickHandler: from " + "(" + start.x + ", " + start.y + ")" + " to " + "(" + targetR + ", " + targetC + ")");
+        }
+    }
+
+    // Adds ctx.getTransform() - returns an SVGMatrix
+    // Adds ctx.transformedPoint(x,y) - returns an SVGPoint
+    _trackTransforms = function(ctx) {
+        let svg = document.createElementNS("http://www.w3.org/2000/svg",'svg');
+        let xform = svg.createSVGMatrix();
+        ctx.getTransform = function(){ return xform; };
+        
+        let savedTransforms = [];
+        let save = ctx.save;
+        ctx.save = function(){
+            savedTransforms.push(xform.translate(0,0));
+            return save.call(ctx);
+        };
+        
+        let restore = ctx.restore;
+        ctx.restore = function(){
+        xform = savedTransforms.pop();
+        return restore.call(ctx);
+                };
+        
+        let scale = ctx.scale;
+        ctx.scale = function(sx,sy){
+        xform = xform.scaleNonUniform(sx,sy);
+        return scale.call(ctx,sx,sy);
+                };
+        
+        let rotate = ctx.rotate;
+        ctx.rotate = function(radians){
+            xform = xform.rotate(radians*180/Math.PI);
+            return rotate.call(ctx,radians);
+        };
+        
+        let translate = ctx.translate;
+        ctx.translate = function(dx,dy){
+            xform = xform.translate(dx,dy);
+            return translate.call(ctx,dx,dy);
+        };
+        
+        let transform = ctx.transform;
+        ctx.transform = function(a,b,c,d,e,f){
+            let m2 = svg.createSVGMatrix();
+            m2.a=a; m2.b=b; m2.c=c; m2.d=d; m2.e=e; m2.f=f;
+            xform = xform.multiply(m2);
+            return transform.call(ctx,a,b,c,d,e,f);
+        };
+        
+        let setTransform = ctx.setTransform;
+        ctx.setTransform = function(a,b,c,d,e,f){
+            xform.a = a;
+            xform.b = b;
+            xform.c = c;
+            xform.d = d;
+            xform.e = e;
+            xform.f = f;
+            return setTransform.call(ctx,a,b,c,d,e,f);
+        };
+        
+        let pt  = svg.createSVGPoint();
+        ctx.transformedPoint = function(x,y){
+            pt.x=x; pt.y=y;
+            return pt.matrixTransform(xform.inverse());
+        }
+    }.bind(this)
+
+    // NAIVE PATHFIND http://ashblue.github.io/javascript-pathfinding/
+    
+
     /* LISTENERS */
 
     // All listeners common to every kind of user
 
     load() {
+        // PATHFINDING
+        document.addEventListener("miticoOggettoCheNonEsiste.MOVE", ((evt) => {this._moveHandler(evt, this._gameClient)}).bind(this), false);
+
+        document.addEventListener("MODEL_SETPATHFINDING",  ((evt) => {this._pathfindingMove(evt, this._gameClient)}).bind(this), false);
+
+        // MAP
         document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", (this.lookMapHandler).bind(this), false);
 
         // Shoot OK event is handled by chat for every player (included "me")
@@ -351,8 +536,6 @@ class MatchController {
                 this._gameClient.startGame(model.status.ga);
                 // memorize game start time
             });
-            // let canvas = document.getElementById("canvas");
-            canvas.addEventListener("keyup", this.startHandler.bind(this), false); // TODO REMOVE
             
             // Init map polling
             this._pollOnce(); // TODO POLLING: this._poller(); 
@@ -371,6 +554,21 @@ class MatchController {
                     popupMsg("Are you a PLAYER or a SPECTATOR?", "danger");
             }
         }, false);
+
+        let canvas = document.getElementById("canvas");
+        canvas.addEventListener('mousedown', ((evt) => {this._mouseDownHandler(evt)}).bind(this),false);
+
+        canvas.addEventListener('mousemove', ((evt) => {this._mouseMoveHandler(evt)}).bind(this),false);
+
+        canvas.addEventListener('mouseup', ((evt) => {this._mouseUpHandler(evt)}).bind(this),false);
+
+        canvas.addEventListener('DOMMouseScroll', ((evt) => {this._handleScroll(evt)}).bind(this),false);
+        canvas.addEventListener('mousewheel', ((evt) => {this._handleScroll(evt)}).bind(this),false);
+
+        window.addEventListener("resize", ((evt) => {this._resizeCanvasHandler(evt)}).bind(this),false);
+
+        canvas.addEventListener("click", ((evt) => {this._clickHandler(evt)}).bind(this),false);
+        
     };
 
     // Player-specific listeners
@@ -418,3 +616,4 @@ class MatchController {
     }
     
 };
+

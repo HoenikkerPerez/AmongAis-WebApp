@@ -90,15 +90,15 @@ class GameClient {
         // console.debug("_requestHandler _waiting: " + this._waitingResponse)
         let now = new Date()
         let elapsed = now - this._lastResponse;
-        if(this._waitingResponse) {
-            console.debug("_requetHandler waitingResponse: " + this._waitingResponse)
-            window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
-            return;
-        }
+        // if(this._waitingResponse) {
+        //     console.debug("_requetHandler waitingResponse: " + this._waitingResponse)
+        //     window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
+        //     return;
+        // }
         
         if (elapsed < timeframe) {
-            let deltaTimeframe = timeframe - elapsed + 50; // add a little more waiting time
-            console.debug("_requetHandler waiting " + deltaTimeframe + " ms, waitingResponse: " + this._waitingResponse)
+            let deltaTimeframe = timeframe - elapsed; // add a little more waiting time
+            // console.debug("_requetHandler waiting " + deltaTimeframe + " ms, waitingResponse: " + this._waitingResponse)
             window.setTimeout(function(){ this._requestHandler() }.bind(this), deltaTimeframe);
             return;
         }

@@ -14,24 +14,68 @@
 // RECHARGE: [0,0],
 // BARRIER: [0,0]
 const Terrain = {
-    GRASS: [1,2],
-    WALL: [3,3],
-    RIVER: [3,21],
-    OCEAN: [5,21],
-    TRAP: [0, 9],
-    FLAG_BLUE: [0, 10],
-    FLAG_RED: [1, 10],
-    RECHARGE: [1,9],
-    BARRIER: [21,3],
-    PLAYER_BLUE: [0, 8],
-    PLAYER_RED: [1, 8],
-    BULLET: [21,21] //TODO laser tile
+    GRASS: [0,0],
+    WALL: [0,0],
+    RIVER: [0,0],
+    OCEAN: [0,0],
+    TRAP: [0,0],
+    FLAG_BLUE: [0,0],
+    FLAG_RED: [0,0],
+    RECHARGE: [0,0],
+    BARRIER: [0,0],
+    PLAYER_BLUE: [0,0],
+    PLAYER_RED: [0,0],
+    BULLET_VERTICAL: [0,0],
+    BULLET_HORIZONTAL: [0,0], //TODO laser tile
+    PATHFINDING: [0,0], // TODO path tile
+    // GRAVES
+    PLAYER_BLUE_KILLED: [3, 0],
+    PLAYER_RED_KILLED: [3, 1]
 }
 
+// TODO ADD GRASS TYPES 
+
 class WorldUi {
+    imgGrass0       = './assets/Terrain/grass_0.png'
+    imgGrass1       = './assets/Terrain/grass_1.png'
+    imgGrass2       = './assets/Terrain/grass_2.png'
+    imgGrass3       = './assets/Terrain/grass_3.png'
+    imgGrass4       = './assets/Terrain/grass_4.png'
+    imgGrass5       = './assets/Terrain/grass_5.png'
+    imgGrass6       = './assets/Terrain/grass_6.png'
+    imgGrass7       = './assets/Terrain/grass_7.png'
+
+    imgWall0        = './assets/Terrain/wall_0.png'
+    imgWall1        = './assets/Terrain/wall_1.png'
+    imgWall2        = './assets/Terrain/wall_2.png'
+    imgWall3        = './assets/Terrain/wall_3.png'
+    imgWall4        = './assets/Terrain/wall_4.png'
+    imgWall5        = './assets/Terrain/wall_5.png'
+    imgWall6        = './assets/Terrain/wall_6.png'
+    imgWall7        = './assets/Terrain/wall_7.png'
+
+    imgFlagRed        = './assets/Terrain/flag_red.png'
+    imgFlagBlue        = './assets/Terrain/flag_blue.png'
+
+    imgRiver       = './assets/Terrain/river.png'
+    imgOcean       = './assets/Terrain/ocean.png'
+    
+    imgTrap        = './assets/Terrain/trap.png'
+    imgBarrier     = './assets/Terrain/barrier0.png'
+    imgRecharge    = './assets/Terrain/recharge.png'
+
+    imgPlayerBlue  = './assets/Player/player_blue.png'
+    imgPlayerRed   = './assets/Player/player_red.png'
+
+    imgBulletVertical  = './assets/Laser/laser_vertical.png'
+    imgBulletHorizontal   = './assets/Laser/laser_horizontal.png'
+
+    imgPathfinding = './assets/Pathfinding/pathfinding_0.png'
+
 
     imgTileSet = './assets/mod32x32_map_tilev2.png'    
-    
+    imgTileSetGraves = './assets/grave_markers-shadow.png'   
+
     images = {}
 
     _rendering = false
@@ -49,13 +93,35 @@ class WorldUi {
         let p = this._loads();
         Promise.all(p).then(function (loaded) {
             this.tileAtlas = this._getImage('tiles');
+            this.tileGraves = this._getImage('graves');
+            
+            this.tileGrass = [this._getImage('grass_0'), this._getImage('grass_1'), 
+                            this._getImage('grass_2'), this._getImage('grass_3'), 
+                            this._getImage('grass_4'), this._getImage('grass_5'), 
+                            this._getImage('grass_6'),this._getImage('grass_7')];
+
+            this.tileWall = [this._getImage('wall_0'), this._getImage('wall_1'), 
+                            this._getImage('wall_2'), this._getImage('wall_3'), 
+                            this._getImage('wall_4'), this._getImage('wall_5'), 
+                            this._getImage('wall_6'),this._getImage('wall_7')];
+            this.tileFlagRed =  this._getImage('flag-red');
+            this.tileFlagBlue =  this._getImage('flag-blue');
+            
+            this.tileRiver = this._getImage('river');
+            this.tileOcean = this._getImage('ocean');
+            this.tileTrap = this._getImage('trap');
+            this.tileBarrier = this._getImage('barrier');
+            this.tileRecharge = this._getImage('recharge');
+            this.tilePlayerBlue = this._getImage('player-blue');
+            this.tilePlayerRed = this._getImage('player-red');
+            this.tilePathfinding = this._getImage('pathfinding');
+
+            this.tileBulletVertical = this._getImage('bullet-vertical');
+            this.tileBulletHorizontal = this._getImage('bullet-horizontal');
+
             this._imageLoaded = true;
         }.bind(this));
         
-        let canvas = document.getElementById("canvas");
-        
-        this.trackTransforms(this.ctx)
-
         this._load();
 
     };
@@ -72,61 +138,77 @@ class WorldUi {
         let tile;
         let team = -1;
         let type = "";
+        let atlas;
+
         let symbol_code = symbol.charCodeAt(0);
+
         if (symbol_code == 88) { // X: team RED flag (A)
-            tile = Terrain.FLAG_RED;
+            tile = Terrain.GRASS;
             team = 0;
             type = "flag";
+            atlas = this.tileGrass[0];
         }
         else if (symbol_code == 120) { // x: team BLUE flag (B)
-            tile = Terrain.FLAG_BLUE;
+            tile = Terrain.GRASS;
             team = 1;
             type = "flag";
+            atlas = this.tileGrass[0];
         }        
         else if(symbol_code >= 65 && symbol_code <= 84) {  // uppercase letter team 0
-            tile = Terrain.PLAYER_RED;
+            // use background grass
+            tile = Terrain.GRASS;
             team = 0;
             type = "player";
+            atlas = this.tileGrass[0];
         }
         else if (symbol_code >= 97 && symbol_code <= 116) {// lowecase letter team 1
-            tile = Terrain.PLAYER_BLUE;
+            // use background grass
+            tile = Terrain.GRASS;
             team = 1;
             type = "player";
+            atlas = this.tileGrass[0];
         }
         else { // terrains
+            type = "terrain";
             switch(symbol) {
                 case ".":
                     tile = Terrain.GRASS;
+                    atlas = this.tileGrass[(col+row*col) % this.tileGrass.length]; // maybe random with a seed?
                     break;
                 case "#":
                     tile = Terrain.WALL;
+                    atlas = this.tileWall[(col+row*col) % this.tileWall.length]; // maybe random with a seed?
                     break;
                 case "~":
                     tile = Terrain.RIVER;
+                    atlas = this.tileRiver;
                     break;
                 case "@":
                     tile = Terrain.OCEAN;
+                    atlas = this.tileOcean;
                     break;
                 case "!":
-                    tile = Terrain.TRAP;
+                    tile = Terrain.GRASS;
+                    atlas = this.tileGrass[0];
+                    type = "trap"
                     break;
                 case "$":
-                    tile = Terrain.RECHARGE;
+                    tile = Terrain.GRASS;
+                    atlas = this.tileGrass[0];
+                    type = "recharge"
                     break;
                 case "&":
-                    tile = Terrain.BARRIER;
-                    break;
-                case "*": // TODO LUCA // not a terrain, actually
-                    tile = Terrain.BULLET;
+                    tile = Terrain.GRASS;
+                    atlas = this.tileGrass[0];
+                    type = "barrier"
                     break;
                 default:
                     console.debug("ERROR map symbol: " + x)
                     break;
             }
-            type = "terrain";
         }
         // return correct position in tilemap and the atlas
-        return [tile, symbol, team, type]
+        return [atlas, tile, symbol, team, type]
     };
 
     _initCanvasSize() {
@@ -152,19 +234,6 @@ class WorldUi {
         this.ctx.canvas.height = this._tsizeMap * model._map.cols;
     }
 
-    _resizeCanvasHandler() {
-        let displayWidth  = window.innerHeight * 0.9
-        let displayHeight = window.innerWidth * 0.9
-        let sz = 0;
-        if(displayWidth<displayHeight) {sz=displayWidth;} else {sz=displayHeight;}
-        displayHeight = displayWidth = sz;
-        this._tsizeMap = Math.floor(displayHeight / model._map.rows)
-        this.ctx.canvas.width  = this._tsizeMap * model._map.rows;
-        this.ctx.canvas.height = this._tsizeMap * model._map.cols;
-
-
-    }
-
     renderMap() {
         if (this._imageLoaded) {
             if (!this._initSize) {
@@ -173,45 +242,119 @@ class WorldUi {
             }
             // this._clearCanvas();
             this._drawMap();
+            this._drawTraps();
+            this._drawPlayers();
             this._drawShoots();
+            this._drawPathfinding();
             this._drawPlayerNames();
         };
         window.requestAnimationFrame(this.renderMap.bind(this));
     };
 
-    _clearCanvas() {
-        // clear canvas
-        this.ctx.save();
-        this.ctx.setTransform(1,0,0,1,0,0);
-        this.ctx.clearRect(0,0,canvas.width,canvas.height);
-        this.ctx.restore();
-    }
 
     _drawMap() {
         let map = model._map;
         // let tsizeMap = Math.floor(this.ctx.canvas.height / this._N)
         this.tmp_players = [];
+        this.tmp_objects = [];
         for (let c = 0; c < map.cols; c++) {
             for (let r = 0; r < map.rows; r++) {
-                let [tile, symbol, team, type] = this._getTile(c, r);
-                if (tile !== (0,0)) { // 0 => empty tile
-                    this.ctx.drawImage(
-                        this.tileAtlas, // image
-                        tile[0] * map.tsize, // source x
-                        tile[1] * map.tsize, // source y
-                        map.tsize, // source width
-                        map.tsize, // source height
-                        c * this._tsizeMap,  // target x
-                        r * this._tsizeMap, // target y
-                        this._tsizeMap, // target width
-                        this._tsizeMap // target height
-                    );
-                    if (type === "player") {
-                        this.tmp_players.push([symbol, team, c, r]);
-                    }
+                let [atlas, tile, symbol, team, type] = this._getTile(c, r); // TODO do not draw players!
+                this.ctx.drawImage(atlas, // image
+                                    tile[0] * map.tsize, // source x
+                                    tile[1] * map.tsize, // source y
+                                    map.tsize, // source width
+                                    map.tsize, // source height
+                                    c * this._tsizeMap,  // target x
+                                    r * this._tsizeMap, // target y
+                                    this._tsizeMap, // target width
+                                    this._tsizeMap // target height
+                                );
+                if (type === "player") {
+                    this.tmp_players.push([symbol, team, c, r]);
+                } else if (type === "trap" || type === "barrier" || type === "recharge" || type === "flag") { 
+                    this.tmp_objects.push([type, c, r, team]);
                 }
             }
         }
+    }
+
+    _drawTraps() {
+        let map = model._map;
+        let tile;
+        let atlas;
+
+        this.tmp_objects.forEach( (trap) => {
+                            let [type, c, r, team] = trap;
+                            if (type === "trap") {
+                                tile = Terrain.TRAP;
+                                atlas = this.tileTrap;
+                            }
+                            else if (type === "barrier") {
+                                tile = Terrain.BARRIER;
+                                atlas = this.tileBarrier;
+                            }
+                            else if (type === "recharge") {
+                                tile = Terrain.RECHARGE;
+                                atlas = this.tileRecharge;
+                            } else if (type === "flag") {
+                                if(team == 0) {
+                                    tile = Terrain.FLAG_RED;
+                                    atlas = this.tileFlagRed;
+                                } else {
+                                    tile = Terrain.FLAG_BLUE;
+                                    atlas = this.tileFlagBlue;
+                                }
+                            }
+
+                            this.ctx.drawImage(
+                                atlas, // image
+                                tile[0] * map.tsize, // source x
+                                tile[1] * map.tsize, // source y
+                                map.tsize, // source width
+                                map.tsize, // source height
+                                c * this._tsizeMap,  // target x
+                                r * this._tsizeMap, // target y
+                                this._tsizeMap, // target width
+                                this._tsizeMap // target height
+                            );
+                        });
+    }   
+
+    _drawPlayers() {
+        let map = model._map;
+        let tile;
+        let atlas;
+        this.tmp_players.forEach( (map_pl) => {
+                        let [symbol, team, c, r] = map_pl;
+                        let pl = model.findPlayerBySymbol(symbol);
+                        if(pl != undefined) {
+                            if (pl.state == "KILLED") {
+                                tile = (team == 0 ? Terrain.PLAYER_RED_KILLED : Terrain.PLAYER_BLUE_KILLED);
+                                atlas = this.tileGraves;
+                            } else {
+                                if (team == 0) {
+                                    tile = Terrain.PLAYER_RED;
+                                    atlas = this.tilePlayerRed;
+                                } else {
+                                    tile = Terrain.PLAYER_BLUE;
+                                    atlas = this.tilePlayerBlue;
+                                }
+                            }
+
+                            this.ctx.drawImage(
+                                atlas, // image
+                                tile[0] * map.tsize, // source x
+                                tile[1] * map.tsize, // source y
+                                map.tsize, // source width
+                                map.tsize, // source height
+                                c * this._tsizeMap,  // target x
+                                r * this._tsizeMap, // target y
+                                this._tsizeMap, // target width
+                                this._tsizeMap // target height
+                            );
+                        }
+                        });
     }
 
     _drawPlayerNames() {
@@ -256,16 +399,19 @@ class WorldUi {
             let direction = shoot.direction;
             let counter = shoot.counter;
             let tile;
-            
+            let atlas;
             if (counter > 0) {
                 console.debug("drawing shoots: " + x +", " + " " + direction + " " + counter);
                 // choose tile
-                if (direction == "vertical") 
-                    tile = Terrain.BULLET;
-                else 
-                    tile = Terrain.BULLET;
+                if (direction == "vertical") {
+                    tile = Terrain.BULLET_VERTICAL;
+                    atlas = this.tileBulletVertical;
+                } else { 
+                    tile = Terrain.BULLET_HORIZONTAL;
+                    atlas = this.tileBulletHorizontal;
+                }
                 this.ctx.drawImage(
-                    this.tileAtlas, // image
+                    atlas, // image
                     tile[0] * map.tsize, // source x
                     tile[1] * map.tsize, // source y
                     map.tsize, // source width
@@ -280,6 +426,34 @@ class WorldUi {
         }
     }
 
+    _drawPathfinding() {
+        let path = model.path;
+        let map = model._map;
+        for (let i=0; i<path.length; i++) {
+            let x = path[i].x;
+            let y = path[i].y;
+            let counter = path[i].counter;
+            let tile = Terrain.PATHFINDING;
+            let atlas = this.tilePathfinding;
+            if (counter > 0) {
+                this.ctx.drawImage(
+                    atlas, // image
+                    tile[0] * map.tsize, // source x
+                    tile[1] * map.tsize, // source y
+                    map.tsize, // source width
+                    map.tsize, // source height
+                    x * this._tsizeMap,  // target x
+                    y * this._tsizeMap, // target y
+                    this._tsizeMap, // target width
+                    this._tsizeMap // target height
+                );
+                model.path[i].counter--;
+            }
+
+        }
+    }
+
+
     _loadWsMessages() {
         document.addEventListener("MODEL_SETMAP", () => {
             if (!this._rendering) {
@@ -287,37 +461,6 @@ class WorldUi {
                 this._rendering = true;
             }
         }, false);
-
-
-        let canvas = document.getElementById("canvas");
-        canvas.addEventListener('mousedown',function(evt){
-            // canvas.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
-            this.lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
-            this.lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
-            this.dragStart = this.ctx.transformedPoint(this.lastX,this.lastY);
-            this.dragged = false;
-        }.bind(this),false);
-
-        canvas.addEventListener('mousemove',function(evt){
-            this.lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
-            this.lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
-            this.dragged = true;
-            if (this.dragStart){
-              let pt = this.ctx.transformedPoint(this.lastX,this.lastY);
-              this.ctx.translate(pt.x-this.dragStart.x,pt.y-this.dragStart.y);
-              this._clearCanvas();
-            }
-        }.bind(this),false);
-        
-        canvas.addEventListener('mouseup',function(evt){
-            this.dragStart = null;
-            //if (!this.dragged) this.zoom(evt.shiftKey ? -1 : 1 );
-        }.bind(this),false);
-
-        canvas.addEventListener('DOMMouseScroll',this.handleScroll.bind(this),false);
-        canvas.addEventListener('mousewheel',this.handleScroll.bind(this),false);
-
-        window.addEventListener("resize", this._resizeCanvasHandler.bind(this), false);
     }
 
     
@@ -345,92 +488,38 @@ class WorldUi {
 
     _loads = function () {
         return [
-            this._loadImage('tiles', this.imgTileSet)
+            this._loadImage('tiles', this.imgTileSet),
+            this._loadImage('graves', this.imgTileSetGraves),
+            this._loadImage('grass_0', this.imgGrass0),
+            this._loadImage('grass_1', this.imgGrass1),
+            this._loadImage('grass_2', this.imgGrass2),
+            this._loadImage('grass_3', this.imgGrass3),
+            this._loadImage('grass_4', this.imgGrass4),
+            this._loadImage('grass_5', this.imgGrass5),
+            this._loadImage('grass_6', this.imgGrass6),
+            this._loadImage('grass_7', this.imgGrass7),
+            this._loadImage('wall_0', this.imgWall0),
+            this._loadImage('wall_1', this.imgWall1),
+            this._loadImage('wall_2', this.imgWall2),
+            this._loadImage('wall_3', this.imgWall3),
+            this._loadImage('wall_4', this.imgWall4),
+            this._loadImage('wall_5', this.imgWall5),
+            this._loadImage('wall_6', this.imgWall6),
+            this._loadImage('wall_7', this.imgWall7),
+            this._loadImage('flag-red', this.imgFlagRed),
+            this._loadImage('flag-blue', this.imgFlagBlue),
+            this._loadImage('river', this.imgRiver),
+            this._loadImage('ocean', this.imgOcean),
+            this._loadImage('trap', this.imgTrap),
+            this._loadImage('barrier', this.imgBarrier),
+            this._loadImage('recharge', this.imgRecharge),
+            this._loadImage('player-blue', this.imgPlayerBlue),
+            this._loadImage('player-red', this.imgPlayerRed),
+            this._loadImage('pathfinding', this.imgPathfinding),
+            this._loadImage('bullet-vertical', this.imgBulletVertical),
+            this._loadImage('bullet-horizontal', this.imgBulletHorizontal)
         ];
     }.bind(this);
-
-
-
-
-    zoom = function(clicks){
-        let pt = this.ctx.transformedPoint(this.lastX,this.lastY);
-        this.ctx.translate(pt.x,pt.y);
-        let factor = Math.pow(this.scaleFactor,clicks);
-        this.ctx.scale(factor,factor);
-        this.ctx.translate(-pt.x,-pt.y);
-        this._clearCanvas();
-    }
-
-    handleScroll = function(evt){
-        let delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
-        if (delta) this.zoom(delta);
-        this._clearCanvas();
-        return evt.preventDefault() && false;
-    };
     
-
-    // Adds ctx.getTransform() - returns an SVGMatrix
-    // Adds ctx.transformedPoint(x,y) - returns an SVGPoint
-    trackTransforms = function(ctx) {
-        let svg = document.createElementNS("http://www.w3.org/2000/svg",'svg');
-        let xform = svg.createSVGMatrix();
-        ctx.getTransform = function(){ return xform; };
-        
-        let savedTransforms = [];
-        let save = ctx.save;
-        ctx.save = function(){
-            savedTransforms.push(xform.translate(0,0));
-            return save.call(ctx);
-        };
-        
-        let restore = ctx.restore;
-        ctx.restore = function(){
-        xform = savedTransforms.pop();
-        return restore.call(ctx);
-                };
-        
-        let scale = ctx.scale;
-        ctx.scale = function(sx,sy){
-        xform = xform.scaleNonUniform(sx,sy);
-        return scale.call(ctx,sx,sy);
-                };
-        
-        let rotate = ctx.rotate;
-        ctx.rotate = function(radians){
-            xform = xform.rotate(radians*180/Math.PI);
-            return rotate.call(ctx,radians);
-        };
-        
-        let translate = ctx.translate;
-        ctx.translate = function(dx,dy){
-            xform = xform.translate(dx,dy);
-            return translate.call(ctx,dx,dy);
-        };
-        
-        let transform = ctx.transform;
-        ctx.transform = function(a,b,c,d,e,f){
-            let m2 = svg.createSVGMatrix();
-            m2.a=a; m2.b=b; m2.c=c; m2.d=d; m2.e=e; m2.f=f;
-            xform = xform.multiply(m2);
-            return transform.call(ctx,a,b,c,d,e,f);
-        };
-        
-        let setTransform = ctx.setTransform;
-        ctx.setTransform = function(a,b,c,d,e,f){
-            xform.a = a;
-            xform.b = b;
-            xform.c = c;
-            xform.d = d;
-            xform.e = e;
-            xform.f = f;
-            return setTransform.call(ctx,a,b,c,d,e,f);
-        };
-        
-        let pt  = svg.createSVGPoint();
-        ctx.transformedPoint = function(x,y){
-            pt.x=x; pt.y=y;
-            return pt.matrixTransform(xform.inverse());
-        }
-    }.bind(this)
 };
 

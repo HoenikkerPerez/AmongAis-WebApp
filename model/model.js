@@ -1,10 +1,12 @@
 var model = {
     _map: [],
-    timeframe: 600, // Default map polling rate
-    spectatorTimeframe: 600, // Spectator's map polling rate
-    playerTimeframe: 600, // Player's map polling rate
-    connectionTimeframe: 600, // Minimum delay between requests
-    nopTimeframe: 30000,
+    timeframe: 500, // Default map polling rate
+    timeframeMap: 500,
+    timeframeStatus:1500,
+    spectatorTimeframe: 500, // Spectator's map polling rate
+    playerTimeframe: 500, // Player's map polling rate
+    connectionTimeframe: 500, // Minimum delay between requests
+    nopTimeframe: 20000,
     net: {
         game: {
             ws: "ws://93.39.188.250:8521"
@@ -65,6 +67,8 @@ var model = {
         iVote: false,
     },
     shoots: [],
+    pathfindigMoves: [],
+    path: [],
 
     setLogin: function(lg) {this.login=lg},
     setUsername(uName){this.username=uName},
@@ -74,8 +78,65 @@ var model = {
         this._map = map;
         // remove exausted shoots
         this._removeExaustedShoots();
+        // update player position
+        let tmpMap = map.tiles;
+        for(let i = 0; i<tmpMap.length; i++) {
+            let symbol_code = tmpMap[i].charCodeAt(0);
+            if(symbol_code >= 65 && symbol_code <= 84 || symbol_code >= 97 && symbol_code <= 116) { 
+                let pl = this.findPlayerBySymbol(tmpMap[i]);
+                if(pl != undefined) {
+                    pl.x = i % map.cols;
+                    pl.y = Math.floor(i / map.cols);
+                } 
+            }
+        }
         document.dispatchEvent(new CustomEvent("MODEL_SETMAP", {detail: {map:map}}));
     },
+
+    setPath(steps) {
+        let reverseSteps = steps.reverse();
+        // reverseSteps.shift();
+        this.path = reverseSteps.map(step => {
+                                    return {
+                                        x: step.x, 
+                                        y: step.y, 
+                                        nextMove: undefined,
+                                        counter: 7}});
+        let path = this.path;
+        for(let i=0; i<path.length-1; i++) {
+            this.path[i].nextMove = this._computeNextPathfindingMove(path[i].x, path[i].y, path[i+1].x, path[i+1].y);
+        }
+        // remove last move 
+        // this.path.pop();
+        // attach first step to the event
+        document.dispatchEvent(new CustomEvent("MODEL_SETPATHFINDING", {detail: {step:this.path}}));
+    },
+
+    popNextPathfindingMove() {
+        if(this.path.length <= 0)
+            return undefined
+        
+        let nextStep =  this.path.shift();
+        if(nextStep.nextMove == undefined)
+            return undefined
+        let nextMove = nextStep.nextMove;
+        console.debug("popNextPathfindingMove: MOVE: " + nextMove);
+        return nextMove;
+    },
+
+    _computeNextPathfindingMove(startX, startY, nextStepX, nextStepY) {
+        if(startX > nextStepX)
+            nextMove = "W";
+        else if (startX < nextStepX)
+            nextMove="E";
+        else if (startY < nextStepY)
+            nextMove="S";
+        else if (startY > nextStepY)
+            nextMove="N";
+        console.debug("_computeNextPathfindingMove: pos " + "(" + startX + ", " + startY + ")" + " to " + "(" + nextStepX + ", " + nextStepY + "); MOVE: " + nextMove);
+        return nextMove;
+    },
+
 
     _removeExaustedShoots() {
         let shoots = this.shoots;
@@ -222,6 +283,17 @@ var model = {
             let player = playerList[p];
             if(player.symbol === symb)
                 return player;
+        }
+        return undefined;
+    },
+
+    findMyPosition() {
+        let me = this.inGameName;
+        let playerList = this.status.pl_list;
+        for(let p in playerList) {
+            let player = playerList[p];
+            if(player.name === me)
+                return {x: player.x, y: player.y};
         }
         return undefined;
     },
