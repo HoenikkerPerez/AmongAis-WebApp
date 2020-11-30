@@ -106,7 +106,7 @@ class SessionController {
                 model.setRunningGame(true, model.PLAYER);
             } else if(msg.startsWith("ERROR 502")) {
                 console.debug("Session Controller is going to force the spectator mode because of server error: " + msg);
-                popupMsg(msg + " received from the server. Activating spectator mode for game " + model.status.ga);
+                popupMsg(msg + " received from the server. Activating spectator mode for game " + model.status.ga, "success");
                 this._gameClient.spectateGame(model.status.ga);
             } else {
                 popupMsg(msg,"danger")
