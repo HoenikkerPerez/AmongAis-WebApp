@@ -357,6 +357,9 @@ class MatchController {
         this._tsizeMap = Math.floor(displayHeight / model._map.rows)
         ctx.canvas.width  = this._tsizeMap * model._map.rows;
         ctx.canvas.height = this._tsizeMap * model._map.cols;
+        // this._clearCanvas();
+        // this._trackTransforms(document.getElementById("canvas").getContext("2d"))
+
     }
 
     _zoom(clicks){
@@ -416,21 +419,23 @@ class MatchController {
             let mapR = model._map.rows;
             let tsizeMap = canvasHeigh / mapR;
 
-            let pt = ctx.transformedPoint(evt.offsetX,evt.offsetY);
-            // check square position
-            let targetC = Math.floor(pt.x / tsizeMap);
-            let targetR = Math.floor(pt.y / tsizeMap);
-
-            let start = model.findMyPosition();
-            if(start == undefined)
+            let pt = ctx.transformedPoint(this.lastX, this.lastY);
+            // console.debug("_clickHandler:pt " + "(" + pt.x + ", " + pt.y);
+            if(pt.x >= 0 && pt.x < canvasWidth && pt.y >= 0 && pt.y <= canvasHeigh) {
+                // check square position
+                let targetC = Math.floor(pt.x / tsizeMap);
+                let targetR = Math.floor(pt.y / tsizeMap);
+                let start = model.findMyPosition();
+                if(start == undefined)
                 return 
-            let jp = new PathFinder(model._map);
-            let path = jp.findPath(start.x, start.y, targetC, targetR); 
-            if(path) { 
-                // update the model
-                model.setPath(path);
+                let jp = new PathFinder(model._map);
+                let path = jp.findPath(start.x, start.y, targetC, targetR); 
+                if(path) { 
+                    // update the model
+                    model.setPath(path);
+                }
+                console.debug("_clickHandler: from " + "(" + start.x + ", " + start.y + ")" + " to " + "(" + targetR + ", " + targetC + ")");
             }
-            console.debug("_clickHandler: from " + "(" + start.x + ", " + start.y + ")" + " to " + "(" + targetR + ", " + targetC + ")");
         }
     }
 
@@ -565,7 +570,7 @@ class MatchController {
         canvas.addEventListener('DOMMouseScroll', ((evt) => {this._handleScroll(evt)}).bind(this),false);
         canvas.addEventListener('mousewheel', ((evt) => {this._handleScroll(evt)}).bind(this),false);
 
-        window.addEventListener("resize", ((evt) => {this._resizeCanvasHandler(evt)}).bind(this),false);
+        // window.addEventListener("resize", ((evt) => {this._resizeCanvasHandler(evt)}).bind(this),false);
 
         canvas.addEventListener("click", ((evt) => {this._clickHandler(evt)}).bind(this),false);
         

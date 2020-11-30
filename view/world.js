@@ -226,9 +226,7 @@ class WorldUi {
             this.ctx.canvas.width  = displayWidth;
             this.ctx.canvas.height = displayHeight;
         }
-        this.lastX = canvas.width/2
-        this.lastX  = canvas.height/2
-        
+            
         this._tsizeMap = Math.floor(this.ctx.canvas.height / model._map.rows)
         this.ctx.canvas.width  = this._tsizeMap * model._map.rows;
         this.ctx.canvas.height = this._tsizeMap * model._map.cols;
@@ -363,22 +361,23 @@ class WorldUi {
             // let this._tsizeMap = Math.floor(this.ctx.canvas.height / this._N)
 
             let player = model.findPlayerBySymbol(symbol);
+            let me_symbol = model.status.me.symbol;
             if (typeof player !== 'undefined') {
                 // draw backroung character:
                 if (team == 0) {
                     if (typeof me_symbol !== 'undefined' && model.status.me.symbol.localeCompare(symbol) == 0) {
-                        this.ctx.font = '12px Arial'
+                        this.ctx.font = '16px Arial'
                         this.ctx.fillStyle = model.teamColors.mePlayer;
                     } else {
-                        this.ctx.font = '8px Arial'
+                        this.ctx.font = '16px Arial'
                         this.ctx.fillStyle = model.teamColors.teamA;
                     }
                 } else {
                     if (typeof me_symbol !== 'undefined' && model.status.me.symbol.localeCompare(symbol) == 0) {
-                        this.ctx.font = '12px Arial'
+                        this.ctx.font = '16px Arial'
                         this.ctx.fillStyle = model.teamColors.mePlayer;
                     } else {
-                        this.ctx.font = '8px Arial'
+                        this.ctx.font = '16px Arial'
                         this.ctx.fillStyle = model.teamColors.teamB;
                     }
                 }
