@@ -89,9 +89,16 @@ class SessionController {
         document.addEventListener("miticoOggettoCheNonEsiste.CREATE_GAME", (evt) => {
             let msg = evt.detail
             let msgOk = msg.startsWith("OK");
-            if(msgOk)
+            if(msgOk){
                 // alert("Game has been created!");
-                popupMsg("Game has been created!","success")
+                popupMsg("Game has been created!","success");
+                document.getElementById("start-button").style.display = "";
+                document.getElementById("start-button").addEventListener("click", () => {
+                    console.debug("MatchController is asking the game client to START the joined game");
+                    this._gameClient.startGame(document.getElementById("gameNameInput").value);
+                    // memorize game start time
+                });
+            }
             else
                 // alert("Game creation failed.");
                 popupMsg(msg,"danger")
