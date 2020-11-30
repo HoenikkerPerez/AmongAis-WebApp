@@ -59,6 +59,15 @@ class Ui {
 
         document.addEventListener("MODEL_RUN_GAME", () => {
             this._gameActivated();
+            if(model.kind == model.PLAYER){
+                let msg = "Gameplay instructions:\n";
+                msg += "Keyboard movement: [W][A][S][D]\n"
+                msg += "Keyboard Shoot: [  space-bar  ]\n"
+                msg += "Zoom +/- : Mouse-Weel\n"
+                msg += "Move view on map: Muouse-Left drag-n-drop\n"
+                msg += "Path-Finding: [Shift] + Mouse-Left\n"
+                popupMsg(msg,"info")
+            }
         }, false);
 
         document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
