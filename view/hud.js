@@ -159,52 +159,54 @@ class HudUi {
             }
             // let team = document.createElement("li");
             // team.innerHTML = "T: " + _p.team;
-            
-            // Touring game visualization
-            let touring_button_human = document.createElement("button");
-            touring_button_human.innerText = "H";
-            touring_button_human.classList.add("touring-button-human");
-            touring_button_human.classList.add("btn");
-            touring_button_human.classList.add("btn-primary");
-            let touring_button_ai = document.createElement("button");
-            touring_button_ai.innerText = "AI";
-            touring_button_ai.classList.add("touring-button-ai");
-            touring_button_ai.classList.add("btn");
-            touring_button_ai.classList.add("btn-primary");
-            // Touring undefined => pushing a button means "I want to say that"
-            // Touring !undefined => pushing a button means "change that I said that"
-            if(_p.touring == undefined) {
-                p.appendChild(touring_button_human);
-                touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} })); }
-                p.appendChild(touring_button_ai);
-                touring_button_ai.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} })); }
-            } else if(_p.touring == GameClient.AI) {
-                p.appendChild(touring_button_ai);
-                touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} })); }
-            } else if(_p.touring == GameClient.HUMAN) {
-                p.appendChild(touring_button_human);
-                touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} })); }
-            } else {
-                console.error("HUD is unable to render Touring button: can't understand touring choice for " + _p.name);
-            }
+            if(model.kind == model.PLAYER) {
+                // Touring game visualization
+                let touring_button_human = document.createElement("button");
+                touring_button_human.innerText = "H";
+                touring_button_human.classList.add("touring-button-human");
+                touring_button_human.classList.add("btn");
+                touring_button_human.classList.add("btn-primary");
+                let touring_button_ai = document.createElement("button");
+                touring_button_ai.innerText = "AI";
+                touring_button_ai.classList.add("touring-button-ai");
+                touring_button_ai.classList.add("btn");
+                touring_button_ai.classList.add("btn-primary");
+                // Touring undefined => pushing a button means "I want to say that"
+                // Touring !undefined => pushing a button means "change that I said that"
+                if(_p.touring == undefined) {
+                    p.appendChild(touring_button_human);
+                    touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} })); }
+                    p.appendChild(touring_button_ai);
+                    touring_button_ai.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} })); }
+                } else if(_p.touring == GameClient.AI) {
+                    p.appendChild(touring_button_ai);
+                    touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} })); }
+                } else if(_p.touring == GameClient.HUMAN) {
+                    p.appendChild(touring_button_human);
+                    touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} })); }
+                } else {
+                    console.error("HUD is unable to render Touring button: can't understand touring choice for " + _p.name);
+                }
 
-            // p.appendChild(team);
-            pl.appendChild(p);
-            if(model.status.me != {} && model.status.me.team == _p.team && model.status.me.symbol != _p.symbol) { // && model.status.me.symbol != _p.symbol
-                // Social deduction
-                let accuse_button = document.createElement("button");
-                accuse_button.innerText = "Accuse!";
-                accuse_button.classList.add("accuse-button");
-                accuse_button.classList.add("btn");
-                accuse_button.classList.add("btn-danger");
-                accuse_button.onclick= () => {
-                    document.dispatchEvent(new CustomEvent("BUTTON_ACCUSE", {detail: _p.name }));
-                    let allb = document.getElementsByClassName("accuse-button");
-                    // TODO: to be continued ...
-                };
-                p.appendChild(accuse_button);
+                // p.appendChild(team);
+                pl.appendChild(p);
+                if(model.status.me != {} && model.status.me.team == _p.team && model.status.me.symbol != _p.symbol) { // && model.status.me.symbol != _p.symbol
+                    // Social deduction
+                    let accuse_button = document.createElement("button");
+                    accuse_button.innerText = "Accuse!";
+                    accuse_button.classList.add("accuse-button");
+                    accuse_button.classList.add("btn");
+                    accuse_button.classList.add("btn-danger");
+                    accuse_button.onclick= () => {
+                        document.dispatchEvent(new CustomEvent("BUTTON_ACCUSE", {detail: _p.name }));
+                        let allb = document.getElementsByClassName("accuse-button");
+                        // TODO: to be continued ...
+                    };
+                    p.appendChild(accuse_button);
+                }
+            } else if(model.kind == model.SPECTATOR) {
+                pl.appendChild(p);
             }
-
         }
         root.appendChild(pl);
     }

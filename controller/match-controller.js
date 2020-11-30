@@ -618,6 +618,10 @@ class MatchController {
             document.getElementById("canvas").focus();
             this._poller();
         }, false);
+
+        document.addEventListener("MODEL_PLAYER_JOINED", () => {
+            this._pollOnce(); // TODO POLLING: this._poller(); 
+       }, false);
     }
     
 };
