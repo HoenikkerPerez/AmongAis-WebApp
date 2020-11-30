@@ -297,9 +297,31 @@ class WorldUi {
                                 atlas = this.tileRecharge;
                             } else if (type === "flag") {
                                 if(team == 0) {
+                                    if (model.status.state == "LOBBY") { // help user to find flags context.arc(x,y,r,sAngle,eAngle,counterclockwise);
+                                        this.ctx.beginPath();
+                                        let radius =  (this._tsizeMap)
+                                        let cx = c * this._tsizeMap + this._tsizeMap /2
+                                        let cy = r * this._tsizeMap + this._tsizeMap /2
+                                        this.ctx.arc(cx, cy, radius, 0, 2*Math.PI);
+                                        this.ctx.fillStyle = 'rgba(255, 0, 0, 0.4)'
+                                        this.ctx.fill();
+                                        this.ctx.lineWidth = 1;
+                                        // this.ctx.stroke();
+                                    }
                                     tile = Terrain.FLAG_RED;
                                     atlas = this.tileFlagRed;
                                 } else {
+                                    if (model.status.state == "LOBBY") { // help user to find flags context.arc(x,y,r,sAngle,eAngle,counterclockwise);
+                                        this.ctx.beginPath();
+                                        let radius =  (this._tsizeMap)
+                                        let cx = c * this._tsizeMap + this._tsizeMap /2
+                                        let cy = r * this._tsizeMap + this._tsizeMap /2
+                                        this.ctx.arc(cx, cy, radius, 0, 2*Math.PI);
+                                        this.ctx.fillStyle = 'rgba(0, 0, 255, 0.4)'
+                                        this.ctx.fill();
+                                        this.ctx.lineWidth = 1;
+                                        // this.ctx.stroke();
+                                    }
                                     tile = Terrain.FLAG_BLUE;
                                     atlas = this.tileFlagBlue;
                                 }
