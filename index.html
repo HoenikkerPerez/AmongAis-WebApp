@@ -31,38 +31,105 @@
         <script src="clients/game-client/lobby-manager.js"></script>
         <script src="clients/game-client/game-client.js"></script>
 
+        <script src="clients/chat-client.js"></script>
+
         <!-- Controller -->
+        <script src="controller/jp.js"></script>
+
         <script src="controller/session-controller.js"></script>
         <script src="controller/match-controller.js"></script>
+        <script src="controller/chat-controller.js"></script>
 
         <script src="controller/controller.js"></script>
         <!-- View -->
-        <script src="view/loader.js"></script>
+        <script src="view/view-utils.js"></script>
+        <script src="view/ui.js"></script>
         <script src="view/world.js"></script>
+        <script src="view/hud.js"></script>
+        <script src="view/gui.js"></script>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        
+        <link rel="stylesheet" href="styles.css" type="text/css">
+
     </head>
-    <body>
-        <div id="homeUI">
-            <div class="login_wrapper">
-                <form name="loginForm" id="loginForm" action="">Login Credentials:<br>
-                    <input type="text" id="usernameInput" name="usernameInput" value="username"><P>
-                    <input type="text" id="ingamenameInput" name="ingamenameInput" value="in-game Name"><P>
-                    <input type="button" id="loginButton" name="loginButton" value="LOGIN">
-                </form>
+    <body class="container-fluid p-3 my-3 bg-dark text-white">
+        <div id="alert-popup" class="modal fade" role="alert"></div>
+        <script>
+            // popupMsg("Uomo avvisato ... ", "info");
+            // popupMsg("... uomo avvisato.", "danger");
+        </script>
+        <div id="homeUI" class="container p-3 my-3 bg-dark text-white">
+            <div class="form-group p-3 my-3" id="login-form-wrapper">
+                <div class="form" name="loginForm" for="email" id="loginForm">Login Credentials:
+                    <!-- <div class="col-sm-4"> . </div> -->
+                    <input type="text" id="usernameInput" name="usernameInput" class="form-control my-3" placeholder="loginName" autofocus> <!-- col-sm-4 -->
+                    <input type="button" class="btn btn-primary" id="loginButton" name="loginButton" value="LOGIN" disabled>
+                    <!-- <div class="col-sm-4"></div> -->
+
+                </div>
+                <div>For the moment you can use the username you want. [this is useless, we know where you live]</div>
             </div>
-            <div class="startgame_wrapper">
-                <form name="startGameForm" id="startGameForm" action="">Enter game name:<br>
-                    <input type="text" id="gameNameInput" name="gameNameInput" value=""><P>
-                    <input type="button" id="startButton" name="startButton" value="START">
-                    <input type="button" id="joinButton" name="joinButton" value="JOIN">
-                </form>
+            <div class="form-group" id="startgame-form-wrapper" style="display: none;">
+                <div name="startGameForm" id="startGameForm" action="">Enter game name:<br>
+                    <input type="text" class="form-control my-3" id="ingamenameInput" name="ingamenameInput" placeholder="username"><P>
+                    <input type="text" class="form-control my-3" id="gameNameInput" name="gameNameInput"  placeholder="matchname" value=""><P>
+                        <div class="btn-group">
+                            <input type="button" class="btn btn-primary" id="createButton" name="createButton" value="CREATE" disabled>
+                            <input type="button" class="btn btn-primary" id="startButtonNoJoin" name="startButtonNoJoin" value="START MATCH" disabled>
+                        </div>
+                        <input type="button" class="btn btn-primary" id="joinButton" name="joinButton" value="JOIN" disabled>
+                    <input type="button" class="btn btn-primary" id="spectateButton" name="spectateButton" value="SPECTATE" disabled>
+                    </div>
             </div>
         </div>
 
-        <div class="hud" id="hud">
+
+        <div id="console" class="row" style="display:none">
+            <div id="endgame" style="max-width: 20%">
+                <h1 id="endgame-title"></h1>
+                <div id="endgame-ladder"></div>
+            </div>
+            <button id="start-button" type="button" class="btn btn-primary" style="display: none;">START</button>
+            <div class="col-sm-2" >
+                <div id="hud" style="overflow:auto; max-height:100vh;"></div>
+                <div id="emergency-meeting" class="emergency-meeting-yellow"style="display: none;"></div>
+            </div>
+            <div class="col">
+                <canvas id="canvas" tabindex='1'></canvas>
+            </div>
+            <!-- chat -->
+            <div class="col-sm-2"> 
+                <div class="form-group"> 
+
+                    <div name="chatForm" id="chatForm"><br>
+                        <div id="chatChannelBlock" class="form-row mb-2">
+                            <input type="text" class="form-control col-8 mr-1" id="chatChannelInput" name="chatChannelInput" placeholder="channel" value="">
+                            <input type="button" class="btn btn-primary col-3" id="chatChannelButton" name="chatChannelButton" value="SUBS" disabled>
+                            <span id="subscribedChannels"> </span>
+                        </div>
+                        <div id="chatSendMessageBlock" class="form-row mb-1">
+                            <div class="col-8 mr-1">
+                                <div class="form-row">
+                                    <input type="text"  class="form-control col mr-1" id="chatSendChannelInput" name="chatSendChannelInput" placeholder="channel" value="">
+                                    <input type="text"  class="form-control col" id="chatSendMessageInput" name="chatSendMessageInput" placeholder="message" value="">
+                                </div>
+                            </div>
+                            <input type="button" class="btn btn-primary col-3" id="chatSendButton" name="chatSendButton" value="SEND" disabled>
+                            
+                        </div>
+                        <div id="messageList" style="overflow:auto; max-height:50vh;"></div>
+                        <div id="chatSubscribedChannelBlock" class="chatSubscribedChannelBlock"></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="canvas_wrapper">
-            <canvas id="canvas" width="512" height="512"></canvas>    
-        </div>
+    <footer class="footer">
+        <p>Web App Version: v0.6.0-proto</p>
+    </footer>
     </body>
 </html>

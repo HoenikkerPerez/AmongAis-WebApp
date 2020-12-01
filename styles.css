@@ -1,0 +1,108 @@
+#homeUI {
+    text-align:center;
+    margin-top: 5%;
+}
+
+#loginUI {
+    text-align:center;
+    margin-top: 5%;
+}
+
+#canvas{
+    outline: rgb(48, 48, 48) 5px solid;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+#canvas:focus {
+    outline: none !important;
+    border: rgb(48, 48, 48) 5px solid;
+    box-shadow: 0 0 10px #719ECE;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    color: black;
+    text-align: center;
+  }
+
+.emergency-meeting-yellow {
+    background-image: repeating-linear-gradient(-60deg, #ffff00, #ffff00 11.16px, transparent 12px, transparent 15.72px, #ffff00 16px), repeating-linear-gradient(30deg, #ffff00, #ffff00 11.16px, transparent 12px, transparent 15.72px, #ffff00 16px), repeating-linear-gradient(120deg, #ffff00, #ffff00 11.16px, transparent 12px, transparent 15.72px, #ffff00 16px), repeating-linear-gradient(210deg, #ffff00, #ffff00 11.16px, transparent 12px, transparent 15.72px, #ffff00 16px);
+    background-size: 4px calc(100% + 32px), calc(100% + 32px) 4px, 4px calc(100% + 32px) , calc(100% + 32px) 4px;
+    background-position: 0 0, 0 0, 100% 0, 0 100%;
+    background-repeat: no-repeat;
+    animation: borderAnimation 0.9s infinite linear;
+    background-color: rgba(255, 255, 0, 0.5);
+    margin: 3% auto;
+    padding: 4%;
+}
+
+@keyframes borderAnimation {
+    from { 
+        background-position: 0 0, -32px 0, 100% -32px, 0 100%; }
+    to { background-position: 0 -32px, 0 0, 100% 0, -32px 100%; }
+}
+
+
+.emergency-meeting-red {
+    background-image: repeating-linear-gradient(-60deg, #ff0000, #ff0000 11.16px, transparent 12px, transparent 15.72px, #ff0000 16px), repeating-linear-gradient(30deg, #ff0000, #ff0000 11.16px, transparent 12px, transparent 15.72px, #ff0000 16px), repeating-linear-gradient(120deg, #ff0000, #ff0000 11.16px, transparent 12px, transparent 15.72px, #ff0000 16px), repeating-linear-gradient(210deg, #ff0000, #ff0000 11.16px, transparent 12px, transparent 15.72px, #ff0000 16px);
+    background-size: 4px calc(100% + 32px), calc(100% + 32px) 4px, 4px calc(100% + 32px) , calc(100% + 32px) 4px;
+    background-position: 0 0, 0 0, 100% 0, 0 100%;
+    background-repeat: no-repeat;
+    animation: borderAnimation 0.1s infinite linear;
+    background-color: rgba(255, 0, 0, 0.5);
+    margin: 3% auto;
+    padding: 4%;
+}
+
+@keyframes borderAnimation {
+    from { 
+        background-position: 0 0, -32px 0, 100% -32px, 0 100%; }
+    to { background-position: 0 -32px, 0 0, 100% 0, -32px 100%; }
+}
+
+.emergency-meeting-ended {
+    border: rgb(255,0,0) 5px solid;
+    background-color: rgba(255, 0, 0, 0.5);
+    margin: 3% auto;
+    padding: 4%;
+}
+
+@keyframes borderAnimation {
+    from { 
+        background-position: 0 0, -32px 0, 100% -32px, 0 100%; }
+    to { background-position: 0 -32px, 0 0, 100% 0, -32px 100%; }
+}
+
+
+/* .chatSubscribedChannelBlock{
+    position: relative;
+    top: 50%;
+    border: 3px solid #8AC007;
+  }  */
+
+.system-message {
+    color: yellow;
+}
+
+.teama-message {
+    color: red;
+}
+
+.teamb-message {
+    color: blue;
+}
+
+.my-message {
+    color: green;
+}
+
+.others-message {
+    color: black;
+}

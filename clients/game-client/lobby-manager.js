@@ -15,8 +15,20 @@ class LobbyManager {
         return msg;
     }
 
-    lookMap(gameName) {
-        let msg = gameName + "LOOK"
+    spectateGame(gameName) {
+        let msg = gameName + " LOOK"
+        console.debug("LobbyManager built " + msg);
+        return msg;
+    }
+
+    startGame(gameName) {
+        let msg = gameName + " START";
+        console.debug("LobbyManager built " + msg);
+        return msg;
+    }
+
+    leave(gameName) {
+        let msg = gameName + " LEAVE human-wanted-to-leave";
         console.debug("LobbyManager built " + msg);
         return msg;
     }
