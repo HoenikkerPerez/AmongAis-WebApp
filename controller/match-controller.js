@@ -158,7 +158,6 @@ class MatchController {
         let map_obj = {
             cols: N,
             rows: N,
-            tsize: 32,
             tiles: parsed_map
         }
         // update model

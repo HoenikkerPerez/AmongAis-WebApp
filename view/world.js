@@ -23,8 +23,8 @@ const Terrain = {
     FLAG_RED: [0,0],
     RECHARGE: [0,0],
     BARRIER: [0,0],
-    PLAYER_BLUE: [0,2],
-    PLAYER_RED: [0,2],
+    PLAYER_BLUE: [[4,19],[4,17],[4,16],[4,18]], //E W N S
+    PLAYER_RED: [[4,19],[4,17],[4,16],[4,18]],
     BULLET_VERTICAL: [0,0],
     BULLET_HORIZONTAL: [0,0], //TODO laser tile
     PATHFINDING: [0,0], // TODO path tile
@@ -363,21 +363,31 @@ class WorldUi {
         let tile;
         let atlas;
         let tiledim;
+        let pl_directions = model.pl_directions;
         this.tmp_players.forEach( (map_pl) => {
                         let [symbol, team, c, r] = map_pl;
                         let pl = model.findPlayerBySymbol(symbol);
                         if(pl != undefined) {
-                            if (pl.state == "KILLED") {
+                            let state = pl.state;
+                            let direction = pl_directions[pl.name];
+
+                            if (state == "KILLED") {
                                 tile = (team == 0 ? Terrain.PLAYER_RED_KILLED : Terrain.PLAYER_BLUE_KILLED);
                                 atlas = this.tileGraves;
                                 tiledim = 32;
                             } else {
+                                // compute tile direction
+                                switch(direction) {
+                                    case "E": tile = Terrain.PLAYER_RED[0]; break;
+                                    case "W": tile = Terrain.PLAYER_RED[1]; break;
+                                    case "N": tile = Terrain.PLAYER_RED[2]; break;
+                                    case "S": tile = Terrain.PLAYER_RED[3]; break;
+                                    default:  tile = Terrain.PLAYER_RED[3]; break;
+                                }
                                 if (team == 0) {
-                                    tile = Terrain.PLAYER_RED;
                                     atlas = this.tilePlayerRed;
                                     tiledim = 64;
                                 } else {
-                                    tile = Terrain.PLAYER_BLUE;
                                     atlas = this.tilePlayerBlue;
                                     tiledim = 64;
                                 }
