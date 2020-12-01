@@ -125,8 +125,12 @@ class HudUi {
             let team = model.status.me.team == "0" ? "red" : "blue";
             let loyalty = model.status.me.loyalty == "0" ? "red" : "blue";
             teamLoy.innerHTML = "Affiliation: " + team + " loyal to " + loyalty;
+            
             let energy = document.createElement("li");
-            energy.innerHTML = "Energy: "+model.status.me.energy;
+            energy.innerHTML = "Energy: ";//+model.status.me.energy;
+            energy.id = "me_enrg";
+            let bar = buildProgress(model.status.me.energy);
+
             let score = document.createElement("li");
             score.innerHTML = "Score: "+model.status.me.score;
 
@@ -136,6 +140,7 @@ class HudUi {
             me.appendChild(score);
 
             root.appendChild(me);
+            $("#me_enrg").append(bar);
         }
 
         let pl = document.createElement("ul");
