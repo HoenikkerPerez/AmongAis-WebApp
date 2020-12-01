@@ -38,6 +38,8 @@ var model = {
                 //     team: "0"
                 //     x: "13"
                 //     y: "25"
+                // *touring
+                // direction N,E,S,W
     },
 
     NONE: "NONE",
@@ -70,6 +72,7 @@ var model = {
     pathfindigMoves: [],
     path: [],
     createdGames:new Set(),
+    pl_directions: [],  // Todo insert into status!
 
     addCreatedGame(nameGame){
         this.createdGames.add(nameGame);
@@ -91,18 +94,43 @@ var model = {
         this._map = map;
         // remove exausted shoots
         this._removeExaustedShoots();
-        // update player position
         let tmpMap = map.tiles;
         for(let i = 0; i<tmpMap.length; i++) {
             let symbol_code = tmpMap[i].charCodeAt(0);
+            // update player position and direction
             if(symbol_code >= 65 && symbol_code <= 84 || symbol_code >= 97 && symbol_code <= 116) { 
                 let pl = this.findPlayerBySymbol(tmpMap[i]);
                 if(pl != undefined) {
-                    pl.x = i % map.cols;
-                    pl.y = Math.floor(i / map.cols);
+                    let name = pl.name;
+                    let newDirection;
+                    if(this.pl_directions[name] == undefined) {
+                        // add new player
+                        this.pl_directions[name] = "S";
+                    } else {
+                        let oldDirection =  this.pl_directions[name];
+                        let oldPosition = {x: pl.x, y: pl.y};
+                        let newPosition = {x: i % map.cols, y:  Math.floor(i / map.cols)};
+                        // N
+                        if(oldPosition.x < newPosition.x) {
+                            newDirection = "E";
+                        } else if(oldPosition.x > newPosition.x) {
+                            newDirection = "W";
+                        } else if(oldPosition.y > newPosition.y) {
+                            newDirection = "N";
+                        } else if(oldPosition.y < newPosition.y || oldDirection == undefined) {
+                            newDirection = "S";
+                        } else {
+                            newDirection = oldDirection; // default positioning (start)
+                        }
+
+                        this.pl_directions[name] = newDirection;
+                        pl.x = newPosition.x;
+                        pl.y = newPosition.y;
+                    }
                 } 
             }
         }
+
         document.dispatchEvent(new CustomEvent("MODEL_SETMAP", {detail: {map:map}}));
     },
 
