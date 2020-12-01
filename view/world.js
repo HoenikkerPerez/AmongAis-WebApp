@@ -226,9 +226,7 @@ class WorldUi {
             this.ctx.canvas.width  = displayWidth;
             this.ctx.canvas.height = displayHeight;
         }
-        this.lastX = canvas.width/2
-        this.lastX  = canvas.height/2
-        
+            
         this._tsizeMap = Math.floor(this.ctx.canvas.height / model._map.rows)
         this.ctx.canvas.width  = this._tsizeMap * model._map.rows;
         this.ctx.canvas.height = this._tsizeMap * model._map.cols;
@@ -299,9 +297,31 @@ class WorldUi {
                                 atlas = this.tileRecharge;
                             } else if (type === "flag") {
                                 if(team == 0) {
+                                    if (model.status.state == "LOBBY") { // help user to find flags context.arc(x,y,r,sAngle,eAngle,counterclockwise);
+                                        this.ctx.beginPath();
+                                        let radius =  (this._tsizeMap)
+                                        let cx = c * this._tsizeMap + this._tsizeMap /2
+                                        let cy = r * this._tsizeMap + this._tsizeMap /2
+                                        this.ctx.arc(cx, cy, radius, 0, 2*Math.PI);
+                                        this.ctx.fillStyle = 'rgba(255, 0, 0, 0.4)'
+                                        this.ctx.fill();
+                                        this.ctx.lineWidth = 1;
+                                        // this.ctx.stroke();
+                                    }
                                     tile = Terrain.FLAG_RED;
                                     atlas = this.tileFlagRed;
                                 } else {
+                                    if (model.status.state == "LOBBY") { // help user to find flags context.arc(x,y,r,sAngle,eAngle,counterclockwise);
+                                        this.ctx.beginPath();
+                                        let radius =  (this._tsizeMap)
+                                        let cx = c * this._tsizeMap + this._tsizeMap /2
+                                        let cy = r * this._tsizeMap + this._tsizeMap /2
+                                        this.ctx.arc(cx, cy, radius, 0, 2*Math.PI);
+                                        this.ctx.fillStyle = 'rgba(0, 0, 255, 0.4)'
+                                        this.ctx.fill();
+                                        this.ctx.lineWidth = 1;
+                                        // this.ctx.stroke();
+                                    }
                                     tile = Terrain.FLAG_BLUE;
                                     atlas = this.tileFlagBlue;
                                 }
@@ -363,22 +383,23 @@ class WorldUi {
             // let this._tsizeMap = Math.floor(this.ctx.canvas.height / this._N)
 
             let player = model.findPlayerBySymbol(symbol);
+            let me_symbol = model.status.me.symbol;
             if (typeof player !== 'undefined') {
                 // draw backroung character:
                 if (team == 0) {
                     if (typeof me_symbol !== 'undefined' && model.status.me.symbol.localeCompare(symbol) == 0) {
-                        this.ctx.font = '12px Arial'
+                        this.ctx.font = '16px Arial'
                         this.ctx.fillStyle = model.teamColors.mePlayer;
                     } else {
-                        this.ctx.font = '8px Arial'
+                        this.ctx.font = '16px Arial'
                         this.ctx.fillStyle = model.teamColors.teamA;
                     }
                 } else {
                     if (typeof me_symbol !== 'undefined' && model.status.me.symbol.localeCompare(symbol) == 0) {
-                        this.ctx.font = '12px Arial'
+                        this.ctx.font = '16px Arial'
                         this.ctx.fillStyle = model.teamColors.mePlayer;
                     } else {
-                        this.ctx.font = '8px Arial'
+                        this.ctx.font = '16px Arial'
                         this.ctx.fillStyle = model.teamColors.teamB;
                     }
                 }

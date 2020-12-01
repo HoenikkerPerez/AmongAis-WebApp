@@ -269,7 +269,6 @@ var model = {
     },
 
     addSubscribedChannel: function(channel) {
-        // todo check if already exists
         let find = this.chat.chatSubscribedChannels.find(o => o.channel === channel);
         if (find == undefined) {
             this.chat.chatSubscribedChannels.push({channel: channel});
@@ -279,11 +278,9 @@ var model = {
     },
 
     removeSubscribedChannel: function(channel) {
-        // TODO 
         let findidx = this.chat.chatSubscribedChannels.findIndex(o => o.channel === channel);
         if (findidx != -1) {
-            console.debug(find);
-            this.chat.chatSubscribedChannels.splice(findidx)
+            this.chat.chatSubscribedChannels.splice(findidx, 1);
             document.dispatchEvent(new CustomEvent("MODEL_UNSUBSCRIBEDCHANNEL")); // for the HUD
             console.debug("chat removeSubscribedChannel: " + channel)
         }

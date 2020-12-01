@@ -357,6 +357,9 @@ class MatchController {
         this._tsizeMap = Math.floor(displayHeight / model._map.rows)
         ctx.canvas.width  = this._tsizeMap * model._map.rows;
         ctx.canvas.height = this._tsizeMap * model._map.cols;
+        // this._clearCanvas();
+        // this._trackTransforms(document.getElementById("canvas").getContext("2d"))
+
     }
 
     _zoom(clicks){
@@ -377,7 +380,7 @@ class MatchController {
     };
     
     _mouseDownHandler(evt) {
-        if (!(evt.shiftKey && evt.which == 1)) {
+        if (!(evt.shiftKey && evt.which == 1) && !(evt.which > 1)) { // !(evt.which > 1) because 2/3 (right click) is used for shooting.
             let ctx = document.getElementById("canvas").getContext("2d");
             // canvas.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
             this.lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
@@ -404,33 +407,87 @@ class MatchController {
         this._dragStart = null;
     };
 
-
     _clickHandler(evt) {
         // SHIFT + mouse click
         if (evt.shiftKey && evt.which == 1) {
             let ctx = document.getElementById("canvas").getContext("2d");
-            let gameClient = this._gameClient;
-            let canvasHeigh = ctx.canvas.height;
+            let canvasHeight = ctx.canvas.height;
             let canvasWidth = ctx.canvas.width;
             let mapC = model._map.cols;
             let mapR = model._map.rows;
-            let tsizeMap = canvasHeigh / mapR;
+            let tsizeMap = canvasHeight / mapR;
 
-            let pt = ctx.transformedPoint(evt.offsetX,evt.offsetY);
-            // check square position
-            let targetC = Math.floor(pt.x / tsizeMap);
-            let targetR = Math.floor(pt.y / tsizeMap);
-
-            let start = model.findMyPosition();
-            if(start == undefined)
+            let pt = ctx.transformedPoint(this.lastX, this.lastY);
+            // console.debug("_clickHandler:pt " + "(" + pt.x + ", " + pt.y);
+            if(pt.x >= 0 && pt.x < canvasWidth && pt.y >= 0 && pt.y <= canvasHeight) {
+                // check square position
+                let targetC = Math.floor(pt.x / tsizeMap);
+                let targetR = Math.floor(pt.y / tsizeMap);
+                let start = model.findMyPosition();
+                if(start == undefined)
                 return 
-            let jp = new PathFinder(model._map);
-            let path = jp.findPath(start.x, start.y, targetC, targetR); 
-            if(path) { 
-                // update the model
-                model.setPath(path);
+                let jp = new PathFinder(model._map);
+                let path = jp.findPath(start.x, start.y, targetC, targetR); 
+                if(path) { 
+                    // update the model
+                    model.setPath(path);
+                }
+                console.debug("_clickHandler: from " + "(" + start.x + ", " + start.y + ")" + " to " + "(" + targetR + ", " + targetC + ")");
             }
-            console.debug("_clickHandler: from " + "(" + start.x + ", " + start.y + ")" + " to " + "(" + targetR + ", " + targetC + ")");
+        }
+    }
+    
+    _shootOnClickHandler(evt) {
+        console.debug("right click shot!");
+        let myPosition = model.findMyPosition();
+        if(myPosition) {
+            let ctx = document.getElementById("canvas").getContext("2d");
+            let canvasHeight = ctx.canvas.height;
+            let canvasWidth = ctx.canvas.width;
+            let mapC = model._map.cols;
+            let mapR = model._map.rows;
+            let tsizeMap = canvasHeight / mapR;
+            let north = GameClient.UP;
+            let south = GameClient.DOWN;
+            let west = GameClient.LEFT;
+            let east = GameClient.RIGHT;
+
+            let pt = ctx.transformedPoint(this.lastX, this.lastY);
+            if(pt.x >= 0 && pt.x < canvasWidth && pt.y >= 0 && pt.y <= canvasHeight) {
+                // check square position
+                let targetX = Math.floor(pt.x / tsizeMap);
+                let targetY = Math.floor(pt.y / tsizeMap);
+                let charaX = myPosition.x;
+                let charaY = myPosition.y;
+                let deltaX = Math.abs(targetX-charaX);
+                let deltaY = Math.abs(targetY-charaY);
+                let direction = undefined;
+                console.debug("AIM! targetX: " + targetX + " / targetY: " + targetY + " / charaX: " + charaX + " / charaY: " + charaY);
+                // AIM!
+                if(targetX >= charaX && targetY <= charaY) // N-E
+                    if(deltaY >= deltaX)
+                        direction = north;
+                    else
+                        direction = east;
+                if(targetX >= charaX && targetY >= charaY) // S-E
+                    if(deltaY <= deltaX)
+                        direction = east;
+                    else
+                        direction = south;
+                if(targetX <= charaX && targetY >= charaY) //  S-W
+                    if(deltaY >= deltaX)
+                        direction = south;
+                    else
+                        direction = west;
+                if(targetX <= charaX && targetY <= charaY) //  N-W
+                    if(deltaY <= deltaX)
+                        direction = west;
+                    else
+                        direction = north;
+                // FIRE!
+                console.debug("FIRE! Direction: " + direction);
+                this._gameClient.shoot(direction)
+            }
         }
     }
 
@@ -565,10 +622,9 @@ class MatchController {
         canvas.addEventListener('DOMMouseScroll', ((evt) => {this._handleScroll(evt)}).bind(this),false);
         canvas.addEventListener('mousewheel', ((evt) => {this._handleScroll(evt)}).bind(this),false);
 
-        window.addEventListener("resize", ((evt) => {this._resizeCanvasHandler(evt)}).bind(this),false);
+        // window.addEventListener("resize", ((evt) => {this._resizeCanvasHandler(evt)}).bind(this),false);
 
         canvas.addEventListener("click", ((evt) => {this._clickHandler(evt)}).bind(this),false);
-        
     };
 
     // Player-specific listeners
@@ -603,6 +659,13 @@ class MatchController {
         document.addEventListener("MODEL_PLAYER_JOINED", () => {
              this._pollOnce(); // TODO POLLING: this._poller(); 
         }, false);
+
+        canvas.addEventListener("contextmenu", ((evt) => {
+            // Prevent opening right click menu
+            if(evt.preventDefault != undefined) evt.preventDefault(); if(evt.stopPropagation != undefined) evt.stopPropagation();
+            // Compute direction and shoot
+            this._shootOnClickHandler(evt);
+        }).bind(this),false);
     }
 
     // Spectator-specific listeners
@@ -614,6 +677,10 @@ class MatchController {
             document.getElementById("canvas").focus();
             this._poller();
         }, false);
+
+        document.addEventListener("MODEL_PLAYER_JOINED", () => {
+            this._pollOnce(); // TODO POLLING: this._poller(); 
+       }, false);
     }
     
 };
