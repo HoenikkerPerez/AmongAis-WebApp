@@ -437,8 +437,8 @@ class MatchController {
         }
     }
     
-    // TODO
     _shootOnClickHandler(evt) {
+        console.debug("right click shot!");
         let myPosition = model.findMyPosition();
         if(myPosition) {
             let ctx = document.getElementById("canvas").getContext("2d");
@@ -459,29 +459,33 @@ class MatchController {
                 let targetY = Math.floor(pt.y / tsizeMap);
                 let charaX = myPosition.x;
                 let charaY = myPosition.y;
+                let deltaX = Math.abs(targetX-charaX);
+                let deltaY = Math.abs(targetY-charaY);
                 let direction = undefined;
+                console.debug("AIM! targetX: " + targetX + " / targetY: " + targetY + " / charaX: " + charaX + " / charaY: " + charaY);
                 // AIM!
-                if(targetX >= charaX && targetY <= charaY)
-                    if(charaY >= charaX)
+                if(targetX >= charaX && targetY <= charaY) // N-E
+                    if(deltaY >= deltaX)
                         direction = north;
                     else
                         direction = east;
-                if(targetX >= charaX && targetY >= charaY)
-                    if(charaY <= charaX)
+                if(targetX >= charaX && targetY >= charaY) // S-E
+                    if(deltaY <= deltaX)
                         direction = east;
                     else
                         direction = south;
-                if(targetX >= charaX && targetY >= charaY)
-                    if(charaY >= charaX)
+                if(targetX <= charaX && targetY >= charaY) //  S-W
+                    if(deltaY >= deltaX)
                         direction = south;
                     else
                         direction = west;
-                if(targetX <= charaX && targetY <= charaY)
-                    if(charaX <= charaY)
+                if(targetX <= charaX && targetY <= charaY) //  N-W
+                    if(deltaY <= deltaX)
                         direction = west;
-                    else(charaX >= charaY)
+                    else
                         direction = north;
                 // FIRE!
+                console.debug("FIRE! Direction: " + direction);
                 this._gameClient.shoot(direction)
             }
         }
@@ -655,7 +659,12 @@ class MatchController {
              this._pollOnce(); // TODO POLLING: this._poller(); 
         }, false);
 
-        canvas.addEventListener("oncontextmenu", ((evt) => {this._shootOnClickHandler(evt)}).bind(this), false);
+        canvas.addEventListener("contextmenu", ((evt) => {
+            // Prevent opening right click menu
+            if(evt.preventDefault != undefined) evt.preventDefault(); if(evt.stopPropagation != undefined) evt.stopPropagation();
+            // Compute direction and shoot
+            this._shootOnClickHandler(evt);
+        }).bind(this),false);
     }
 
     // Spectator-specific listeners
