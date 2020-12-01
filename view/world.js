@@ -23,8 +23,8 @@ const Terrain = {
     FLAG_RED: [0,0],
     RECHARGE: [0,0],
     BARRIER: [0,0],
-    PLAYER_BLUE: [0,0],
-    PLAYER_RED: [0,0],
+    PLAYER_BLUE: [0,2],
+    PLAYER_RED: [0,2],
     BULLET_VERTICAL: [0,0],
     BULLET_HORIZONTAL: [0,0], //TODO laser tile
     PATHFINDING: [0,0], // TODO path tile
@@ -64,8 +64,8 @@ class WorldUi {
     imgBarrier     = './assets/Terrain/barrier0.png'
     imgRecharge    = './assets/Terrain/recharge.png'
 
-    imgPlayerBlue  = './assets/Player/player_blue.png'
-    imgPlayerRed   = './assets/Player/player_red.png'
+    imgPlayerBlue  = './assets/Player/player_blue64.png'
+    imgPlayerRed   = './assets/Player/player_red64.png'
 
     imgBulletVertical  = './assets/Laser/laser_vertical.png'
     imgBulletHorizontal   = './assets/Laser/laser_horizontal.png'
@@ -139,7 +139,7 @@ class WorldUi {
         let team = -1;
         let type = "";
         let atlas;
-
+        let tiledim;
         let symbol_code = symbol.charCodeAt(0);
 
         if (symbol_code == 88) { // X: team RED flag (A)
@@ -147,12 +147,14 @@ class WorldUi {
             team = 0;
             type = "flag";
             atlas = this.tileGrass[0];
+            tiledim = 32;
         }
         else if (symbol_code == 120) { // x: team BLUE flag (B)
             tile = Terrain.GRASS;
             team = 1;
             type = "flag";
             atlas = this.tileGrass[0];
+            tiledim = 32;
         }        
         else if(symbol_code >= 65 && symbol_code <= 84) {  // uppercase letter team 0
             // use background grass
@@ -160,6 +162,7 @@ class WorldUi {
             team = 0;
             type = "player";
             atlas = this.tileGrass[0];
+            tiledim = 32;
         }
         else if (symbol_code >= 97 && symbol_code <= 116) {// lowecase letter team 1
             // use background grass
@@ -167,6 +170,7 @@ class WorldUi {
             team = 1;
             type = "player";
             atlas = this.tileGrass[0];
+            tiledim = 32;
         }
         else { // terrains
             type = "terrain";
@@ -174,33 +178,40 @@ class WorldUi {
                 case ".":
                     tile = Terrain.GRASS;
                     atlas = this.tileGrass[(col+row*col) % this.tileGrass.length]; // maybe random with a seed?
+                    tiledim = 32;
                     break;
                 case "#":
                     tile = Terrain.WALL;
                     atlas = this.tileWall[(col+row*col) % this.tileWall.length]; // maybe random with a seed?
+                    tiledim = 32;
                     break;
                 case "~":
                     tile = Terrain.RIVER;
                     atlas = this.tileRiver;
+                    tiledim = 32;
                     break;
                 case "@":
                     tile = Terrain.OCEAN;
                     atlas = this.tileOcean;
+                    tiledim = 32;
                     break;
                 case "!":
                     tile = Terrain.GRASS;
                     atlas = this.tileGrass[0];
                     type = "trap"
+                    tiledim = 32;
                     break;
                 case "$":
                     tile = Terrain.GRASS;
                     atlas = this.tileGrass[0];
                     type = "recharge"
+                    tiledim = 32;
                     break;
                 case "&":
                     tile = Terrain.GRASS;
                     atlas = this.tileGrass[0];
                     type = "barrier"
+                    tiledim = 32;
                     break;
                 default:
                     console.debug("ERROR map symbol: " + x)
@@ -208,7 +219,7 @@ class WorldUi {
             }
         }
         // return correct position in tilemap and the atlas
-        return [atlas, tile, symbol, team, type]
+        return [atlas, tile, tiledim, symbol, team, type]
     };
 
     _initCanvasSize() {
@@ -257,12 +268,12 @@ class WorldUi {
         this.tmp_objects = [];
         for (let c = 0; c < map.cols; c++) {
             for (let r = 0; r < map.rows; r++) {
-                let [atlas, tile, symbol, team, type] = this._getTile(c, r); // TODO do not draw players!
+                let [atlas, tile, tiledim, symbol, team, type] = this._getTile(c, r); // TODO do not draw players!
                 this.ctx.drawImage(atlas, // image
-                                    tile[0] * map.tsize, // source x
-                                    tile[1] * map.tsize, // source y
-                                    map.tsize, // source width
-                                    map.tsize, // source height
+                                    tile[0] * tiledim, // source x
+                                    tile[1] * tiledim, // source y
+                                    tiledim, // source width
+                                    tiledim, // source height
                                     c * this._tsizeMap,  // target x
                                     r * this._tsizeMap, // target y
                                     this._tsizeMap, // target width
@@ -281,20 +292,24 @@ class WorldUi {
         let map = model._map;
         let tile;
         let atlas;
+        let tiledim;
 
         this.tmp_objects.forEach( (trap) => {
                             let [type, c, r, team] = trap;
                             if (type === "trap") {
                                 tile = Terrain.TRAP;
                                 atlas = this.tileTrap;
+                                tiledim = 32;
                             }
                             else if (type === "barrier") {
                                 tile = Terrain.BARRIER;
                                 atlas = this.tileBarrier;
+                                tiledim = 32;
                             }
                             else if (type === "recharge") {
                                 tile = Terrain.RECHARGE;
                                 atlas = this.tileRecharge;
+                                tiledim = 32;
                             } else if (type === "flag") {
                                 if(team == 0) {
                                     if (model.status.state == "LOBBY") { // help user to find flags context.arc(x,y,r,sAngle,eAngle,counterclockwise);
@@ -310,6 +325,7 @@ class WorldUi {
                                     }
                                     tile = Terrain.FLAG_RED;
                                     atlas = this.tileFlagRed;
+                                    tiledim = 32;
                                 } else {
                                     if (model.status.state == "LOBBY") { // help user to find flags context.arc(x,y,r,sAngle,eAngle,counterclockwise);
                                         this.ctx.beginPath();
@@ -324,15 +340,16 @@ class WorldUi {
                                     }
                                     tile = Terrain.FLAG_BLUE;
                                     atlas = this.tileFlagBlue;
+                                    tiledim = 32;
                                 }
                             }
 
                             this.ctx.drawImage(
                                 atlas, // image
-                                tile[0] * map.tsize, // source x
-                                tile[1] * map.tsize, // source y
-                                map.tsize, // source width
-                                map.tsize, // source height
+                                tile[0] * tiledim, // source x
+                                tile[1] * tiledim, // source y
+                                tiledim, // source width
+                                tiledim, // source height
                                 c * this._tsizeMap,  // target x
                                 r * this._tsizeMap, // target y
                                 this._tsizeMap, // target width
@@ -345,6 +362,7 @@ class WorldUi {
         let map = model._map;
         let tile;
         let atlas;
+        let tiledim;
         this.tmp_players.forEach( (map_pl) => {
                         let [symbol, team, c, r] = map_pl;
                         let pl = model.findPlayerBySymbol(symbol);
@@ -352,22 +370,25 @@ class WorldUi {
                             if (pl.state == "KILLED") {
                                 tile = (team == 0 ? Terrain.PLAYER_RED_KILLED : Terrain.PLAYER_BLUE_KILLED);
                                 atlas = this.tileGraves;
+                                tiledim = 64;
                             } else {
                                 if (team == 0) {
                                     tile = Terrain.PLAYER_RED;
                                     atlas = this.tilePlayerRed;
+                                    tiledim = 64;
                                 } else {
                                     tile = Terrain.PLAYER_BLUE;
                                     atlas = this.tilePlayerBlue;
+                                    tiledim = 64;
                                 }
                             }
 
                             this.ctx.drawImage(
                                 atlas, // image
-                                tile[0] * map.tsize, // source x
-                                tile[1] * map.tsize, // source y
-                                map.tsize, // source width
-                                map.tsize, // source height
+                                tile[0] * tiledim, // source x
+                                tile[1] * tiledim, // source y
+                                tiledim, // source width
+                                tiledim, // source height
                                 c * this._tsizeMap,  // target x
                                 r * this._tsizeMap, // target y
                                 this._tsizeMap, // target width
@@ -413,6 +434,7 @@ class WorldUi {
     _drawShoots() {
         let shoots = model.shoots;
         let map = model._map;
+        let tiledim = 32;
         for (let i=0; i<shoots.length; i++) {
             let shoot = shoots[i];
             let x = shoot.x;
@@ -433,10 +455,10 @@ class WorldUi {
                 }
                 this.ctx.drawImage(
                     atlas, // image
-                    tile[0] * map.tsize, // source x
-                    tile[1] * map.tsize, // source y
-                    map.tsize, // source width
-                    map.tsize, // source height
+                    tile[0] * tiledim, // source x
+                    tile[1] * tiledim, // source y
+                    tiledim, // source width
+                    tiledim, // source height
                     x * this._tsizeMap,  // target x
                     y * this._tsizeMap, // target y
                     this._tsizeMap, // target width
@@ -450,6 +472,7 @@ class WorldUi {
     _drawPathfinding() {
         let path = model.path;
         let map = model._map;
+        let tiledim = 32;
         for (let i=0; i<path.length; i++) {
             let x = path[i].x;
             let y = path[i].y;
@@ -459,10 +482,10 @@ class WorldUi {
             if (counter > 0) {
                 this.ctx.drawImage(
                     atlas, // image
-                    tile[0] * map.tsize, // source x
-                    tile[1] * map.tsize, // source y
-                    map.tsize, // source width
-                    map.tsize, // source height
+                    tile[0] * tiledim, // source x
+                    tile[1] * tiledim, // source y
+                    tiledim, // source width
+                    tiledim, // source height
                     x * this._tsizeMap,  // target x
                     y * this._tsizeMap, // target y
                     this._tsizeMap, // target width
