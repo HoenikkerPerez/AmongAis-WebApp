@@ -92,12 +92,12 @@ class SessionController {
             if(msgOk){
                 // alert("Game has been created!");
                 popupMsg("Game has been created!","success");
-                document.getElementById("start-button").style.display = "";
-                document.getElementById("start-button").addEventListener("click", () => {
-                    console.debug("MatchController is asking the game client to START the joined game");
-                    this._gameClient.startGame(document.getElementById("gameNameInput").value);
-                    // memorize game start time
-                });
+                model.addCreatedGame(document.getElementById("gameNameInput").value);
+                // document.getElementById("start-button").style.display = "";
+                // document.getElementById("start-button").addEventListener("click", () => {
+                //     console.debug("MatchController is asking the game client to START the joined game");
+                //     this._gameClient.startGame(document.getElementById("gameNameInput").value);
+                // });
             }
             else
                 // alert("Game creation failed.");

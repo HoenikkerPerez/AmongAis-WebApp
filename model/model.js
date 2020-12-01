@@ -71,6 +71,19 @@ var model = {
     shoots: [],
     pathfindigMoves: [],
     path: [],
+    createdGames:new Set(),
+
+    addCreatedGame(nameGame){
+        this.createdGames.add(nameGame);
+    },
+
+    imCreator(nameGame){
+        return this.createdGames.has(nameGame);
+    },
+
+    removeCreatedGames(nameGame){
+        this.createdGames.delete(nameGame);
+    },
 
     setLogin: function(lg) {this.login=lg},
     setUsername(uName){this.username=uName},
