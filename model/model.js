@@ -11,12 +11,10 @@ var model = {
         game: {
             // ws: "ws://margot.di.unipi.it:8521"
             ws: "ws://93.39.188.250:8521"
-            // ws: "ws://131.114.3.213:8521"
         },
         chat: {
             // ws: "ws://margot.di.unipi.it:8522"
             ws: "ws://93.39.188.250:8522"
-            // ws: "ws://131.114.3.213:8522"
         }
     },
     status: {
@@ -71,6 +69,19 @@ var model = {
     shoots: [],
     pathfindigMoves: [],
     path: [],
+    createdGames:new Set(),
+
+    addCreatedGame(nameGame){
+        this.createdGames.add(nameGame);
+    },
+
+    imCreator(nameGame){
+        return this.createdGames.has(nameGame);
+    },
+
+    removeCreatedGames(nameGame){
+        this.createdGames.delete(nameGame);
+    },
 
     setLogin: function(lg) {this.login=lg},
     setUsername(uName){this.username=uName},

@@ -27,11 +27,6 @@ class HudUi {
             this.renderSubscribedChannels();
         }, false);
 
-        document.addEventListener("MODEL_STATE_LOBBYOWNER", () => {
-            console.debug("hud displaying start button")
-            document.getElementById("start-button").style.display = "";
-        }, false);
-
         document.addEventListener("MODEL_STATE_KILLED", () => {
             console.debug("hud displaying killing status");
             popupMsg("WASTED!!!\nYou are dead ... not a BIG surprise!", "danger");
@@ -42,8 +37,16 @@ class HudUi {
             popupMsg("Welcome! Please wait for the match beginning", "success");
         }, false);
 
+        // Show-Start Button
+        document.addEventListener("MODEL_MATCH_STATUS_LOBBY", () => {
+            if(model.imCreator(model.status.ga)){
+                document.getElementById("start-button").style.display="";
+            }
+        }, false);
+
         document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
             document.getElementById("start-button").style.display = "none";
+            model.removeCreatedGames(model.status.ga);
         }, false);
 
         document.addEventListener("MODEL_MEETING_START", () => {
@@ -125,8 +128,12 @@ class HudUi {
             let team = model.status.me.team == "0" ? "red" : "blue";
             let loyalty = model.status.me.loyalty == "0" ? "red" : "blue";
             teamLoy.innerHTML = "Affiliation: " + team + " loyal to " + loyalty;
+            
             let energy = document.createElement("li");
-            energy.innerHTML = "Energy: "+model.status.me.energy;
+            energy.innerHTML = "Energy: ";//+model.status.me.energy;
+            energy.id = "me_enrg";
+            let bar = buildProgress(model.status.me.energy);
+
             let score = document.createElement("li");
             score.innerHTML = "Score: "+model.status.me.score;
 
@@ -136,6 +143,7 @@ class HudUi {
             me.appendChild(score);
 
             root.appendChild(me);
+            $("#me_enrg").append(bar);
         }
 
         let pl = document.createElement("ul");

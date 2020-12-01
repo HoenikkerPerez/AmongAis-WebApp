@@ -587,12 +587,12 @@ class MatchController {
         document.addEventListener("MODEL_RUN_GAME", () => {
             // Init human commands
             // Session-related commands during the lobby (keys)
-
-            document.getElementById("start-button").addEventListener("click", () => {
-                console.debug("MatchController is asking the game client to START the joined game");
-                this._gameClient.startGame(model.status.ga);
-                // memorize game start time
-            });
+            if(model.imCreator(model.status.ga)){
+                document.getElementById("start-button").addEventListener("click", () => {
+                    console.debug("MatchController is asking the game client to START the joined game");
+                    this._gameClient.startGame(model.status.ga);
+                });
+            }
             
             // Init map polling
             this._pollOnce(); // TODO POLLING: this._poller(); 
@@ -630,6 +630,7 @@ class MatchController {
     // Player-specific listeners
 
     _loadPlayerOnRunGame() {
+
         document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
             // Init human commands
             console.debug("match-controller catches MODEL_MATCH_STATUS_ACTIVE")
