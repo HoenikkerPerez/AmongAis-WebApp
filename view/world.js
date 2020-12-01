@@ -30,7 +30,7 @@ const Terrain = {
     PATHFINDING: [0,0], // TODO path tile
     // GRAVES
     PLAYER_BLUE_KILLED: [3, 0],
-    PLAYER_RED_KILLED: [3, 1]
+    PLAYER_RED_KILLED: [3, 0]
 }
 
 // TODO ADD GRASS TYPES 
@@ -370,7 +370,7 @@ class WorldUi {
                             if (pl.state == "KILLED") {
                                 tile = (team == 0 ? Terrain.PLAYER_RED_KILLED : Terrain.PLAYER_BLUE_KILLED);
                                 atlas = this.tileGraves;
-                                tiledim = 64;
+                                tiledim = 32;
                             } else {
                                 if (team == 0) {
                                     tile = Terrain.PLAYER_RED;
