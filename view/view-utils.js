@@ -11,7 +11,7 @@ popupMsg = function(msg, kind){ // kind: success / info / warning / danger
     content.className = "alert alert-"+kind;
     
     $('#alert-popup').modal('show');
-    window.setTimeout(function(){ $("#"+id).remove() }.bind(this), 10000);
+    window.setTimeout(function(){ $("#"+id).remove() }.bind(this), 15000);
 };
 let maxE = 256;
 buildProgress = function(nrg){
