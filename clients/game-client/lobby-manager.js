@@ -3,8 +3,9 @@
  */
 class LobbyManager {
 
-    createGame(gameName) {
-        let msg = "NEW " + gameName;
+    createGame(gameName, type, size) {
+        
+        let msg = "NEW " + gameName + " " + type + size;
         console.debug("LobbyManager built " + msg);
         return msg;
     }

@@ -259,7 +259,7 @@ class WorldUi {
             this._drawShoots();
             this._drawPathfinding();
             this._drawPlayerNames();
-            this._drawMinimap();
+            // this._drawMinimap();
         };
         window.requestAnimationFrame(this.renderMap.bind(this));
     };
@@ -543,7 +543,7 @@ class WorldUi {
             let tile;
             let atlas;
             if (counter > 0) {
-                console.debug("drawing shoots: " + x +", " + " " + direction + " " + counter);
+                // console.debug("drawing shoots: " + x +", " + " " + direction + " " + counter);
                 // choose tile
                 if (direction == "vertical") {
                     tile = Terrain.BULLET_VERTICAL;

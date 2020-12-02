@@ -22,7 +22,7 @@ class GameClient {
     _lastResponse;
     _nopTime;
     _noRequestsTime;
-
+    _tmpMsg = "";
     constructor(clientType) {
         this._connect();
         this._lobby = new LobbyManager();
@@ -47,12 +47,25 @@ class GameClient {
         this._wsQueue = [];
         this._ws.onmessage = async function(evt) {
             this._waitingResponse = false;
-            this._lastResponse = new Date();
+            // TODO lastresponse after first or last response?
             let msg = await evt.data.text();
             let msgtag = this._wsQueue.shift()
-            //console.debug(this._clientType + " received a message - " + msgtag);
-            // console.debug("Game Client: Dispatching event" + msgtag);
-            document.dispatchEvent(new CustomEvent(msgtag, {detail: msg }));
+            console.debug(this._clientType + " received a message - \n" + msg);
+            if((msgtag==="miticoOggettoCheNonEsiste.SPECTATE_GAME" || msgtag==="miticoOggettoCheNonEsiste.LOOK_MAP")) {
+                    this._tmpMsg += msg;
+                    if(msg.endsWith("«ENDOFMAP»\n")) {
+                        this._lastResponse = new Date();
+                        // console.debug("Game Client: Dispatching event" + msgtag);
+                        document.dispatchEvent(new CustomEvent(msgtag, {detail: this._tmpMsg }));
+                        this._tmpMsg = "";
+                    } else {
+                        this._wsQueue.unshift(msgtag);
+                    }
+            } else {
+                this._lastResponse = new Date();
+                // console.debug("Game Client: Dispatching event" + msgtag);
+                document.dispatchEvent(new CustomEvent(msgtag, {detail: msg }));
+            }
         }.bind(this)
 
         this._nopTime = new Date();
@@ -180,7 +193,7 @@ class GameClient {
 
     createGame(gameName) {
         //console.debug("Game Client is requesting a game creation for " + gameName);
-        let msg = this._lobby.createGame(gameName);
+        let msg = this._lobby.createGame(gameName, 3, "Q");
         this._send("miticoOggettoCheNonEsiste.CREATE_GAME", msg);
     }
 
