@@ -259,7 +259,7 @@ class WorldUi {
             this._drawShoots();
             this._drawPathfinding();
             this._drawPlayerNames();
-            // this._drawMinimap();
+            this._drawMinimap();
         };
         window.requestAnimationFrame(this.renderMap.bind(this));
     };
@@ -268,7 +268,8 @@ class WorldUi {
         this.ctx.save();
         this.ctx.setTransform(1,0,0,1,0,0);
         let map = model._map;
-        let dimSquare = 4;
+        let dimMinimap = Math.floor(.10 * this.ctx.canvas.width)
+        let dimSquare = Math.ceil(dimMinimap/map.cols);
         let alpha = 0.6;
         let minimapSize = {x: map.cols*dimSquare, y: map.rows*dimSquare}
 
