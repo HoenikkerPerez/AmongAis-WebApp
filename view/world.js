@@ -247,7 +247,7 @@ class WorldUi {
     }
 
     renderMap() {
-        if (this._imageLoaded) {
+        if (this._imageLoaded && model._map != undefined) {
             if (!this._initSize) {
                 this._initCanvasSize();
                 this._initSize = true;
@@ -268,8 +268,15 @@ class WorldUi {
         this.ctx.save();
         this.ctx.setTransform(1,0,0,1,0,0);
         let map = model._map;
-        let dimMinimap = Math.floor(.10 * this.ctx.canvas.width)
-        let dimSquare = Math.ceil(dimMinimap/map.cols);
+        let dimMinimap;
+        if(map.cols == 128) 
+            dimMinimap = Math.floor(.30 * this.ctx.canvas.width) // .10 128x128
+        else if(map.cols == 64) 
+            dimMinimap = Math.floor(.30 * this.ctx.canvas.width) // .10 128x128
+        else 
+            dimMinimap = Math.floor(.30 * this.ctx.canvas.width) // .10 128x128
+
+        let dimSquare = dimMinimap/map.cols;
         let alpha = 0.6;
         let minimapSize = {x: map.cols*dimSquare, y: map.rows*dimSquare}
 

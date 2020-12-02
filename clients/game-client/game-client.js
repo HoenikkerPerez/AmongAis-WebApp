@@ -50,18 +50,19 @@ class GameClient {
             // TODO lastresponse after first or last response?
             let msg = await evt.data.text();
             let msgtag = this._wsQueue.shift()
-            console.debug(this._clientType + " received a message - \n" + msg);
             if((msgtag==="miticoOggettoCheNonEsiste.SPECTATE_GAME" || msgtag==="miticoOggettoCheNonEsiste.LOOK_MAP")) {
-                    this._tmpMsg += msg;
-                    if(msg.endsWith("«ENDOFMAP»\n")) {
-                        this._lastResponse = new Date();
-                        // console.debug("Game Client: Dispatching event" + msgtag);
-                        document.dispatchEvent(new CustomEvent(msgtag, {detail: this._tmpMsg }));
-                        this._tmpMsg = "";
-                    } else {
-                        this._wsQueue.unshift(msgtag);
-                    }
+                this._tmpMsg += msg;
+                if(this._tmpMsg.endsWith("«ENDOFMAP»\n")) {
+                    this._lastResponse = new Date();
+                    // console.debug("Game Client: Dispatching event" + msgtag);
+                    document.dispatchEvent(new CustomEvent(msgtag, {detail: this._tmpMsg }));
+                    console.debug(this._clientType + " received a message - \n" + msg);
+                    this._tmpMsg = "";
+                } else {
+                    this._wsQueue.unshift(msgtag);
+                }
             } else {
+                console.debug(this._clientType + " received a message - \n" + msg);
                 this._lastResponse = new Date();
                 // console.debug("Game Client: Dispatching event" + msgtag);
                 document.dispatchEvent(new CustomEvent(msgtag, {detail: msg }));
