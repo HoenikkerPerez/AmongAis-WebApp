@@ -58,27 +58,29 @@
     </head>
     <body class="container-fluid p-3 my-3 bg-dark text-white">
         <div id="alert-popup" class="modal fade" role="alert"></div>
-        <script>
-            // popupMsg("Uomo avvisato ... ", "info");
-            // popupMsg("... uomo avvisato.", "danger");
-        </script>
-        <div id="homeUI" class="container p-3 my-3 bg-dark text-white">
-            <div class="form-group p-3 my-3" id="login-form-wrapper">
-                <div class="form" name="loginForm" for="email" id="loginForm">Login Credentials:
-                    <!-- <div class="col-sm-4"> . </div> -->
-                    <input type="text" id="usernameInput" name="usernameInput" class="form-control my-3" placeholder="loginName" autofocus> <!-- col-sm-4 -->
-                    <input type="button" class="btn btn-primary" id="loginButton" name="loginButton" value="LOGIN" disabled>
-                    <!-- <div class="col-sm-4"></div> -->
 
-                </div>
-                <div>For the moment you can use the username you want. [this is useless, we know where you live]</div>
+        <div id="homeUI" class="container p-3 my-3 bg-dark text-white">
+
+            <div class="my-3" id="login-form-wrapper">
+                <label class="col-sm-4 mb-3 text-center">Login Name</label>
+                <input type="text" id="usernameInput" name="usernameInput" class="form-control mb-3 text-center" placeholder="loginName" autofocus> <!-- col-sm-4 -->
+                <input type="button" class="btn btn-primary mb-3" id="loginButton" name="loginButton" value="LOGIN" disabled>
+                <div>The login name will be used by the DM-LOG system. If you want to store and retrieve your statistics, please use always the same login name</div>
             </div>
+
             <div class="form-group" id="startgame-form-wrapper" style="display: none;">
-                <div name="startGameForm" id="startGameForm" action="">
-                    <input type="text" class="form-control" id="ingamenameInput" name="ingamenameInput" placeholder="username"><P>
-                    <div class="form-check form-check-inline">
-                        <input type="text" class="form-control" id="gameNameInput" name="gameNameInput"  placeholder="matchname" value=""><P>
-                    </div>
+                <div class="form-row mb-3">
+                    <label class="col-sm-4 mr-3 text-right">Username</label>
+                    <input type="text" class="form-control col-sm-4" id="ingamenameInput" name="ingamenameInput" placeholder="username">
+                </div>
+
+                <div class="form-row mb-3">
+                    <label class="col-sm-4 mr-3 text-right">Game Name</label>
+                    <input type="text" class="form-control col-sm-4" id="gameNameInput" name="gameNameInput"  placeholder="matchname" value="">
+                </div>
+
+                <div class="form-row mb-3">
+                    <label class="col-sm-4 mr-3 text-right">Map Size</label>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="mapSizeRadio" id="radio1" value="1" checked>
                         <label class="form-check-label" for="radio1">32x32</label>
@@ -91,17 +93,16 @@
                         <input class="form-check-input" type="radio" name="mapSizeRadio" id="radio3" value="3">
                         <label class="form-check-label" for="radio3">128x128</label>
                     </div>
-                    <div class="btn-group">
-                        <input type="button" class="btn btn-primary" id="createButton" name="createButton" value="CREATE" disabled>
-                        <input type="button" class="btn btn-primary" id="startButtonNoJoin" name="startButtonNoJoin" value="START MATCH" disabled>
-                    </div>
-                    <input type="button" class="btn btn-primary" id="joinButton" name="joinButton" value="JOIN" disabled>
-                    <input type="button" class="btn btn-primary" id="spectateButton" name="spectateButton" value="SPECTATE" disabled>
                 </div>
+
+                <div class="btn-group">
+                    <input type="button" class="btn btn-primary" id="createButton" name="createButton" value="CREATE" disabled>
+                    <input type="button" class="btn btn-primary" id="startButtonNoJoin" name="startButtonNoJoin" value="START MATCH" disabled>
+                </div>
+                <input type="button" class="btn btn-primary" id="joinButton" name="joinButton" value="JOIN" disabled>
+                <input type="button" class="btn btn-primary" id="spectateButton" name="spectateButton" value="SPECTATE" disabled>
             </div>
-
         </div>
-
 
         <div id="console" class="row" style="display:none">
             <div id="endgame" style="max-width: 20%">
