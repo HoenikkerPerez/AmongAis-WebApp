@@ -1,11 +1,11 @@
 var model = {
     _map: [],
-    timeframe: 200, // Default map polling rate
-    timeframeMap: 200,
+    timeframe: 150, // Default map polling rate
+    timeframeMap: 150,
     timeframeStatus:1500,
-    spectatorTimeframe: 200, // Spectator's map polling rate
-    playerTimeframe: 200, // Player's map polling rate
-    connectionTimeframe: 200, // Minimum delay between requests
+    spectatorTimeframe: 150, // Spectator's map polling rate
+    playerTimeframe: 150, // Player's map polling rate
+    connectionTimeframe: 150, // Minimum delay between requests
     nopTimeframe: 20000,
     net: {
         game: {
@@ -73,7 +73,7 @@ var model = {
     path: [],
     createdGames:new Set(),
     pl_directions: [],  // Todo insert into status!
-
+    
     addCreatedGame(nameGame){
         this.createdGames.add(nameGame);
     },

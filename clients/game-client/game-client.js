@@ -56,14 +56,14 @@ class GameClient {
                     this._lastResponse = new Date();
                     // console.debug("Game Client: Dispatching event" + msgtag);
                     document.dispatchEvent(new CustomEvent(msgtag, {detail: this._tmpMsg }));
-                    console.debug(this._clientType + " received a message - \n" + msg);
+                    // console.debug(this._clientType + " received a message - \n" + msg);
                     this._tmpMsg = "";
                     this._waitingResponse = false;
                 } else {
                     this._wsQueue.unshift(msgtag);
                 }
             } else {
-                console.debug(this._clientType + " received a message - \n" + msg);
+                // console.debug(this._clientType + " received a message - \n" + msg);
                 this._lastResponse = new Date();
                 // console.debug("Game Client: Dispatching event" + msgtag);
                 document.dispatchEvent(new CustomEvent(msgtag, {detail: msg }));
@@ -119,7 +119,7 @@ class GameClient {
             window.setTimeout(function(){ this._requestHandler() }.bind(this), deltaTimeframe);
             return;
         }
-        
+        console.debug("Passed " + elapsed + " from previous message");
         if(this.isOdd(this._schedulerCounter)) {
             if(this._wsRequests_cmd.length > 0) {
                 //console.debug("Game Client's request queue is not empty.");
