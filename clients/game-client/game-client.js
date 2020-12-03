@@ -46,7 +46,7 @@ class GameClient {
 
         this._wsQueue = [];
         this._ws.onmessage = async function(evt) {
-            this._waitingResponse = false;
+            // this._waitingResponse = false;
             // TODO lastresponse after first or last response?
             let msg = await evt.data.text();
             let msgtag = this._wsQueue.shift()
@@ -58,6 +58,7 @@ class GameClient {
                     document.dispatchEvent(new CustomEvent(msgtag, {detail: this._tmpMsg }));
                     console.debug(this._clientType + " received a message - \n" + msg);
                     this._tmpMsg = "";
+                    this._waitingResponse = false;
                 } else {
                     this._wsQueue.unshift(msgtag);
                 }
@@ -66,6 +67,8 @@ class GameClient {
                 this._lastResponse = new Date();
                 // console.debug("Game Client: Dispatching event" + msgtag);
                 document.dispatchEvent(new CustomEvent(msgtag, {detail: msg }));
+                this._waitingResponse = false;
+
             }
         }.bind(this)
 
@@ -104,11 +107,11 @@ class GameClient {
         // console.debug("_requestHandler _waiting: " + this._waitingResponse)
         let now = new Date()
         let elapsed = now - this._lastResponse;
-        // if(this._waitingResponse) {
-        //     console.debug("_requetHandler waitingResponse: " + this._waitingResponse)
-        //     window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
-        //     return;
-        // }
+        if(this._waitingResponse) {
+            console.debug("_requetHandler waitingResponse: " + this._waitingResponse)
+            window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
+            return;
+        }
         
         if (elapsed < timeframe) {
             let deltaTimeframe = timeframe - elapsed; // add a little more waiting time

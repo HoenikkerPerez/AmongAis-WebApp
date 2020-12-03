@@ -1,11 +1,11 @@
 var model = {
     _map: [],
-    timeframe: 500, // Default map polling rate
-    timeframeMap: 500,
+    timeframe: 200, // Default map polling rate
+    timeframeMap: 200,
     timeframeStatus:1500,
-    spectatorTimeframe: 500, // Spectator's map polling rate
-    playerTimeframe: 500, // Player's map polling rate
-    connectionTimeframe: 500, // Minimum delay between requests
+    spectatorTimeframe: 200, // Spectator's map polling rate
+    playerTimeframe: 200, // Player's map polling rate
+    connectionTimeframe: 200, // Minimum delay between requests
     nopTimeframe: 20000,
     net: {
         game: {
