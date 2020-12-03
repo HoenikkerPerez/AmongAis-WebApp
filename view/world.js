@@ -179,11 +179,13 @@ class WorldUi {
                     tile = Terrain.GRASS;
                     atlas = this.tileGrass[(col+row*col) % this.tileGrass.length]; // maybe random with a seed?
                     tiledim = 32;
+                    type = "grass"
                     break;
                 case "#":
                     tile = Terrain.WALL;
                     atlas = this.tileWall[(col+row*col) % this.tileWall.length]; // maybe random with a seed?
                     tiledim = 32;
+                    type = "wall"
                     break;
                 case "~":
                     tile = Terrain.RIVER;
@@ -194,6 +196,7 @@ class WorldUi {
                     tile = Terrain.OCEAN;
                     atlas = this.tileOcean;
                     tiledim = 32;
+                    type = "ocean";
                     break;
                 case "!":
                     tile = Terrain.GRASS;
@@ -244,7 +247,7 @@ class WorldUi {
     }
 
     renderMap() {
-        if (this._imageLoaded) {
+        if (this._imageLoaded && model._map != undefined) {
             if (!this._initSize) {
                 this._initCanvasSize();
                 this._initSize = true;
@@ -256,10 +259,104 @@ class WorldUi {
             this._drawShoots();
             this._drawPathfinding();
             this._drawPlayerNames();
+            this._drawMinimap();
         };
         window.requestAnimationFrame(this.renderMap.bind(this));
     };
 
+    _drawMinimap() {
+        this.ctx.save();
+        this.ctx.setTransform(1,0,0,1,0,0);
+        let map = model._map;
+        let dimMinimap;
+        if(map.cols == 128) 
+            dimMinimap = Math.floor(.30 * this.ctx.canvas.width) // .10 128x128
+        else if(map.cols == 64) 
+            dimMinimap = Math.floor(.30 * this.ctx.canvas.width) // .10 128x128
+        else 
+            dimMinimap = Math.floor(.30 * this.ctx.canvas.width) // .10 128x128
+
+        let dimSquare = dimMinimap/map.cols;
+        let alpha = 0.6;
+        let minimapSize = {x: map.cols*dimSquare, y: map.rows*dimSquare}
+
+        let startX = this.ctx.canvas.width - minimapSize.x - 5 // TODO this._tsizeMap
+        let startY = this.ctx.canvas.height - minimapSize.y - 5 // TODO
+
+        this.ctx.beginPath();
+        // draw minimap borders
+        this.ctx.strokeStyle = "rgba(255, 255, 255, " + alpha + ")";
+        this.ctx.fillStyle = "rgba(255, 255, 255, " + alpha + ")";
+
+        this.ctx.rect(startX, startY, minimapSize.x, minimapSize.y);
+        this.ctx.stroke();
+
+        for (let c = 0; c < map.cols; c++) {
+            for (let r = 0; r < map.rows; r++) {
+                let [atlas, tile, tiledim, symbol, team, type] = this._getTile(c, r); // TODO do not draw players!
+                switch(type) {
+                    case "player":
+                        this.ctx.beginPath();
+                        let player = model.findPlayerBySymbol(symbol);
+                        let myName = model.status.me.name;
+                        if(player != undefined && myName != undefined && player.name == myName) {
+                            this.ctx.fillStyle = "rgba(255, 255, 255, " + alpha + ")"
+                            this.ctx.strokeStyle = "rgba(255, 255, 255, " + alpha + ")";
+
+                        } else {
+                            switch(team) {
+                                case 0:              
+                                    this.ctx.strokeStyle = "rgba(255, 0, 0, " + alpha + ")";
+                                    this.ctx.fillStyle = "rgba(255, 0, 0, " + alpha + ")";
+                                    break;
+                                case 1:
+                                    this.ctx.strokeStyle = "rgba(0, 0, 255, " + alpha + ")";
+                                    this.ctx.fillStyle = "rgba(0, 0, 255, " + alpha + ")";
+                                    break;
+                            } 
+                        }
+                        this.ctx.fillRect(startX + c*dimSquare, startY + r*dimSquare, dimSquare, dimSquare);
+                        this.ctx.stroke();
+                        break;
+
+                    case "flag":
+                        this.ctx.beginPath();
+                        switch(team) {
+                            case 0:              
+                                this.ctx.strokeStyle = "rgba(255, 0, 0, " + alpha + ")";
+                                this.ctx.fillStyle = "rgba(255, 0, 0, " + alpha + ")";
+                                break;
+                            case 1:
+                                this.ctx.strokeStyle = "rgba(0, 0, 255, " + alpha + ")";
+                                this.ctx.fillStyle = "rgba(0, 0, 255, " + alpha + ")";
+                                break;
+                        }
+                        this.ctx.rect(startX + c*dimSquare, startY + r*dimSquare, dimSquare, dimSquare);
+                        this.ctx.stroke();
+
+                        break;
+
+                    case "wall":
+                        this.ctx.beginPath();
+                        this.ctx.fillStyle =  "rgba(128, 128, 128, " + alpha + ")";
+                        this.ctx.strokeStyle =  "rgba(128, 128, 128, " + alpha + ")";
+                        this.ctx.fillRect(startX + c*dimSquare, startY + r*dimSquare, dimSquare, dimSquare);
+                        this.ctx.stroke();
+                        break;
+                    case "ocean":
+                        this.ctx.beginPath();
+                        this.ctx.fillStyle =  "rgba(173, 216, 230, " + alpha + ")";
+                        this.ctx.strokeStyle =  "rgba(173, 216, 230, " + alpha + ")";
+                        this.ctx.fillRect(startX + c*dimSquare, startY + r*dimSquare, dimSquare, dimSquare);
+                        this.ctx.stroke();
+                        break;
+                    default:
+                        break;;        
+                }
+            }
+        }
+        this.ctx.restore();
+    };
 
     _drawMap() {
         let map = model._map;
@@ -454,7 +551,7 @@ class WorldUi {
             let tile;
             let atlas;
             if (counter > 0) {
-                console.debug("drawing shoots: " + x +", " + " " + direction + " " + counter);
+                // console.debug("drawing shoots: " + x +", " + " " + direction + " " + counter);
                 // choose tile
                 if (direction == "vertical") {
                     tile = Terrain.BULLET_VERTICAL;

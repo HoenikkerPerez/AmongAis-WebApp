@@ -1,6 +1,5 @@
 // Controller
 
-mapClient = new GameClient("MAPCLIENT");
 
 window.onload = function () {
    // Loading session

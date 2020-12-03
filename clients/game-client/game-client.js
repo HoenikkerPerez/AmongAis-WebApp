@@ -22,7 +22,7 @@ class GameClient {
     _lastResponse;
     _nopTime;
     _noRequestsTime;
-
+    _tmpMsg = "";
     constructor(clientType) {
         this._connect();
         this._lobby = new LobbyManager();
@@ -46,13 +46,30 @@ class GameClient {
 
         this._wsQueue = [];
         this._ws.onmessage = async function(evt) {
-            this._waitingResponse = false;
-            this._lastResponse = new Date();
+            // this._waitingResponse = false;
+            // TODO lastresponse after first or last response?
             let msg = await evt.data.text();
             let msgtag = this._wsQueue.shift()
-            //console.debug(this._clientType + " received a message - " + msgtag);
-            // console.debug("Game Client: Dispatching event" + msgtag);
-            document.dispatchEvent(new CustomEvent(msgtag, {detail: msg }));
+            if((msgtag==="miticoOggettoCheNonEsiste.SPECTATE_GAME" || msgtag==="miticoOggettoCheNonEsiste.LOOK_MAP")) {
+                this._tmpMsg += msg;
+                if(this._tmpMsg.endsWith("«ENDOFMAP»\n")) {
+                    this._lastResponse = new Date();
+                    // console.debug("Game Client: Dispatching event" + msgtag);
+                    document.dispatchEvent(new CustomEvent(msgtag, {detail: this._tmpMsg }));
+                    // console.debug(this._clientType + " received a message - \n" + msg);
+                    this._tmpMsg = "";
+                    this._waitingResponse = false;
+                } else {
+                    this._wsQueue.unshift(msgtag);
+                }
+            } else {
+                // console.debug(this._clientType + " received a message - \n" + msg);
+                this._lastResponse = new Date();
+                // console.debug("Game Client: Dispatching event" + msgtag);
+                document.dispatchEvent(new CustomEvent(msgtag, {detail: msg }));
+                this._waitingResponse = false;
+
+            }
         }.bind(this)
 
         this._nopTime = new Date();
@@ -90,11 +107,11 @@ class GameClient {
         // console.debug("_requestHandler _waiting: " + this._waitingResponse)
         let now = new Date()
         let elapsed = now - this._lastResponse;
-        // if(this._waitingResponse) {
-        //     console.debug("_requetHandler waitingResponse: " + this._waitingResponse)
-        //     window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
-        //     return;
-        // }
+        if(this._waitingResponse) {
+            console.debug("_requetHandler waitingResponse: " + this._waitingResponse)
+            window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
+            return;
+        }
         
         if (elapsed < timeframe) {
             let deltaTimeframe = timeframe - elapsed; // add a little more waiting time
@@ -102,7 +119,7 @@ class GameClient {
             window.setTimeout(function(){ this._requestHandler() }.bind(this), deltaTimeframe);
             return;
         }
-        
+        console.debug("Passed " + elapsed + " from previous message");
         if(this.isOdd(this._schedulerCounter)) {
             if(this._wsRequests_cmd.length > 0) {
                 //console.debug("Game Client's request queue is not empty.");
@@ -178,9 +195,9 @@ class GameClient {
 
     /* SESSION interface */
 
-    createGame(gameName) {
+    createGame(gameName, type, mapSize) {
         //console.debug("Game Client is requesting a game creation for " + gameName);
-        let msg = this._lobby.createGame(gameName);
+        let msg = this._lobby.createGame(gameName, type, mapSize);
         this._send("miticoOggettoCheNonEsiste.CREATE_GAME", msg);
     }
 

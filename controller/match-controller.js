@@ -128,7 +128,7 @@ class MatchController {
         ) {
             let idx = r * model._map.cols + c;
             let tile = model._map.tiles[idx];
-            console.log("Checking " + r + "," + c + " (" + tile + ")");
+            // console.log("Checking " + r + "," + c + " (" + tile + ")");
             bulletStopped = stopsBullet(tile);
             //console.debug("bulletStopped: " + bulletStopped);
             if(!bulletStopped) {
@@ -248,7 +248,7 @@ class MatchController {
         //console.debug("Polling map")
         if(model.status.ga != undefined) {
             let gameName = model.status.ga;
-            mapClient.lookMap(gameName);
+            this._gameClient.lookMap(gameName);
         }
         // setMap()
     };
