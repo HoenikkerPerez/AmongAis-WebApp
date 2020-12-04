@@ -35,13 +35,13 @@ class ChatController {
 
                     if(name.startsWith("@") && (channel == model.status.ga)) {
                         let kind = this._parseSystemMessage(text, channel, name);
-                        // Endgame message: extract and compute the next #players messages
-                        if(kind == "endgame") {
+                        // Endgame ladder message: extract and compute the next #players messages
+                        if(kind == "ladder") {
                             let playerNumber = Object.keys(model.status.pl_list).length;
-                            let scoreMsgs = msgs.splice(i+1, playerNumber);
+                            let scoreMsgs = msgs.splice(i, playerNumber);
                             for(let j in scoreMsgs) {
                                 let scoreMsg = scoreMsgs[j];
-                                let text = this._parseChatMessage(scoreMsg);
+                                let text = this._parseChatMessage(scoreMsg).text;
                                 this._parseLadderSystemMessage(text);
                             }
                         }
@@ -69,7 +69,12 @@ class ChatController {
         if (msg.startsWith("Game finished!")) {
             document.dispatchEvent(new CustomEvent("CHAT_GAME_FINISHED", {detail: {message:msg}}));
             model.addMessageChat(channel, name, msg);
-            return "endgame";
+            return;
+        }
+
+        // Endgame ladder multiline message
+        if (msg.startsWith("(")) {
+            return "ladder";
         }
 
         // JOIN
