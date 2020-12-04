@@ -21,6 +21,29 @@ class SessionController {
 
     }
 
+    static PLAYER = "player";
+    static SPECTATOR = "spectator";
+
+    _joinAs(userKind) {
+        let gameName = document.getElementById("gameNameInput").value;
+        model.status.ga = gameName;
+        let inGameName = document.getElementById("ingamenameInput").value;
+        model.inGameName = inGameName;
+        console.debug("SessionController: joining a name called " + gameName + " as " + inGameName + " (" + userKind + ")");
+        // Join game
+        // Spectate game
+        switch(userKind) {
+            case SessionController.PLAYER:
+                this._gameClient.joinGame(gameName, inGameName);
+                break;
+            case SessionController.SPECTATOR:
+                this._gameClient.spectateGame(gameName);
+                break;
+            default:
+                console.error("Session Controller tried to join but it is unable to retrieve user kind (such as player, spectator, etc...)");
+        }
+    }
+
     _loadUI() {
         // Login
         document.getElementById("loginButton").addEventListener("click", () => {
@@ -38,7 +61,6 @@ class SessionController {
             }
         });
 
-                
         // Game name
         let gameNameInput = document.getElementById("gameNameInput");
         gameNameInput.addEventListener("input", this._validateInput);
@@ -57,26 +79,17 @@ class SessionController {
         });
         // Join game
         document.getElementById("joinButton").addEventListener("click", () => {
-            let gameName = document.getElementById("gameNameInput").value;
-            let inGameName = document.getElementById("ingamenameInput").value;
-            model.inGameName = inGameName;
-            console.debug("SessionController: joining a name called " + gameName + " as " + inGameName);
-            this._gameClient.joinGame(gameName, inGameName);
+            this._joinAs(SessionController.PLAYER);
+        });
+        // Spectate game
+        document.getElementById("spectateButton").addEventListener("click", () => {
+            this._joinAs(SessionController.SPECTATOR);
         });
         // start game no join
         document.getElementById("startButtonNoJoin").addEventListener("click", () => {
             let gameName = document.getElementById("gameNameInput").value;
             console.debug("SessionController: start game " + gameName + " without joining it");
             this._gameClient.startGame(gameName);
-        });
-        // Spectate game
-        document.getElementById("spectateButton").addEventListener("click", () => {
-            let gameName = document.getElementById("gameNameInput").value;
-            model.status.ga = gameName;
-            // Remove home UI elements
-            console.debug("SessionController: spectating a name called " + gameName);
-            //model.setGameActive(true);
-            this._gameClient.spectateGame(gameName);
         });
 
         // validate Login using credential
