@@ -37,9 +37,8 @@ class ChatController {
                         let kind = this._parseSystemMessage(text, channel, name);
                         // Endgame message: extract and compute the next #players messages
                         if(kind == "endgame") {
-                            let count = 0;
-                            model.status.pl_list.forEach(() => { count++; }); // .length is not available because pl_list is not a list anymore
-                            let scoreMsgs = msgs.splice(i+1, count);
+                            let playerNumber = Object.keys(model.status.pl_list).length;
+                            let scoreMsgs = msgs.splice(i+1, playerNumber);
                             for(let j in scoreMsgs) {
                                 let scoreMsg = scoreMsgs[j];
                                 let text = this._parseChatMessage(scoreMsg);
