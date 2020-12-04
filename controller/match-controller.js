@@ -82,8 +82,10 @@ class MatchController {
         let stopsBullet = (tile) => {
             //console.debug("check &");
             if(tile == "&") return true;
-            //console.error("check #");
+            //console.debug("check #");
             if(tile == "#") return true;
+            //console.debug("check players");
+            if(/^[A-Ta-t]$/.test(tile)) return true;
             return false;
         }
 
