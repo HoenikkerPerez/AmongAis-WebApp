@@ -50,7 +50,7 @@ class GameClient {
             // TODO lastresponse after first or last response?
             let msg = await evt.data.text();
             let msgtag = this._wsQueue.shift()
-            if((msgtag==="miticoOggettoCheNonEsiste.SPECTATE_GAME" || msgtag==="miticoOggettoCheNonEsiste.LOOK_MAP")) {
+            if(msgtag==="miticoOggettoCheNonEsiste.LOOK_MAP") {
                 this._tmpMsg += msg;
                 if(this._tmpMsg.endsWith("«ENDOFMAP»\n")) {
                     this._lastResponse = new Date();
@@ -78,7 +78,7 @@ class GameClient {
         this._noRequestsTime = new Date();
         this._waitingResponse = false;
         this._lastResponse = new Date();
-        
+
         window.setTimeout(function(){ this._requestHandler() }.bind(this), model.connectionTimeframe);
         // window.setTimeout(function(){ this._requestCmdHandler() }.bind(this), model.connectionTimeframe);
         // window.setTimeout(function(){ this._requestLookHandler() }.bind(this), model.connectionTimeframe);
@@ -201,17 +201,15 @@ class GameClient {
         this._send("miticoOggettoCheNonEsiste.CREATE_GAME", msg);
     }
 
-    joinGame(gameName, characterName) {
+    joinGame(gameName, characterName, logName) {
         //console.debug("Game Client is joining game named " + gameName);
-        model.status.ga = gameName;
-        let msg = this._lobby.joinGame(gameName, characterName);
+        let msg = this._lobby.joinGame(gameName, characterName, logName);
         this._send("miticoOggettoCheNonEsiste.JOIN_GAME", msg);
     }
     
-    spectateGame(gameName) {
+    spectateGame(gameName, characterName, logName) {
         //console.debug("Game Client is joining game named " + gameName);
-        model.status.ga = gameName;
-        let msg = this._lobby.spectateGame(gameName);
+        let msg = this._lobby.spectateGame(gameName, characterName, logName);
         this._send("miticoOggettoCheNonEsiste.SPECTATE_GAME", msg);
     }
 

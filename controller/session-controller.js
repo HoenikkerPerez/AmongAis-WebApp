@@ -29,15 +29,16 @@ class SessionController {
         model.status.ga = gameName;
         let inGameName = document.getElementById("ingamenameInput").value;
         model.inGameName = inGameName;
+        let username = model.username;
         console.debug("SessionController: joining a name called " + gameName + " as " + inGameName + " (" + userKind + ")");
         // Join game
         // Spectate game
         switch(userKind) {
             case SessionController.PLAYER:
-                this._gameClient.joinGame(gameName, inGameName);
+                this._gameClient.joinGame(gameName, inGameName, username);
                 break;
             case SessionController.SPECTATOR:
-                this._gameClient.spectateGame(gameName);
+                this._gameClient.spectateGame(gameName, inGameName, username);
                 break;
             default:
                 console.error("Session Controller tried to join but it is unable to retrieve user kind (such as player, spectator, etc...)");
