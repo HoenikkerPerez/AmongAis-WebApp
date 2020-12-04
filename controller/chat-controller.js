@@ -1,9 +1,19 @@
 class ChatController {
     _chat_client
-    _username
-    _gamename
 
-    _isEndgame = false
+    _parseChatMessage(item) {
+        let trimmed = item.replace(/  +/g, ' ');
+        let spltmsg = trimmed.split(" ");
+        let channel = spltmsg.shift();
+        let name = spltmsg.shift();
+        let text = spltmsg.join(' ');
+
+        return {
+            channel: channel,
+            name: name,
+            text: text
+        }
+    }
 
     constructor(chat_client) {
         this._chat_client = chat_client;
@@ -11,23 +21,33 @@ class ChatController {
             let msg = await evt.data.text();
             // let msg = evt.data;
             let msgs = msg.split("\n");
-            msgs.forEach((item, idx) => {
+            for(let i in msgs) {
+                let item = msgs[i];
                 if (item.length > 0) {
                     console.debug("Chat Client received message: " + msg);
                     // <channel> <name> <text>
-                    let trimmed = item.replace(/  +/g, ' ');
-                    let spltmsg = trimmed.split(" ");
-                    let channel = spltmsg.shift();
-                    let name = spltmsg.shift();
-                    let text = spltmsg.join(' ');
+                    let parsed = this._parseChatMessage(item);
+                    let channel = parsed.channel;
+                    let name = parsed.name;
+                    let text = parsed.text;
 
                     if(name.startsWith("@") && (channel == model.status.ga)) {
-                        this._parseSystemMessage(text, channel, name);
+                        let kind = this._parseSystemMessage(text, channel, name);
+                        // Endgame ladder message: extract and compute the next #players messages
+                        if(kind == "ladder") {
+                            let playerNumber = Object.keys(model.status.pl_list).length;
+                            let scoreMsgs = msgs.splice(i, playerNumber);
+                            for(let j in scoreMsgs) {
+                                let scoreMsg = scoreMsgs[j];
+                                let text = this._parseChatMessage(scoreMsg).text;
+                                this._parseLadderSystemMessage(text);
+                            }
+                        }
                     } else {
                         this._parseNonSystemMessage(text, channel, name);
                     }
                 }
-            });             
+            }
         });
         this.load();
     }
@@ -35,17 +55,6 @@ class ChatController {
     _parseSystemMessage(msg, channel, name) {
 
         let msgspl = msg.split(" "); // @gameserver ...
-
-        if(this._isEndgame) {
-            // Player endgame messages
-            let team = msgspl[0][1];
-            let playerName = msgspl[1];
-            let finalStatus = msgspl[2]; // ACTIVE, KILLED, ...
-            let score = parseInt(msgspl[3]);
-            let endscore = {score: score, team: team, name: playerName, endedAs: finalStatus};
-            model.pushEndgameScore(endscore);
-            return;
-        }
 
         // GAME start
         if(msg == "Now starting!") { 
@@ -58,8 +67,12 @@ class ChatController {
         if (msg.startsWith("Game finished!")) {
             document.dispatchEvent(new CustomEvent("CHAT_GAME_FINISHED", {detail: {message:msg}}));
             model.addMessageChat(channel, name, msg);
-            this._isEndgame = true;
             return;
+        }
+
+        // Endgame ladder multiline message
+        if (msg.startsWith("(")) {
+            return "ladder";
         }
 
         // JOIN
@@ -105,6 +118,18 @@ class ChatController {
         model.addMessageChat(channel, name, msg);
     }
 
+    _parseLadderSystemMessage(msg) {
+        // Split message components
+        let msgspl = msg.split(" "); // @gameserver ...
+        // Player endgame messages
+        let team = msgspl[0][1];
+        let playerName = msgspl[1];
+        let finalStatus = msgspl[2]; // ACTIVE, KILLED, ...
+        let score = parseInt(msgspl[3]);
+        let endscore = {score: score, team: team, name: playerName, endedAs: finalStatus};
+        model.pushEndgameScore(endscore);
+    }
+
     _parseNonSystemMessage(msg, channel, name) {
         // Perhaps one day this function will grow and become powerful. But not today.
         model.addMessageChat(channel, name, msg);
@@ -115,7 +140,7 @@ class ChatController {
         let message = document.getElementById("chatSendMessageInput").value
         this._chat_client.sendMessage(channel, message);
         // update model
-        // model.addMessageChat(channel, this._username, message);
+        // model.addMessageChat(channel, username, message);
     }
     
     _subscribeChatChannel() {
@@ -143,18 +168,18 @@ class ChatController {
         document.addEventListener("MODEL_RUN_GAME", () => {
             // JOIN chat with login name
             console.debug("chat-controller USERNAME SET")
-            this._username = model.inGameName
+            let username = model.inGameName
             if (model.inGameName == undefined) {
-                this._username = "spectator";
+                username = "spectator";
             } 
-            this._chat_client.loginChat(this._username);
+            this._chat_client.loginChat(username);
 
             // SUBSCRIBE to the game channel
-            this._gamename = model.status.ga;
-            this._chat_client.subscribeChannel(this._gamename);
+            let gamename = model.status.ga;
+            this._chat_client.subscribeChannel(gamename);
             //update model
-            model.addSubscribedChannel(this._gamename);
-            document.getElementById("chatSendChannelInput").value = this._gamename;
+            model.addSubscribedChannel(gamename);
+            document.getElementById("chatSendChannelInput").value = gamename;
 
             // set default channel
 
