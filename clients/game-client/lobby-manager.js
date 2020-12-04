@@ -10,14 +10,14 @@ class LobbyManager {
         return msg;
     }
 
-    joinGame(gameName, characterName) {
-        let msg = gameName + " JOIN " + characterName + " H role web-team"
+    joinGame(gameName, characterName, logName) {
+        let msg = gameName + " JOIN " + characterName + " H role " + logName;
         console.debug("LobbyManager built " + msg);
         return msg;
     }
 
-    spectateGame(gameName) {
-        let msg = gameName + " LOOK"
+    spectateGame(gameName, characterName, logName) {
+        let msg = gameName + " JOIN " + characterName + " O role " + logName;
         console.debug("LobbyManager built " + msg);
         return msg;
     }

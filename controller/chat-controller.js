@@ -169,9 +169,6 @@ class ChatController {
             // JOIN chat with login name
             console.debug("chat-controller USERNAME SET")
             let username = model.inGameName
-            if (model.inGameName == undefined) {
-                username = "spectator";
-            } 
             this._chat_client.loginChat(username);
 
             // SUBSCRIBE to the game channel
