@@ -10,7 +10,6 @@ class MatchController {
     // LISTENERS
 
     _gameClient;
-    _lastDirection = {direction: GameClient.UP}; // Not in model because it's intended to be part of the interaction. The server actually allows to shoot in a different direction.
 
     // 
 
@@ -23,16 +22,12 @@ class MatchController {
 
     /* PHYSICAL GAME */
 
-    getLastDirection() {
-        return this._lastDirection;
-    }
-
-    humanHandler(event, gameClient, lastDirection) {
+    humanHandler(event, gameClient) {
         switch(event.key) {
             case " ":
                 // SHOOT
-                console.debug("MatchController is asking the game client to SHOOT in the last direction moved (" + lastDirection.direction + ").");
-                gameClient.shoot(lastDirection.direction);
+                console.debug("MatchController is asking the game client to SHOOT in the last direction moved (" + model.status.me.lastDirection + ").");
+                gameClient.shoot(model.status.me.lastDirection);
                 break;
             default:
                 // MOVE. Moving also sets the lastDirection in which the player shoots.
@@ -58,7 +53,7 @@ class MatchController {
                 if(newDirection) {
                     console.debug("MatchController is asking the game client to move " + newDirection);
                     gameClient.move(newDirection);
-                    lastDirection.direction = newDirection;
+                    model.status.me.lastDirection = newDirection;
                 }
         }
     }
@@ -317,7 +312,7 @@ class MatchController {
         if(nextMove != undefined) { // no path to follow
             console.debug("MatchController _pathfindingMove is asking the game client to pathfinding-move " + nextMove);
             gameClient.move(nextMove);
-            this._lastDirection.direction = nextMove;
+            model.status.me.lastDirection = nextMove;
         } 
     }
 
@@ -327,7 +322,7 @@ class MatchController {
         if(nextMove != undefined) {
             console.debug("MatchController _moveHandler is asking the game client to pathfinding-move " + nextMove);
             gameClient.move(nextMove);
-            this._lastDirection.direction = nextMove;
+            model.status.me.lastDirection = nextMove;
         }
     }
 
@@ -634,7 +629,7 @@ class MatchController {
             // Init human commands
             console.debug("match-controller catches MODEL_MATCH_STATUS_ACTIVE")
             let canvas = document.getElementById("canvas");
-            canvas.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient, this._lastDirection)}, false);
+            canvas.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient)}, false);
             // Accuse Button
             document.addEventListener("BUTTON_ACCUSE", (evt) => {
                 let teammateName = evt.detail;

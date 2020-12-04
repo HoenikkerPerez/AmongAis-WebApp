@@ -28,6 +28,7 @@ var model = {
             loyalty:0,
             energy:256,
             score:0,
+            lastDirection: undefined
         },
         pl_list:[]
         //     pl_list: (2) […]
@@ -196,6 +197,10 @@ var model = {
                 newPlayers[name].touring = oldPlayers[name].touring;
     },
 
+    _restoreLastDirection(oldMatchStatus, newMatchStatus) {
+        newMatchStatus.me.lastDirection = oldMatchStatus.me.lastDirection;
+    },
+
     _isMatchStatusChange(oldMatchStatus,newMatchStatus){
         if(newMatchStatus !== oldMatchStatus){
             let newstate_tag = "MODEL_MATCH_STATUS_"+this.status.state; // LOBBY, ACTIVE, FINISHED
@@ -223,6 +228,7 @@ var model = {
         // Postprocess the status after it is received from the server
         if(old != undefined) {
             this._restoreTouringGame(old, this.status);
+            this._restoreLastDirection(old, this.status);
         }
 
         // Fire an event if the match status actually changed
