@@ -218,23 +218,18 @@ class WorldUi {
 
     _initCanvasSize() {
         // Lookup the size the browser is displaying the canvas.
-        let displayWidth  = window.innerWidth*0.9;
-        let displayHeight = window.innerHeight*0.9;
-
-        let sz = 0;
-        if(displayWidth<displayHeight) {sz=displayWidth;} else {sz=displayHeight;}
-        displayHeight = displayWidth = sz;
+        let displayWidth  = window.innerWidth*0.90;
+        let displayHeight = window.innerHeight*0.90;
         
-        if (this.ctx.canvas.width  != displayWidth ||
-            this.ctx.canvas.height != displayHeight) {
-            // Make the canvas the same size
-            this.ctx.canvas.width  = displayWidth;
-            this.ctx.canvas.height = displayHeight;
+        if(model.world._map.cols == model.world._map.rows) { //SQUARE MAP
+            displayWidth = displayHeight = Math.min(displayWidth, displayHeight);
+        } else { // WIDE MAP
+            displayWidth = displayHeight = Math.min(displayWidth/2, displayHeight);
         }
-            
-        this._tsizeMap = Math.floor(this.ctx.canvas.height / model.world._map.rows)
-        this.ctx.canvas.width  = this._tsizeMap * model.world._map.rows;
-        this.ctx.canvas.height = this._tsizeMap * model.world._map.cols;
+        // map fit all the screen
+        this._tsizeMap = Math.floor(displayHeight / model.world._map.rows)
+        this.ctx.canvas.width  = this._tsizeMap * model.world._map.cols;
+        this.ctx.canvas.height = this._tsizeMap * model.world._map.rows;
     }
 
     renderMap() {

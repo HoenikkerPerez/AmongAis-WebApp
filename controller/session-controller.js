@@ -76,7 +76,8 @@ class SessionController {
             let gameName = document.getElementById("gameNameInput").value;
             console.debug("SessionController: creating a name called " + gameName);
             let mapSize = Array.from(document.getElementsByName("mapSizeRadio")).find(r => r.checked).value;
-            this._gameClient.createGame(gameName, mapSize, "Q"); // TODO WIDE MAPS
+            let mapType = Array.from(document.getElementsByName("mapTypeRadio")).find(r => r.checked).value;
+            this._gameClient.createGame(gameName, mapType, mapSize); // TODO WIDE MAPS
         });
         // Join game
         document.getElementById("joinButton").addEventListener("click", () => {
