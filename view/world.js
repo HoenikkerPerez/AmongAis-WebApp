@@ -78,12 +78,6 @@ class WorldUi {
 
     images = {}
 
-    
-    
-
-    tmp_players = []
-    _initSize;
-    _imageLoaded = false;
 
     constructor(ctx) {
         this.ctx = ctx;
@@ -116,7 +110,7 @@ class WorldUi {
             this.tileBulletVertical = this._getImage('bullet-vertical');
             this.tileBulletHorizontal = this._getImage('bullet-horizontal');
 
-            this._imageLoaded = true;
+            model.world._imageLoaded = true;
         }.bind(this));
         
         this._load();
@@ -129,7 +123,7 @@ class WorldUi {
     };
 
     _getTile(col, row) {
-        let map = model._map;
+        let map = model.world._map;
         let idx = row * map.cols + col;
         let symbol = map.tiles[idx];
         let tile;
@@ -238,16 +232,16 @@ class WorldUi {
             this.ctx.canvas.height = displayHeight;
         }
             
-        this._tsizeMap = Math.floor(this.ctx.canvas.height / model._map.rows)
-        this.ctx.canvas.width  = this._tsizeMap * model._map.rows;
-        this.ctx.canvas.height = this._tsizeMap * model._map.cols;
+        this._tsizeMap = Math.floor(this.ctx.canvas.height / model.world._map.rows)
+        this.ctx.canvas.width  = this._tsizeMap * model.world._map.rows;
+        this.ctx.canvas.height = this._tsizeMap * model.world._map.cols;
     }
 
     renderMap() {
-        if (this._imageLoaded && model._map != undefined) {
-            if (!this._initSize) {
+        if (model.world._imageLoaded && model.world._map != undefined) {
+            if (!model.world._initSize) {
                 this._initCanvasSize();
-                this._initSize = true;
+                model.world._initSize = true;
             }
             // this._clearCanvas();
             this._drawMap();
@@ -264,7 +258,7 @@ class WorldUi {
     _drawMinimap() {
         this.ctx.save();
         this.ctx.setTransform(1,0,0,1,0,0);
-        let map = model._map;
+        let map = model.world._map;
         let dimMinimap;
         if(map.cols == 128) 
             dimMinimap = Math.floor(.30 * this.ctx.canvas.width) // .10 128x128
@@ -356,10 +350,10 @@ class WorldUi {
     };
 
     _drawMap() {
-        let map = model._map;
+        let map = model.world._map;
         // let tsizeMap = Math.floor(this.ctx.canvas.height / this._N)
-        this.tmp_players = [];
-        this.tmp_objects = [];
+        model.world.tmp_players = [];
+        model.world.tmp_objects = [];
         for (let c = 0; c < map.cols; c++) {
             for (let r = 0; r < map.rows; r++) {
                 let [atlas, tile, tiledim, symbol, team, type] = this._getTile(c, r); // TODO do not draw players!
@@ -374,21 +368,21 @@ class WorldUi {
                                     this._tsizeMap // target height
                                 );
                 if (type === "player") {
-                    this.tmp_players.push([symbol, team, c, r]);
+                    model.world.tmp_players.push([symbol, team, c, r]);
                 } else if (type === "trap" || type === "barrier" || type === "recharge" || type === "flag") { 
-                    this.tmp_objects.push([type, c, r, team]);
+                    model.world.tmp_objects.push([type, c, r, team]);
                 }
             }
         }
     }
 
     _drawTraps() {
-        let map = model._map;
+        let map = model.world._map;
         let tile;
         let atlas;
         let tiledim;
 
-        this.tmp_objects.forEach( (trap) => {
+        model.world.tmp_objects.forEach( (trap) => {
                             let [type, c, r, team] = trap;
                             if (type === "trap") {
                                 tile = Terrain.TRAP;
@@ -453,12 +447,11 @@ class WorldUi {
     }   
 
     _drawPlayers() {
-        let map = model._map;
         let tile;
         let atlas;
         let tiledim;
         let pl_directions = model.pl_directions;
-        this.tmp_players.forEach( (map_pl) => {
+        model.world.tmp_players.forEach( (map_pl) => {
                         let [symbol, team, c, r] = map_pl;
                         let pl = model.findPlayerBySymbol(symbol);
                         if(pl != undefined) {
@@ -503,8 +496,8 @@ class WorldUi {
     }
 
     _drawPlayerNames() {
-        for (let i=0; i<this.tmp_players.length; i++) {
-            let [symbol, team, c, r] = this.tmp_players[i];
+        for (let i=0; i<model.world.tmp_players.length; i++) {
+            let [symbol, team, c, r] = model.world.tmp_players[i];
             // let this._tsizeMap = Math.floor(this.ctx.canvas.height / this._N)
 
             let player = model.findPlayerBySymbol(symbol);
@@ -537,7 +530,7 @@ class WorldUi {
 
     _drawShoots() {
         let shoots = model.shoots;
-        let map = model._map;
+        let map = model.world._map;
         let tiledim = 32;
         for (let i=0; i<shoots.length; i++) {
             let shoot = shoots[i];
@@ -575,7 +568,6 @@ class WorldUi {
 
     _drawPathfinding() {
         let path = model.path;
-        let map = model._map;
         let tiledim = 32;
         for (let i=0; i<path.length; i++) {
             let x = path[i].x;

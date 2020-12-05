@@ -1,5 +1,4 @@
 var model = {
-    _map: [],
     timeframe: 150, // Default map polling rate
     timeframeMap: 150,
     timeframeStatus:1500,
@@ -75,19 +74,25 @@ var model = {
     createdGames:new Set(),
     pl_directions: [],  // Todo insert into status!
     // word parameters
-    _rendering: false,
+    world: {
+        _map: [],
+        _rendering: false,
+        _initSize: false,
+        tmp_players: [],
+        tmp_objects: [],
+        _imageLoaded: false
+    },
 
     addCreatedGame(nameGame){
         this.createdGames.add(nameGame);
     },
     
     setRendering(rendering) {
-        this._rendering = rendering;
+        this.world._rendering = rendering;
     },
-
         
     getRendering() {
-        return this._rendering;
+        return this.world._rendering;
     },
 
     imCreator(nameGame){
@@ -103,7 +108,7 @@ var model = {
 
     setMap: function(map) {
         // preprocess map
-        this._map = map;
+        this.world._map = map;
         // remove exausted shoots
         this._removeExaustedShoots();
         let tmpMap = map.tiles;

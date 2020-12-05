@@ -73,7 +73,7 @@ class MatchController {
         let position =  {x: parseInt(model.status.pl_list[shooter].x), y: parseInt(model.status.pl_list[shooter].y)};
         this.computeShootOnMap(position, direction);
         console.debug("Match Controller computed the map with the shot and is going to set the new map in the model.");
-        model.setMap(model._map); // update needed to fire the rendering action
+        model.setMap(model.world._map); // update needed to fire the rendering action
     }
 
     computeShootOnMap(shooterPosition, direction) {
@@ -106,9 +106,9 @@ class MatchController {
         //console.debug("firstX: " + firstX);
         let firstY = shooterPosition.y + deltaY;
         //console.debug("firstY: " + firstY);
-        let limitX = model._map.cols;
+        let limitX = model.world._map.cols;
         //console.debug("limitX: " + limitX);
-        let limitY = model._map.rows;
+        let limitY = model.world._map.rows;
         //console.debug("limitY: " + limitY);
         let cells = 0;
         let bulletStopped = false;
@@ -121,8 +121,8 @@ class MatchController {
 
             c += deltaX, r += deltaY
         ) {
-            let idx = r * model._map.cols + c;
-            let tile = model._map.tiles[idx];
+            let idx = r * model.world._map.cols + c;
+            let tile = model.world._map.tiles[idx];
             // console.log("Checking " + r + "," + c + " (" + tile + ")");
             bulletStopped = stopsBullet(tile);
             //console.debug("bulletStopped: " + bulletStopped);
@@ -348,9 +348,9 @@ class MatchController {
         let sz = 0;
         if(displayWidth<displayHeight) {sz=displayWidth;} else {sz=displayHeight;}
         displayHeight = displayWidth = sz;
-        this._tsizeMap = Math.floor(displayHeight / model._map.rows)
-        ctx.canvas.width  = this._tsizeMap * model._map.rows;
-        ctx.canvas.height = this._tsizeMap * model._map.cols;
+        this._tsizeMap = Math.floor(displayHeight / model.world._map.rows)
+        ctx.canvas.width  = this._tsizeMap * model.world._map.rows;
+        ctx.canvas.height = this._tsizeMap * model.world._map.cols;
         // this._clearCanvas();
         // this._trackTransforms(document.getElementById("canvas").getContext("2d"))
 
@@ -407,8 +407,8 @@ class MatchController {
             let ctx = document.getElementById("canvas").getContext("2d");
             let canvasHeight = ctx.canvas.height;
             let canvasWidth = ctx.canvas.width;
-            let mapC = model._map.cols;
-            let mapR = model._map.rows;
+            let mapC = model.world._map.cols;
+            let mapR = model.world._map.rows;
             let tsizeMap = canvasHeight / mapR;
 
             let pt = ctx.transformedPoint(this.lastX, this.lastY);
@@ -420,7 +420,7 @@ class MatchController {
                 let start = model.findMyPosition();
                 if(start == undefined)
                 return 
-                let jp = new PathFinder(model._map);
+                let jp = new PathFinder(model.world._map);
                 let path = jp.findPath(start.x, start.y, targetC, targetR); 
                 if(path) { 
                     // update the model
@@ -438,8 +438,8 @@ class MatchController {
             let ctx = document.getElementById("canvas").getContext("2d");
             let canvasHeight = ctx.canvas.height;
             let canvasWidth = ctx.canvas.width;
-            let mapC = model._map.cols;
-            let mapR = model._map.rows;
+            let mapC = model.world._map.cols;
+            let mapR = model.world._map.rows;
             let tsizeMap = canvasHeight / mapR;
             let north = GameClient.UP;
             let south = GameClient.DOWN;
