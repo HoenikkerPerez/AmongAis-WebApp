@@ -158,10 +158,18 @@ class ChatController {
         });
 
         document.getElementById("chatSendMessageInput").addEventListener("input", this._validateSend);
+        document.getElementById("chatSendMessageInput").addEventListener("keyup", (evt) => {
+            if(evt.key === 'Enter') {
+                this._sendChatMessage();
+                document.getElementById("chatSendMessageInput").value = "";
+                this._validateSend();
+                document.getElementById("canvas").focus();
+            }});
         document.getElementById("chatSendChannelInput").addEventListener("input", this._validateSend);
         document.getElementById("chatSendButton").addEventListener("click", () => {
             this._sendChatMessage();
             document.getElementById("chatSendMessageInput").value = "";
+            this._validateSend();
             document.getElementById("canvas").focus();
         });
         
