@@ -49,7 +49,7 @@ class PathFinder  {
             if (outOfBounds(x, y)) {
                 return true;
             }
-            let idx = x + y*map.rows;
+            let idx = x + y*map.cols;
             let tile = map.tiles[idx];
             if (tile == "#" || tile == "@" || tile == "!") {
                 return true;
