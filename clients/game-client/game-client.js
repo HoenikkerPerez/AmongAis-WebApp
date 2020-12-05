@@ -49,7 +49,7 @@ class GameClient {
             // this._waitingResponse = false;
             // TODO lastresponse after first or last response?
             let msg = await evt.data.text();
-            let msgtag = this._wsQueue.shift()
+            let msgtag = this._wsQueue[0];
             if(msgtag==="miticoOggettoCheNonEsiste.LOOK_MAP") {
                 this._tmpMsg += msg;
                 if(this._tmpMsg.endsWith("«ENDOFMAP»\n")) {
@@ -59,10 +59,10 @@ class GameClient {
                     // console.debug(this._clientType + " received a message - \n" + msg);
                     this._tmpMsg = "";
                     this._waitingResponse = false;
-                } else {
-                    this._wsQueue.unshift(msgtag);
-                }
+                    this._wsQueue.shift()
+                } 
             } else {
+                this._wsQueue.shift();
                 // console.debug(this._clientType + " received a message - \n" + msg);
                 this._lastResponse = new Date();
                 // console.debug("Game Client: Dispatching event" + msgtag);

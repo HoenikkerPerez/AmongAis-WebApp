@@ -78,11 +78,8 @@ class WorldUi {
 
     images = {}
 
-    _rendering = false
     
-    dragStart=null
-    dragged
-    scaleFactor = 1.01
+    
 
     tmp_players = []
     _initSize;
@@ -607,9 +604,9 @@ class WorldUi {
 
     _loadWsMessages() {
         document.addEventListener("MODEL_SETMAP", () => {
-            if (!this._rendering) {
+            if (!model.getRendering()) {
                 window.requestAnimationFrame(this.renderMap.bind(this));    
-                this._rendering = true;
+                model.setRendering(true);
             }
         }, false);
     }

@@ -74,9 +74,20 @@ var model = {
     path: [],
     createdGames:new Set(),
     pl_directions: [],  // Todo insert into status!
-    
+    // word parameters
+    _rendering: false,
+
     addCreatedGame(nameGame){
         this.createdGames.add(nameGame);
+    },
+    
+    setRendering(rendering) {
+        this._rendering = rendering;
+    },
+
+        
+    getRendering() {
+        return this._rendering;
     },
 
     imCreator(nameGame){
