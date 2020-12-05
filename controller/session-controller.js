@@ -70,15 +70,15 @@ class SessionController {
         let ingamenameInput = document.getElementById("ingamenameInput");
         ingamenameInput.addEventListener("input", this._validateInput)
 
-
         // Create game
         document.getElementById("createButton").addEventListener("click", () => {
             let gameName = document.getElementById("gameNameInput").value;
             console.debug("SessionController: creating a name called " + gameName);
             let mapSize = Array.from(document.getElementsByName("mapSizeRadio")).find(r => r.checked).value;
             let mapType = Array.from(document.getElementsByName("mapTypeRadio")).find(r => r.checked).value;
-            this._gameClient.createGame(gameName, mapType, mapSize); // TODO WIDE MAPS
+            this._gameClient.createGame(gameName, mapType, mapSize);
         });
+
         // Join game
         document.getElementById("joinButton").addEventListener("click", () => {
             this._joinAs(SessionController.PLAYER);
@@ -213,4 +213,6 @@ class SessionController {
             startButtonNoJoin.disabled = false;
         }
     };
+    
+
 }
