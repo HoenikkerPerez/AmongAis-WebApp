@@ -616,14 +616,14 @@ class MatchController {
         }, false);
 
         let canvas = document.getElementById("canvas");
-        canvas.addEventListener('mousedown', ((evt) => {this._mouseDownHandler(evt)}).bind(this),false);
+        document.addEventListener('mousedown', ((evt) => {this._mouseDownHandler(evt)}).bind(this),false);
 
-        canvas.addEventListener('mousemove', ((evt) => {this._mouseMoveHandler(evt)}).bind(this),false);
+        document.addEventListener('mousemove', ((evt) => {this._mouseMoveHandler(evt)}).bind(this),false);
 
-        canvas.addEventListener('mouseup', ((evt) => {this._mouseUpHandler(evt)}).bind(this),false);
+        document.addEventListener('mouseup', ((evt) => {this._mouseUpHandler(evt)}).bind(this),false);
 
-        canvas.addEventListener('DOMMouseScroll', ((evt) => {this._handleScroll(evt)}).bind(this),false);
-        canvas.addEventListener('mousewheel', ((evt) => {this._handleScroll(evt)}).bind(this),false);
+        document.addEventListener('DOMMouseScroll', ((evt) => {this._handleScroll(evt)}).bind(this),false);
+        document.addEventListener('mousewheel', ((evt) => {this._handleScroll(evt)}).bind(this),false);
 
         // window.addEventListener("resize", ((evt) => {this._resizeCanvasHandler(evt)}).bind(this),false);
 
