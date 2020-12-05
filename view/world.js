@@ -33,7 +33,7 @@ const Terrain = {
     PLAYER_RED_KILLED: [3, 0]
 }
 
-// TODO ADD GRASS TYPES 
+// TODO ADD GRASS TYPES
 
 class WorldUi {
     imgGrass0       = './assets/Terrain/grass_0.png'
@@ -59,7 +59,7 @@ class WorldUi {
 
     imgRiver       = './assets/Terrain/river.png'
     imgOcean       = './assets/Terrain/ocean.png'
-    
+
     imgTrap        = './assets/Terrain/trap.png'
     imgBarrier     = './assets/Terrain/barrier0.png'
     imgRecharge    = './assets/Terrain/recharge.png'
@@ -73,8 +73,8 @@ class WorldUi {
     imgPathfinding = './assets/Pathfinding/pathfinding_0.png'
 
 
-    imgTileSet = './assets/mod32x32_map_tilev2.png'    
-    imgTileSetGraves = './assets/grave_markers-shadow.png'   
+    imgTileSet = './assets/mod32x32_map_tilev2.png'
+    imgTileSetGraves = './assets/grave_markers-shadow.png'
 
     images = {}
 
@@ -85,19 +85,19 @@ class WorldUi {
         Promise.all(p).then(function (loaded) {
             this.tileAtlas = this._getImage('tiles');
             this.tileGraves = this._getImage('graves');
-            
-            this.tileGrass = [this._getImage('grass_0'), this._getImage('grass_1'), 
-                            this._getImage('grass_2'), this._getImage('grass_3'), 
-                            this._getImage('grass_4'), this._getImage('grass_5'), 
+
+            this.tileGrass = [this._getImage('grass_0'), this._getImage('grass_1'),
+                            this._getImage('grass_2'), this._getImage('grass_3'),
+                            this._getImage('grass_4'), this._getImage('grass_5'),
                             this._getImage('grass_6'),this._getImage('grass_7')];
 
-            this.tileWall = [this._getImage('wall_0'), this._getImage('wall_1'), 
-                            this._getImage('wall_2'), this._getImage('wall_3'), 
-                            this._getImage('wall_4'), this._getImage('wall_5'), 
+            this.tileWall = [this._getImage('wall_0'), this._getImage('wall_1'),
+                            this._getImage('wall_2'), this._getImage('wall_3'),
+                            this._getImage('wall_4'), this._getImage('wall_5'),
                             this._getImage('wall_6'),this._getImage('wall_7')];
             this.tileFlagRed =  this._getImage('flag-red');
             this.tileFlagBlue =  this._getImage('flag-blue');
-            
+
             this.tileRiver = this._getImage('river');
             this.tileOcean = this._getImage('ocean');
             this.tileTrap = this._getImage('trap');
@@ -112,7 +112,7 @@ class WorldUi {
 
             model.world._imageLoaded = true;
         }.bind(this));
-        
+
         this._load();
 
     };
@@ -146,7 +146,7 @@ class WorldUi {
             type = "flag";
             atlas = this.tileGrass[0];
             tiledim = 32;
-        }        
+        }
         else if(symbol_code >= 65 && symbol_code <= 84) {  // uppercase letter team 0
             // use background grass
             tile = Terrain.GRASS;
@@ -220,7 +220,7 @@ class WorldUi {
         // Lookup the size the browser is displaying the canvas.
         let displayWidth  = window.innerWidth*0.90;
         let displayHeight = window.innerHeight*0.90;
-        
+
         if(model.world._map.cols == model.world._map.rows) { //SQUARE MAP
             displayWidth = displayHeight = Math.min(displayWidth, displayHeight);
         } else { // WIDE MAP
@@ -244,22 +244,29 @@ class WorldUi {
             this._drawPlayers();
             this._drawShoots();
             this._drawPathfinding();
+            this._drawGrid();
             this._drawPlayerNames();
             this._drawMinimap();
         };
         window.requestAnimationFrame(this.renderMap.bind(this));
     };
 
+
+    _drawGrid() {
+
+    };
+
+
     _drawMinimap() {
         this.ctx.save();
         this.ctx.setTransform(1,0,0,1,0,0);
         let map = model.world._map;
         let dimMinimap;
-        if(map.cols == 128) 
+        if(map.cols == 128)
             dimMinimap = Math.floor(.30 * this.ctx.canvas.width) // .10 128x128
-        else if(map.cols == 64) 
+        else if(map.cols == 64)
             dimMinimap = Math.floor(.30 * this.ctx.canvas.width) // .10 128x128
-        else 
+        else
             dimMinimap = Math.floor(.30 * this.ctx.canvas.width) // .10 128x128
 
         let dimSquare = dimMinimap/map.cols;
@@ -291,7 +298,7 @@ class WorldUi {
 
                         } else {
                             switch(team) {
-                                case 0:              
+                                case 0:
                                     this.ctx.strokeStyle = "rgba(255, 0, 0, " + alpha + ")";
                                     this.ctx.fillStyle = "rgba(255, 0, 0, " + alpha + ")";
                                     break;
@@ -299,7 +306,7 @@ class WorldUi {
                                     this.ctx.strokeStyle = "rgba(0, 0, 255, " + alpha + ")";
                                     this.ctx.fillStyle = "rgba(0, 0, 255, " + alpha + ")";
                                     break;
-                            } 
+                            }
                         }
                         this.ctx.fillRect(startX + c*dimSquare, startY + r*dimSquare, dimSquare, dimSquare);
                         this.ctx.stroke();
@@ -308,7 +315,7 @@ class WorldUi {
                     case "flag":
                         this.ctx.beginPath();
                         switch(team) {
-                            case 0:              
+                            case 0:
                                 this.ctx.strokeStyle = "rgba(255, 0, 0, " + alpha + ")";
                                 this.ctx.fillStyle = "rgba(255, 0, 0, " + alpha + ")";
                                 break;
@@ -337,7 +344,7 @@ class WorldUi {
                         this.ctx.stroke();
                         break;
                     default:
-                        break;;        
+                        break;;
                 }
             }
         }
@@ -346,6 +353,8 @@ class WorldUi {
 
     _drawMap() {
         let map = model.world._map;
+        let showGrid = model.world.showGrid;
+
         // let tsizeMap = Math.floor(this.ctx.canvas.height / this._N)
         model.world.tmp_players = [];
         model.world.tmp_objects = [];
@@ -362,9 +371,21 @@ class WorldUi {
                                     this._tsizeMap, // target width
                                     this._tsizeMap // target height
                                 );
+                if(showGrid) {
+                    this.ctx.beginPath();
+
+                    this.ctx.rect(
+                        c * this._tsizeMap,  // target x
+                        r * this._tsizeMap, // target y
+                        this._tsizeMap, // target width
+                        this._tsizeMap // target height
+                        );
+
+                    this.ctx.stroke();
+                    }
                 if (type === "player") {
                     model.world.tmp_players.push([symbol, team, c, r]);
-                } else if (type === "trap" || type === "barrier" || type === "recharge" || type === "flag") { 
+                } else if (type === "trap" || type === "barrier" || type === "recharge" || type === "flag") {
                     model.world.tmp_objects.push([type, c, r, team]);
                 }
             }
@@ -439,7 +460,7 @@ class WorldUi {
                                 this._tsizeMap // target height
                             );
                         });
-    }   
+    }
 
     _drawPlayers() {
         let tile;
@@ -520,7 +541,7 @@ class WorldUi {
                 this.ctx.textBaseline = "bottom";
                 this.ctx.fillText(player.name, c * this._tsizeMap + Math.floor(this._tsizeMap/2), r * this._tsizeMap);
             }
-        }        
+        }
     }
 
     _drawShoots() {
@@ -541,7 +562,7 @@ class WorldUi {
                 if (direction == "vertical") {
                     tile = Terrain.BULLET_VERTICAL;
                     atlas = this.tileBulletVertical;
-                } else { 
+                } else {
                     tile = Terrain.BULLET_HORIZONTAL;
                     atlas = this.tileBulletHorizontal;
                 }
@@ -592,31 +613,31 @@ class WorldUi {
     _loadWsMessages() {
         document.addEventListener("MODEL_SETMAP", () => {
             if (!model.getRendering()) {
-                window.requestAnimationFrame(this.renderMap.bind(this));    
+                window.requestAnimationFrame(this.renderMap.bind(this));
                 model.setRendering(true);
             }
         }, false);
     }
 
-    
+
     _loadImage = function (key, src) {
         let img = new Image();
-    
+
         let d = new Promise(function (resolve, reject) {
             img.onload = function () {
                 this.images[key] = img;
                 resolve(img);
             }.bind(this);
-    
+
             img.onerror = function () {
                 reject('Could not load image: ' + src);
             };
         }.bind(this));
-    
+
         img.src = src;
         return d;
     };
-    
+
     _getImage = function (key) {
         return (key in this.images) ? this.images[key] : null;
     };
@@ -655,6 +676,6 @@ class WorldUi {
             this._loadImage('bullet-horizontal', this.imgBulletHorizontal)
         ];
     }.bind(this);
-    
+
 };
 

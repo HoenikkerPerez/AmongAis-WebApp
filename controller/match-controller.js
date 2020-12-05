@@ -629,6 +629,17 @@ class MatchController {
         // window.addEventListener("resize", ((evt) => {this._resizeCanvasHandler(evt)}).bind(this),false);
 
         canvas.addEventListener("click", ((evt) => {this._clickHandler(evt)}).bind(this),false);
+
+        // GRID VEW
+        let gridSwitch = document.getElementById("gridViewSwitch");
+        gridSwitch.addEventListener("change", (evt)=> {
+            if(gridSwitch.checked) {
+                model.showGrid(true);
+            }
+            else {
+                model.showGrid(false);
+            }
+        })
     };
 
     // Player-specific listeners
