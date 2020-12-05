@@ -151,7 +151,7 @@ class MatchController {
         let map_obj;
         let parsed_map = map.slice(7).replace('«ENDOFMAP»', '').replace(/\n/g, '').split('');
         let numTiles = parsed_map.length;
-        if(numTiles == 1048 || numTiles == 4096 || numTiles == 16384) { // worst code ever. I'm gonna whip myself for this. (luca)
+        if(numTiles == 1024 || numTiles == 4096 || numTiles == 16384) { // worst code ever. I'm gonna whip myself for this. (luca)
             let N = Math.sqrt(parsed_map.length);
             map_obj = {
                 cols: N,
