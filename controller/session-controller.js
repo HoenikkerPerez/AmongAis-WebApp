@@ -199,16 +199,16 @@ class SessionController {
 
         if(gameNameInput.value.length == 0 || ingamenameInput.value.length == 0) {
             joinButton.disabled = true;
+            spectateButton.disabled = true;
         } else {
             joinButton.disabled = false;
+            spectateButton.disabled = false;
         }
         if(gameNameInput.value.length == 0) {
             createButton.disabled = true;
-            spectateButton.disabled = true;
             startButtonNoJoin.disabled = true;
         } else {
             createButton.disabled = false;
-            spectateButton.disabled = false;
             startButtonNoJoin.disabled = false;
         }
     };

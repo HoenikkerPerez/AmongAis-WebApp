@@ -8,6 +8,29 @@
     margin-top: 5%;
 }
 
+#console {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+  
+#left-hud {
+    width: 20%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    float: left;
+}
+
+#right-hud {
+    width: 20%;
+    height: 100%;
+    right: 0;
+    top: 0;
+    position: absolute;
+}
+
 #canvas{
     outline: rgb(48, 48, 48) 5px solid;
     padding-left: 0;
@@ -23,6 +46,21 @@
     box-shadow: 0 0 10px #719ECE;
 }
 
+
+input.transparent-input { 
+    border-color: #007bff !important;
+}
+
+.transparent-input {
+   background-color: rgba(0, 0, 0, 0);
+   border-color: #007bff !important;
+}
+
+input.transparent-input{
+    background-color:rgba(0,0,0,0) !important;
+    border-color: #007bff !important;
+}
+
 .footer {
     position: fixed;
     left: 0;
@@ -31,6 +69,12 @@
     color: black;
     text-align: center;
   }
+
+
+/* .form-control:focus {
+border-color: #FF0000;
+box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(255, 0, 0, 0.6);
+} */
 
 .emergency-meeting-yellow {
     background-image: repeating-linear-gradient(-60deg, #ffff00, #ffff00 11.16px, transparent 12px, transparent 15.72px, #ffff00 16px), repeating-linear-gradient(30deg, #ffff00, #ffff00 11.16px, transparent 12px, transparent 15.72px, #ffff00 16px), repeating-linear-gradient(120deg, #ffff00, #ffff00 11.16px, transparent 12px, transparent 15.72px, #ffff00 16px), repeating-linear-gradient(210deg, #ffff00, #ffff00 11.16px, transparent 12px, transparent 15.72px, #ffff00 16px);
