@@ -15,20 +15,26 @@
   }
   
 #left-hud {
-    width: 20%;
+    width: 10%;
     height: 100%;
     position: absolute;
     top: 0;
     left: 0;
     float: left;
+    padding: 5px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, .1);
 }
 
 #right-hud {
-    width: 20%;
+    width: 10%;
     height: 100%;
     right: 0;
     top: 0;
+    padding: 5px;
     position: absolute;
+    border-radius:10px;
+    background-color:rgba(0, 0, 0, .1);
 }
 
 #canvas{
@@ -38,6 +44,8 @@
     margin-left: auto;
     margin-right: auto;
     display: block;
+    /* position: absolute;
+    top: 0; */
 }
 
 #canvas:focus {
@@ -72,7 +80,6 @@ input.transparent-input{
     color: black;
     text-align: center;
   }
-
 
 /* .form-control:focus {
 border-color: #FF0000;

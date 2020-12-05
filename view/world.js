@@ -218,8 +218,8 @@ class WorldUi {
 
     _initCanvasSize() {
         // Lookup the size the browser is displaying the canvas.
-        let displayWidth  = window.innerWidth*0.90;
-        let displayHeight = window.innerHeight*0.90;
+        let displayWidth  = window.innerWidth//*0.90;
+        let displayHeight = window.innerHeight//*0.90;
 
         if(model.world._map.cols == model.world._map.rows) { //SQUARE MAP
             displayWidth = displayHeight = Math.min(displayWidth, displayHeight);
