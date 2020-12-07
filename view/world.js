@@ -258,6 +258,9 @@ class WorldUi {
 
 
     _drawMinimap() {
+        let showMinimap = model.world.showMinimap;
+        if(!showMinimap)
+            return;
         this.ctx.save();
         this.ctx.setTransform(1,0,0,1,0,0);
         let map = model.world._map;
