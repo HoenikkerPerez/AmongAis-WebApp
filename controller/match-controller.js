@@ -354,8 +354,8 @@ class MatchController {
 
     _resizeCanvasHandler() {
         let ctx = document.getElementById("canvas").getContext("2d");
-        let displayWidth  = window.innerHeight * 0.9
-        let displayHeight = window.innerWidth * 0.9
+        let displayWidth  = window.innerHeight// * 0.9
+        let displayHeight = window.innerWidth// * 0.9
         
         this._tsizeMap = Math.floor(displayHeight / model.world._map.rows)
         ctx.canvas.width  = this._tsizeMap * model.world._map.rows;

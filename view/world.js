@@ -147,7 +147,7 @@ class WorldUi {
             atlas = this.tileGrass[0];
             tiledim = 32;
         }
-        else if(symbol_code >= 65 && symbol_code <= 84) {  // uppercase letter team 0
+        else if(symbol_code >= 65 && symbol_code <= 87) {  // uppercase letter team 0
             // use background grass
             tile = Terrain.GRASS;
             team = 0;
@@ -155,7 +155,7 @@ class WorldUi {
             atlas = this.tileGrass[0];
             tiledim = 32;
         }
-        else if (symbol_code >= 97 && symbol_code <= 116) {// lowecase letter team 1
+        else if (symbol_code >= 97 && symbol_code <= 119) {// lowecase letter team 1
             // use background grass
             tile = Terrain.GRASS;
             team = 1;

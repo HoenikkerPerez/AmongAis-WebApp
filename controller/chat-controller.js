@@ -100,7 +100,7 @@ class ChatController {
             return;
         }
         // EMERGENCY MEETING ended.
-        if(msg.startsWith("EMERGENCY MEETING ended.")){
+        if(msg.startsWith("EMERGENCY MEETING") && msg.endsWith("ended.")){
             model.meetingEnd();
             return;
         }
