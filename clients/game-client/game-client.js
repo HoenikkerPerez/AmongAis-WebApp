@@ -61,6 +61,18 @@ class GameClient {
                     this._waitingResponse = false;
                     this._wsQueue.shift()
                 } 
+            } else if(msgtag==="STATUS") {
+                this._tmpMsg += msg;
+                if(this._tmpMsg.endsWith("«ENDOFSTATUS»\n")) {
+                    this._lastResponse = new Date();
+                    // console.debug("Game Client: Dispatching event" + msgtag);
+                    document.dispatchEvent(new CustomEvent(msgtag, {detail: this._tmpMsg }));
+                    // console.debug("************* END OF STATUS *************\n");
+                    // console.debug(this._clientType + " received a message - \n" + this._tmpMsg);
+                    this._tmpMsg = "";
+                    this._waitingResponse = false;
+                    this._wsQueue.shift()
+                } 
             } else {
                 this._wsQueue.shift();
                 // console.debug(this._clientType + " received a message - \n" + msg);
@@ -90,7 +102,7 @@ class GameClient {
         //console.debug("Game Client pushing response tag " + msgtag);
         // this._wsQueue.push(msgtag);
         //console.debug("Game Client pushing request message " + msg);
-        if(msgtag==="STATUS" || msgtag==="miticoOggettoCheNonEsiste.SPECTATE_GAME" || msgtag==="miticoOggettoCheNonEsiste.LOOK_MAP"){
+        if(msgtag==="STATUS" || msgtag==="miticoOggettoCheNonEsiste.LOOK_MAP"){
             this._wsRequests_look.push({tag:msgtag, msg:msg});
         } else {
             this._wsRequests_cmd.push({tag:msgtag, msg:msg});
