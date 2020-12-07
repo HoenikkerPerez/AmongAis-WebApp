@@ -14,37 +14,53 @@ class ChatController {
             text: text
         }
     }
+    _endScoresMessage = "";
+    _receivingEndScores = false;
 
     constructor(chat_client) {
         this._chat_client = chat_client;
         this._chat_client.onMessage(async (evt) => {
             let msg = await evt.data.text();
-            // let msg = evt.data;
-            let msgs = msg.split("\n");
-            for(let i in msgs) {
-                let item = msgs[i];
-                if (item.length > 0) {
-                    console.debug("Chat Client received message: " + msg);
-                    // <channel> <name> <text>
-                    let parsed = this._parseChatMessage(item);
-                    let channel = parsed.channel;
-                    let name = parsed.name;
-                    let text = parsed.text;
+            if(this._receivingEndScores) {
+                this._endScoresMessage += msg;
+                if(this._endScoresMessage.endsWith("-----------------\n")) {
+                    this._receivingEndScores = false;
+                    msg = this._endScoresMessage
+                    console.debug("ENDSCORE message: " + msg);
+                }
+            } 
 
-                    if(name.startsWith("@") && (channel == model.status.ga)) {
-                        let kind = this._parseSystemMessage(text, channel, name);
-                        // Endgame ladder message: extract and compute the next #players messages
-                        if(kind == "ladder") {
-                            let playerNumber = Object.keys(model.status.pl_list).length;
-                            let scoreMsgs = msgs.splice(i, playerNumber);
-                            for(let j in scoreMsgs) {
-                                let scoreMsg = scoreMsgs[j];
-                                let text = this._parseChatMessage(scoreMsg).text;
-                                this._parseLadderSystemMessage(text);
+            if(!this._receivingEndScores) {
+                // let msg = evt.data;
+                let msgs = msg.split("\n");
+                for(let i in msgs) {
+                    let item = msgs[i];
+                    if (item.length > 0) {
+                        console.debug("Chat Client received message: " + msg);
+                        // <channel> <name> <text>
+                        let parsed = this._parseChatMessage(item);
+                        let channel = parsed.channel;
+                        let name = parsed.name;
+                        let text = parsed.text;
+
+                        if(name.startsWith("@") && (channel == model.status.ga)) {
+                            let kind = this._parseSystemMessage(text, channel, name);
+                            if(kind == "endgame") {
+                                this._receivingEndScores = true;
                             }
+                            // Endgame ladder message: extract and compute the next #players messages
+                            if(kind == "ladder") {
+                                let playerNumber = Object.keys(model.status.pl_list).length;
+                                let scoreMsgs = msgs.splice(i, playerNumber);
+                                for(let j in scoreMsgs) {
+                                    let scoreMsg = scoreMsgs[j];
+                                    let text = this._parseChatMessage(scoreMsg).text;
+                                    this._parseLadderSystemMessage(text);
+                                }
+                            }
+                        } else {
+                            this._parseNonSystemMessage(text, channel, name);
                         }
-                    } else {
-                        this._parseNonSystemMessage(text, channel, name);
                     }
                 }
             }
@@ -67,7 +83,7 @@ class ChatController {
         if (msg.startsWith("Game finished!")) {
             document.dispatchEvent(new CustomEvent("CHAT_GAME_FINISHED", {detail: {message:msg}}));
             model.addMessageChat(channel, name, msg);
-            return;
+            return "endgame";
         }
 
         // Endgame ladder multiline message
