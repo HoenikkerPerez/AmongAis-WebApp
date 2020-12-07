@@ -42,24 +42,25 @@ class ChatController {
                         let channel = parsed.channel;
                         let name = parsed.name;
                         let text = parsed.text;
-
-                        if(name.startsWith("@") && (channel == model.status.ga)) {
-                            let kind = this._parseSystemMessage(text, channel, name);
-                            if(kind == "endgame") {
-                                this._receivingEndScores = true;
-                            }
-                            // Endgame ladder message: extract and compute the next #players messages
-                            if(kind == "ladder") {
-                                let playerNumber = Object.keys(model.status.pl_list).length;
-                                let scoreMsgs = msgs.splice(i, playerNumber);
-                                for(let j in scoreMsgs) {
-                                    let scoreMsg = scoreMsgs[j];
-                                    let text = this._parseChatMessage(scoreMsg).text;
-                                    this._parseLadderSystemMessage(text);
+                        if(parsed.name != undefined) {
+                            if(name.startsWith("@") && (channel == model.status.ga)) {
+                                let kind = this._parseSystemMessage(text, channel, name);
+                                if(kind == "endgame") {
+                                    this._receivingEndScores = true;
                                 }
+                                // Endgame ladder message: extract and compute the next #players messages
+                                if(kind == "ladder") {
+                                    let playerNumber = Object.keys(model.status.pl_list).length;
+                                    let scoreMsgs = msgs.splice(i, playerNumber);
+                                    for(let j in scoreMsgs) {
+                                        let scoreMsg = scoreMsgs[j];
+                                        let text = this._parseChatMessage(scoreMsg).text;
+                                        this._parseLadderSystemMessage(text);
+                                    }
+                                }
+                            } else {
+                                this._parseNonSystemMessage(text, channel, name);
                             }
-                        } else {
-                            this._parseNonSystemMessage(text, channel, name);
                         }
                     }
                 }
