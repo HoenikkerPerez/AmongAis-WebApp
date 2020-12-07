@@ -2,7 +2,6 @@ html {
     margin: 0 !important;;
     padding: 0 !important;;
     height: 100% !important;;
-    overflow-y: hidden !important;;
 }
 
 
@@ -36,6 +35,11 @@ html {
     padding: 5px;
     border-radius: 10px;
     background-color: rgba(0, 0, 0, .1);
+}
+
+#hud {
+    overflow:auto; 
+    max-height:95%;
 }
 
 #endgame {
