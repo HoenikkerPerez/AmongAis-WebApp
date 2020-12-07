@@ -3,9 +3,14 @@
  */
 class LobbyManager {
 
-    createGame(gameName, type, size) {
+    createGame(gameName, type, size, balancedTeams) {
+        let msg;
         
-        let msg = "NEW " + gameName + " " + type + size;
+        if(balancedTeams) 
+            msg = "NEW " + gameName + " " + type + size;
+        else 
+            msg = "NEW " + gameName + " " + type + size + " B";
+
         console.debug("LobbyManager built " + msg);
         return msg;
     }
