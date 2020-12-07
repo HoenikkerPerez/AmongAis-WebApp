@@ -70,14 +70,15 @@ class SessionController {
         let ingamenameInput = document.getElementById("ingamenameInput");
         ingamenameInput.addEventListener("input", this._validateInput)
 
-
         // Create game
         document.getElementById("createButton").addEventListener("click", () => {
             let gameName = document.getElementById("gameNameInput").value;
             console.debug("SessionController: creating a name called " + gameName);
             let mapSize = Array.from(document.getElementsByName("mapSizeRadio")).find(r => r.checked).value;
-            this._gameClient.createGame(gameName, mapSize, "Q"); // TODO WIDE MAPS
+            let mapType = Array.from(document.getElementsByName("mapTypeRadio")).find(r => r.checked).value;
+            this._gameClient.createGame(gameName, mapType, mapSize);
         });
+
         // Join game
         document.getElementById("joinButton").addEventListener("click", () => {
             this._joinAs(SessionController.PLAYER);
@@ -199,17 +200,19 @@ class SessionController {
 
         if(gameNameInput.value.length == 0 || ingamenameInput.value.length == 0) {
             joinButton.disabled = true;
+            spectateButton.disabled = true;
         } else {
             joinButton.disabled = false;
+            spectateButton.disabled = false;
         }
         if(gameNameInput.value.length == 0) {
             createButton.disabled = true;
-            spectateButton.disabled = true;
             startButtonNoJoin.disabled = true;
         } else {
             createButton.disabled = false;
-            spectateButton.disabled = false;
             startButtonNoJoin.disabled = false;
         }
     };
+    
+
 }

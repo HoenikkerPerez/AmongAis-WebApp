@@ -104,13 +104,13 @@ class HudUi {
     renderHud() {
         let div = document.getElementById("hud");
         div.innerHTML="";
-        let root = document.createElement("ul");
+        let root = document.createElement("div");
 
-        let match = document.createElement("ul");
+        let match = document.createElement("div");
         match.textContent="GAME";
-        let gamename = document.createElement("li");
+        let gamename = document.createElement("div");
         gamename.innerHTML= "Name: " + model.status.ga;
-        let statusGame = document.createElement("li");
+        let statusGame = document.createElement("div");
         statusGame.innerHTML = "Status: " + model.status.state;
 
         match.appendChild(gamename);
@@ -119,22 +119,22 @@ class HudUi {
         div.appendChild(root);
 
         if(model.status.me != {} && (typeof model.status.me.name !== 'undefined')){
-            let me = document.createElement("ul");
+            let me = document.createElement("div");
             me.textContent = "Player"
             
-            let player = document.createElement("li");
+            let player = document.createElement("div");
             player.innerHTML = model.status.me.name; // +" [" + model.status.me.symbol + "]"
-            let teamLoy = document.createElement("li");
+            let teamLoy = document.createElement("div");
             let team = model.status.me.team == "0" ? "red" : "blue";
             let loyalty = model.status.me.loyalty == "0" ? "red" : "blue";
             teamLoy.innerHTML = "Affiliation: " + team + " loyal to " + loyalty;
             
-            let energy = document.createElement("li");
+            let energy = document.createElement("div");
             energy.innerHTML = "Energy: ";//+model.status.me.energy;
             energy.id = "me_enrg";
             let bar = buildProgress(model.status.me.energy);
 
-            let score = document.createElement("li");
+            let score = document.createElement("div");
             score.innerHTML = "Score: "+model.status.me.score;
 
             me.appendChild(player);
@@ -146,14 +146,14 @@ class HudUi {
             $("#me_enrg").append(bar);
         }
 
-        let pl = document.createElement("ul");
+        let pl = document.createElement("div");
         pl.textContent="PLAYERS IN GAME"
         for(let playerName in model.status.pl_list){
             // PL: symbol=A name=username3 team=0 x=7 y=26
             // let pul = document.createElement("il");
 
             let _p = model.status.pl_list[playerName];
-            let p = document.createElement("li");
+            let p = document.createElement("div");
 
             p.innerHTML = _p.name; //+ "   (" + _p.team + ")"; // "["+_p.symbol+"] " + 
             if(_p.state == "KILLED") {
@@ -165,7 +165,7 @@ class HudUi {
             } else if (_p.team == 1) {
                 p.style.color = model.teamColors.teamB;
             }
-            // let team = document.createElement("li");
+            // let team = document.createElement("div");
             // team.innerHTML = "T: " + _p.team;
             if(model.kind == model.PLAYER) {
                 // Touring game visualization
@@ -174,11 +174,20 @@ class HudUi {
                 touring_button_human.classList.add("touring-button-human");
                 touring_button_human.classList.add("btn");
                 touring_button_human.classList.add("btn-primary");
+                touring_button_human.classList.add("btn-sm");
+                touring_button_human.classList.add("px-1");
+                touring_button_human.classList.add("py-0");
+                touring_button_human.classList.add("ml-1");
+
                 let touring_button_ai = document.createElement("button");
                 touring_button_ai.innerText = "AI";
                 touring_button_ai.classList.add("touring-button-ai");
                 touring_button_ai.classList.add("btn");
                 touring_button_ai.classList.add("btn-primary");
+                touring_button_ai.classList.add("btn-sm");
+                touring_button_ai.classList.add("px-1");
+                touring_button_ai.classList.add("py-0");
+                touring_button_ai.classList.add("ml-1");
                 // Touring undefined => pushing a button means "I want to say that"
                 // Touring !undefined => pushing a button means "change that I said that"
                 if(_p.touring == undefined) {
@@ -205,6 +214,11 @@ class HudUi {
                     accuse_button.classList.add("accuse-button");
                     accuse_button.classList.add("btn");
                     accuse_button.classList.add("btn-danger");
+                    accuse_button.classList.add("btn-sm");
+                    accuse_button.classList.add("px-1");
+                    accuse_button.classList.add("py-0");
+                    accuse_button.classList.add("ml-1");
+
                     accuse_button.onclick= () => {
                         document.dispatchEvent(new CustomEvent("BUTTON_ACCUSE", {detail: _p.name }));
                         let allb = document.getElementsByClassName("accuse-button");
@@ -304,22 +318,29 @@ class HudUi {
         chatSubscribedChannelBlock.innerHTML = "";
         let subs_channels = model.chat.chatSubscribedChannels
 
-        let box = document.createElement("ul");
+        let box = document.createElement("div");
         box.textContent = "Subscribed channels"
         for (let i=0; i< subs_channels.length; i++) { 
-            let channel = document.createElement("li");
+            let channel = document.createElement("div");
             let channelstr = subs_channels[i].channel;
 
             channel.innerHTML = channelstr
             box.appendChild(channel);
 
             let leaveButton = document.createElement("button");
-            leaveButton.innerText = "Leave"
+            leaveButton.classList.add("btn");
+            leaveButton.classList.add("btn-outline-primary");
+            leaveButton.classList.add("btn-sm");
+            leaveButton.classList.add("px-1");
+            leaveButton.classList.add("py-0");
+            leaveButton.classList.add("ml-1");
+
+            leaveButton.innerText = "Leave";
             leaveButton.onclick= () => {
                 //this._chat_client.removeSubscribedChannel(channel);
                 document.dispatchEvent(new CustomEvent("BUTTON_UNSUBSRIBECHANNEL", {detail: {channel: channelstr}}));
             };
-            box.appendChild(leaveButton);
+            channel.appendChild(leaveButton);
 
         }   
         chatSubscribedChannelBlock.appendChild(box);

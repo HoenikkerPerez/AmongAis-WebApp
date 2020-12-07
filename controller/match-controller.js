@@ -148,12 +148,23 @@ class MatchController {
         }
         // parse map
         let map = evt.detail;
+        let map_obj;
         let parsed_map = map.slice(7).replace('«ENDOFMAP»', '').replace(/\n/g, '').split('');
-        let N = Math.sqrt(parsed_map.length);
-        let map_obj = {
-            cols: N,
-            rows: N,
-            tiles: parsed_map
+        let numTiles = parsed_map.length;
+        if(numTiles == 1024 || numTiles == 4096 || numTiles == 16384) { // worst code ever. I'm gonna whip myself for this. (luca)
+            let N = Math.sqrt(parsed_map.length);
+            map_obj = {
+                cols: N,
+                rows: N,
+                tiles: parsed_map
+            }
+        } else {
+            let N = Math.sqrt(parsed_map.length/2);
+            map_obj = {
+                cols: N*2,
+                rows: N,
+                tiles: parsed_map
+            }
         }
         // update model
         model.setMap(map_obj);
@@ -343,11 +354,9 @@ class MatchController {
 
     _resizeCanvasHandler() {
         let ctx = document.getElementById("canvas").getContext("2d");
-        let displayWidth  = window.innerHeight * 0.9
-        let displayHeight = window.innerWidth * 0.9
-        let sz = 0;
-        if(displayWidth<displayHeight) {sz=displayWidth;} else {sz=displayHeight;}
-        displayHeight = displayWidth = sz;
+        let displayWidth  = window.innerHeight// * 0.9
+        let displayHeight = window.innerWidth// * 0.9
+        
         this._tsizeMap = Math.floor(displayHeight / model.world._map.rows)
         ctx.canvas.width  = this._tsizeMap * model.world._map.rows;
         ctx.canvas.height = this._tsizeMap * model.world._map.cols;
@@ -381,6 +390,7 @@ class MatchController {
             this.lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
             this._dragStart = ctx.transformedPoint(this.lastX,this.lastY);
             this._dragged = false;
+            return evt.preventDefault() && false;
         }
     };
 
@@ -619,6 +629,17 @@ class MatchController {
         // window.addEventListener("resize", ((evt) => {this._resizeCanvasHandler(evt)}).bind(this),false);
 
         canvas.addEventListener("click", ((evt) => {this._clickHandler(evt)}).bind(this),false);
+
+        // GRID VEW
+        let gridSwitch = document.getElementById("gridViewSwitch");
+        gridSwitch.addEventListener("change", (evt)=> {
+            if(gridSwitch.checked) {
+                model.showGrid(true);
+            }
+            else {
+                model.showGrid(false);
+            }
+        })
     };
 
     // Player-specific listeners
