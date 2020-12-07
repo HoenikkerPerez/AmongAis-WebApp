@@ -197,7 +197,7 @@ class HudUi {
                     touring_button_ai.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} })); }
                 } else if(_p.touring == GameClient.AI) {
                     p.appendChild(touring_button_ai);
-                    touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} })); }
+                    touring_button_ai.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} })); }
                 } else if(_p.touring == GameClient.HUMAN) {
                     p.appendChild(touring_button_human);
                     touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} })); }
