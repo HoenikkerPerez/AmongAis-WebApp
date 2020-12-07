@@ -76,7 +76,8 @@ class SessionController {
             console.debug("SessionController: creating a name called " + gameName);
             let mapSize = Array.from(document.getElementsByName("mapSizeRadio")).find(r => r.checked).value;
             let mapType = Array.from(document.getElementsByName("mapTypeRadio")).find(r => r.checked).value;
-            this._gameClient.createGame(gameName, mapType, mapSize);
+            let balancedTeam = Array.from(document.getElementsByName("mapTypeRadio")).find(r => r.checked).value == "B"; 
+            this._gameClient.createGame(gameName, mapType, mapSize, balancedTeam);
         });
 
         // Join game
