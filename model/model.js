@@ -81,12 +81,18 @@ var model = {
         tmp_players: [],
         tmp_objects: [],
         _imageLoaded: false,
-        showGrid: false
+        showGrid: false,
+        showMinimap: true
     },
 
     showGrid(show) {
         this.world.showGrid = show;
     },
+    
+    showMinimap(show) {
+        this.world.showMinimap = show;
+    },
+
     
     addCreatedGame(nameGame){
         this.createdGames.add(nameGame);

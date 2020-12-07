@@ -630,6 +630,15 @@ class MatchController {
 
         canvas.addEventListener("click", ((evt) => {this._clickHandler(evt)}).bind(this),false);
 
+        // SHOW MINIMAP
+        let minimapSwitch = document.getElementById("minimapSwitch");
+        minimapSwitch.addEventListener("change", (evt)=> {
+            if(minimapSwitch.checked) 
+                model.showMinimap(true);
+            else 
+                model.showMinimap(false);
+        });
+
         // GRID VEW
         let gridSwitch = document.getElementById("gridViewSwitch");
         gridSwitch.addEventListener("change", (evt)=> {
@@ -639,7 +648,8 @@ class MatchController {
             else {
                 model.showGrid(false);
             }
-        })
+        });
+
     };
 
     // Player-specific listeners
