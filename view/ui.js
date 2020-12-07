@@ -52,6 +52,11 @@ class Ui {
             el.style.color = teamColor;
             endgameDiv.appendChild(el);
         }
+        endgameDiv = document.getElementById("endgame");
+        endgameDiv.style.display="";
+        //left-hud
+        let leftHUD = document.getElementById("left-hud");
+        leftHUD.style.display="none";
     }
 
     _loadWsMessages() {
