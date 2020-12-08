@@ -667,13 +667,6 @@ class MatchController {
                 // popupMsg("A vote of no confidence for teammate: " + teammateName, "warning");
                 this._gameClient.accuse(evt.detail);
             }, false);
-            // Touring Button
-            document.addEventListener("BUTTON_TOURING", (evt) => {
-                let name = evt.detail.name;
-                let touringChoice = evt.detail.touring;
-                this._touringQueue.push({name: name, touring: touringChoice});
-                this._gameClient.tour(name, touringChoice);
-            }, false);
             // Start game
             model.timeframe = model.playerTimeframe;
             model.setStartGameTime();
@@ -691,6 +684,14 @@ class MatchController {
             // Compute direction and shoot
             this._shootOnClickHandler(evt);
         }).bind(this),false);
+
+        // Touring Button
+        document.addEventListener("BUTTON_TOURING", (evt) => {
+            let name = evt.detail.name;
+            let touringChoice = evt.detail.touring;
+            this._touringQueue.push({name: name, touring: touringChoice});
+            this._gameClient.tour(name, touringChoice);
+        }, false);
     }
 
     // Spectator-specific listeners
