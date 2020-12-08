@@ -7,9 +7,9 @@ class LobbyManager {
         let msg;
         
         if(balancedTeams) 
-            msg = "NEW " + gameName + " " + type + size;
-        else 
             msg = "NEW " + gameName + " " + type + size + " B";
+        else 
+            msg = "NEW " + gameName + " " + type + size;
 
         console.debug("LobbyManager built " + msg);
         return msg;
