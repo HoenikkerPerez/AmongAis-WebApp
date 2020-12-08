@@ -167,11 +167,12 @@ class HudUi {
             }
             // let team = document.createElement("div");
             // team.innerHTML = "T: " + _p.team;
-            if(model.kind == model.PLAYER) {
+            if(model.kind == model.PLAYER && _p.name != model.status.me.name) {
                 // Touring game visualization
                 let touring_button_human = document.createElement("button");
                 touring_button_human.innerText = "H";
-                touring_button_human.classList.add("touring-button-human");
+                let human_button_id = "touring-button-human";
+                touring_button_human.classList.add(human_button_id);
                 touring_button_human.classList.add("btn");
                 touring_button_human.classList.add("btn-primary");
                 touring_button_human.classList.add("btn-sm");
@@ -181,28 +182,45 @@ class HudUi {
 
                 let touring_button_ai = document.createElement("button");
                 touring_button_ai.innerText = "AI";
-                touring_button_ai.classList.add("touring-button-ai");
+                let ai_button_id = "touring-button-ai";
+                touring_button_ai.classList.add(ai_button_id);
                 touring_button_ai.classList.add("btn");
                 touring_button_ai.classList.add("btn-primary");
                 touring_button_ai.classList.add("btn-sm");
                 touring_button_ai.classList.add("px-1");
                 touring_button_ai.classList.add("py-0");
                 touring_button_ai.classList.add("ml-1");
+
+                // Attach buttons to the DOM
                 // Touring undefined => pushing a button means "I want to say that"
                 // Touring !undefined => pushing a button means "change that I said that"
-                if(_p.touring == undefined) {
+                if(_p.touring == undefined || _p.touring == GameClient.HUMAN) {
                     p.appendChild(touring_button_human);
-                    touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} })); }
+                    touring_button_human.onclick = () => {
+                        if(_p.touring == undefined){
+                            touring_button_human.style.visibility = 'visible';
+                            touring_button_ai.style.visibility = 'hidden';
+                            document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} }));
+                        } else if (_p.touring == GameClient.HUMAN) {
+                            touring_button_human.style.visibility = 'hidden';
+                            touring_button_ai.style.visibility = 'visible';
+                            document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} }));
+                        }
+                    };
+                }
+                if(_p.touring == undefined || _p.touring == GameClient.AI) {
                     p.appendChild(touring_button_ai);
-                    touring_button_ai.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} })); }
-                } else if(_p.touring == GameClient.AI) {
-                    p.appendChild(touring_button_ai);
-                    touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} })); }
-                } else if(_p.touring == GameClient.HUMAN) {
-                    p.appendChild(touring_button_human);
-                    touring_button_human.onclick = () => { document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} })); }
-                } else {
-                    console.error("HUD is unable to render Touring button: can't understand touring choice for " + _p.name);
+                    touring_button_ai.onclick = () => {
+                        if(_p.touring == undefined){
+                            touring_button_human.style.visibility = 'hidden';
+                            touring_button_ai.style.visibility = 'visible';
+                            document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} }));
+                        } else if (_p.touring == GameClient.AI) {
+                            touring_button_human.style.visibility = 'visible';
+                            touring_button_ai.style.visibility = 'hidden';
+                            document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} }));
+                        }
+                    };
                 }
 
                 // p.appendChild(team);
