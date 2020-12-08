@@ -167,7 +167,7 @@ class HudUi {
             }
             // let team = document.createElement("div");
             // team.innerHTML = "T: " + _p.team;
-            if(model.kind == model.PLAYER) {
+            if(model.kind == model.PLAYER && _p.name != model.status.me.name) {
                 // Touring game visualization
                 let touring_button_human = document.createElement("button");
                 touring_button_human.innerText = "H";
@@ -192,37 +192,36 @@ class HudUi {
                 touring_button_ai.classList.add("ml-1");
 
                 // Attach buttons to the DOM
-                p.appendChild(touring_button_human);
-                p.appendChild(touring_button_ai);
-
                 // Touring undefined => pushing a button means "I want to say that"
                 // Touring !undefined => pushing a button means "change that I said that"
-                touring_button_human.onclick = () => {
-                    let humanBtn = document.getElementById(human_button_id);
-                    let aiBtn = document.getElementById(ai_button_id);
-                    if(_p.touring == undefined){
-                        humanBtn.style.visibility = 'visible';
-                        aiBtn.style.visibility = 'hidden';
-                        document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} }));
-                    } else if (_p.touring == GameClient.HUMAN) {
-                        humanBtn.style.visibility = 'hidden';
-                        aiBtn.style.visibility = 'visible';
-                        document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} }));
-                    }
-                };
-                touring_button_ai.onclick = () => {
-                    let humanBtn = document.getElementById(human_button_id);
-                    let aiBtn = document.getElementById(ai_button_id);
-                    if(_p.touring == undefined){
-                        humanBtn.style.visibility = 'hidden';
-                        aiBtn.style.visibility = 'visible';
-                        document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} }));
-                    } else if (_p.touring == GameClient.AI) {
-                        humanBtn.style.visibility = 'visible';
-                        aiBtn.style.visibility = 'hidden';
-                        document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} }));
-                    }
-                };
+                if(_p.touring == undefined || _p.touring == GameClient.HUMAN) {
+                    p.appendChild(touring_button_human);
+                    touring_button_human.onclick = () => {
+                        if(_p.touring == undefined){
+                            touring_button_human.style.visibility = 'visible';
+                            touring_button_ai.style.visibility = 'hidden';
+                            document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} }));
+                        } else if (_p.touring == GameClient.HUMAN) {
+                            touring_button_human.style.visibility = 'hidden';
+                            touring_button_ai.style.visibility = 'visible';
+                            document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} }));
+                        }
+                    };
+                }
+                if(_p.touring == undefined || _p.touring == GameClient.AI) {
+                    p.appendChild(touring_button_ai);
+                    touring_button_ai.onclick = () => {
+                        if(_p.touring == undefined){
+                            touring_button_human.style.visibility = 'hidden';
+                            touring_button_ai.style.visibility = 'visible';
+                            document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.AI} }));
+                        } else if (_p.touring == GameClient.AI) {
+                            touring_button_human.style.visibility = 'visible';
+                            touring_button_ai.style.visibility = 'hidden';
+                            document.dispatchEvent(new CustomEvent("BUTTON_TOURING", {detail: {name: _p.name, touring: GameClient.HUMAN} }));
+                        }
+                    };
+                }
 
                 // p.appendChild(team);
                 pl.appendChild(p);
