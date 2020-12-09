@@ -642,28 +642,28 @@ class MatchController {
                 model.showMinimap(true);
             else 
                 model.showMinimap(false);
+            model.startRefreshMap();
+
         });
 
         // GRID VEW
         let gridSwitch = document.getElementById("gridViewSwitch");
         gridSwitch.addEventListener("change", (evt)=> {
-            if(gridSwitch.checked) {
+            if(gridSwitch.checked) 
                 model.showGrid(true);
-            }
-            else {
+            else
                 model.showGrid(false);
-            }
+            model.startRefreshMap();
         });
 
-        // GRID VEW
+        // lowResolutionMap VEW
         let lowResolutionSwitch = document.getElementById("lowResolutionSwitch");
         lowResolutionSwitch.addEventListener("change", (evt)=> {
-            if(lowResolutionSwitch.checked) {
+            if(lowResolutionSwitch.checked) 
                 model.lowResolutionMap(true);
-            }
-            else {
+            else
                 model.lowResolutionMap(false);
-            }
+            model.startRefreshMap();
         });
 
 

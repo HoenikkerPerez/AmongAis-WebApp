@@ -36,6 +36,8 @@ const Terrain = {
 // TODO ADD GRASS TYPES
 
 class WorldUi {
+    imgGrassPattern = './assets/Terrain/grassP.jpg'
+
     imgGrass0       = './assets/Terrain/grass_0.png'
     imgGrass1       = './assets/Terrain/grass_1.png'
     imgGrass2       = './assets/Terrain/grass_2.png'
@@ -86,6 +88,8 @@ class WorldUi {
             this.tileAtlas = this._getImage('tiles');
             this.tileGraves = this._getImage('graves');
 
+            this.tileGrassPattern = this._getImage('grass');
+
             this.tileGrass = [this._getImage('grass_0'), this._getImage('grass_1'),
                             this._getImage('grass_2'), this._getImage('grass_3'),
                             this._getImage('grass_4'), this._getImage('grass_5'),
@@ -110,6 +114,7 @@ class WorldUi {
             this.tileBulletVertical = this._getImage('bullet-vertical');
             this.tileBulletHorizontal = this._getImage('bullet-horizontal');
 
+            this.grassPattern = ctx.createPattern(this.tileGrassPattern, 'repeat');
             model.world._imageLoaded = true;
         }.bind(this));
 
@@ -358,13 +363,42 @@ class WorldUi {
         // let tsizeMap = Math.floor(this.ctx.canvas.height / this._N)
         model.world.tmp_players = [];
         model.world.tmp_objects = [];
+
+        if(model.world.lowResolutionMap) {
+                // draw green background
+            // this.ctx.beginPath();
+            this.ctx.fillStyle = "green"  
+            this.ctx.fillRect(0, 
+                            0, 
+                            this._tsizeMap * map.cols,
+                            this._tsizeMap * map.rows);
+            // this.ctx.stroke();
+        } else {
+            // draw background highres map 
+            // this.ctx.fillStyle = this.grassPattern;
+            // this.ctx.fillRect(0, 
+            //                 0, 
+            //                 this._tsizeMap * map.cols,
+            //                 this._tsizeMap * map.rows);
+
+            this.ctx.drawImage(this.tileGrassPattern, // image
+                0, // source x
+                0, // source y
+                1600, // source width
+                1600, // source height
+                0, // source x
+                0, // source y
+                this._tsizeMap * map.cols,
+                this._tsizeMap * map.rows
+            );
+
+        }
+
         for (let c = 0; c < map.cols; c++) {
             for (let r = 0; r < map.rows; r++) {
                 let [atlas, tile, tiledim, symbol, team, type] = this._getTile(c, r); // TODO do not draw players!
 
                 if(model.world.lowResolutionMap) {
-                    // draw green background
-                    
                     switch(type) {    
                         case "wall":
                             // this.ctx.beginPath();
@@ -397,27 +431,23 @@ class WorldUi {
                             break;
 
                         default:
-                            // this.ctx.beginPath();
-                            this.ctx.fillStyle = "green"  
-                            this.ctx.fillRect(c * this._tsizeMap, 
-                                            r * this._tsizeMap, 
-                                            this._tsizeMap,
-                                            this._tsizeMap);
-                            // this.ctx.stroke();
                             break;
                     } 
                 } else {
-                    this.ctx.drawImage(atlas, // image
-                                        tile[0] * tiledim, // source x
-                                        tile[1] * tiledim, // source y
-                                        tiledim, // source width
-                                        tiledim, // source height
-                                        c * this._tsizeMap,  // target x
-                                        r * this._tsizeMap, // target y
-                                        this._tsizeMap, // target width
-                                        this._tsizeMap // target height
-                                    );
+                    if(type == "river" || type == "wall" || type == "ocean") {
+                        this.ctx.drawImage(atlas, // image
+                                            tile[0] * tiledim, // source x
+                                            tile[1] * tiledim, // source y
+                                            tiledim, // source width
+                                            tiledim, // source height
+                                            c * this._tsizeMap,  // target x
+                                            r * this._tsizeMap, // target y
+                                            this._tsizeMap, // target width
+                                            this._tsizeMap // target height
+                                        );
+                    }
                 }
+
                 if(showGrid) {
                     this.ctx.beginPath();
 
@@ -713,6 +743,7 @@ class WorldUi {
         return [
             this._loadImage('tiles', this.imgTileSet),
             this._loadImage('graves', this.imgTileSetGraves),
+            this._loadImage('grass', this.imgGrassPattern),
             this._loadImage('grass_0', this.imgGrass0),
             this._loadImage('grass_1', this.imgGrass1),
             this._loadImage('grass_2', this.imgGrass2),
