@@ -90,6 +90,10 @@ var model = {
         this.world.showGrid = show;
     },
 
+    lowResolutionMap(flag) {
+        this.world.lowResolutionMap = flag;
+    },
+
     needRefresh() {
         return this.world.refresh;
     },

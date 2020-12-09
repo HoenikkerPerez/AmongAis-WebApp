@@ -182,6 +182,7 @@ class WorldUi {
                     tile = Terrain.RIVER;
                     atlas = this.tileRiver;
                     tiledim = 32;
+                    type = "river"
                     break;
                 case "@":
                     tile = Terrain.OCEAN;
@@ -246,7 +247,8 @@ class WorldUi {
                 this._drawShoots();
                 this._drawPathfinding();
                 this._drawPlayerNames();
-                this._drawMinimap();
+                if(model.world.showMinimap)
+                    this._drawMinimap();
                 model.stopRefreshMap();
             }
         };
@@ -256,19 +258,16 @@ class WorldUi {
 
 
     _drawMinimap() {
-        let showMinimap = model.world.showMinimap;
-        if(!showMinimap)
-            return;
         this.ctx.save();
         this.ctx.setTransform(1,0,0,1,0,0);
         let map = model.world._map;
         let dimMinimap;
-        if(map.cols == 128)
-            dimMinimap = Math.floor(.30 * this.ctx.canvas.width) // .10 128x128
-        else if(map.cols == 64)
-            dimMinimap = Math.floor(.30 * this.ctx.canvas.width) // .10 128x128
-        else
-            dimMinimap = Math.floor(.30 * this.ctx.canvas.width) // .10 128x128
+        // if(map.cols == 128)
+        //     dimMinimap = Math.floor(.30 * this.ctx.canvas.width) // .10 128x128
+        // else if(map.cols == 64)
+        //     dimMinimap = Math.floor(.30 * this.ctx.canvas.width) // .10 128x128
+        // else
+        dimMinimap = Math.floor(.30 * this.ctx.canvas.width) // .10 128x128
 
         let dimSquare = dimMinimap/map.cols;
         let alpha = 0.6;
@@ -362,16 +361,61 @@ class WorldUi {
         for (let c = 0; c < map.cols; c++) {
             for (let r = 0; r < map.rows; r++) {
                 let [atlas, tile, tiledim, symbol, team, type] = this._getTile(c, r); // TODO do not draw players!
-                this.ctx.drawImage(atlas, // image
-                                    tile[0] * tiledim, // source x
-                                    tile[1] * tiledim, // source y
-                                    tiledim, // source width
-                                    tiledim, // source height
-                                    c * this._tsizeMap,  // target x
-                                    r * this._tsizeMap, // target y
-                                    this._tsizeMap, // target width
-                                    this._tsizeMap // target height
-                                );
+
+                if(model.world.lowResolutionMap) {
+                    switch(type) {    
+                        case "wall":
+                            // this.ctx.beginPath();
+                            this.ctx.fillStyle = "grey"  
+                            this.ctx.fillRect(c * this._tsizeMap, 
+                                            r * this._tsizeMap, 
+                                            this._tsizeMap,
+                                            this._tsizeMap);
+                            // this.ctx.stroke();
+                            break;
+
+                        case "ocean":
+                            // this.ctx.beginPath();
+                            this.ctx.fillStyle = "blue"  
+                            this.ctx.fillRect(c * this._tsizeMap, 
+                                            r * this._tsizeMap, 
+                                            this._tsizeMap,
+                                            this._tsizeMap);
+                            // this.ctx.stroke();
+                            break;
+                            
+                        case "river":
+                            // this.ctx.beginPath();
+                            this.ctx.fillStyle = "#00BFFF"  
+                            this.ctx.fillRect(c * this._tsizeMap, 
+                                            r * this._tsizeMap, 
+                                            this._tsizeMap,
+                                            this._tsizeMap);
+                            // this.ctx.stroke();
+                            break;
+
+                        default:
+                            // this.ctx.beginPath();
+                            this.ctx.fillStyle = "green"  
+                            this.ctx.fillRect(c * this._tsizeMap, 
+                                            r * this._tsizeMap, 
+                                            this._tsizeMap,
+                                            this._tsizeMap);
+                            // this.ctx.stroke();
+                            break;
+                    } 
+                } else {
+                    this.ctx.drawImage(atlas, // image
+                                        tile[0] * tiledim, // source x
+                                        tile[1] * tiledim, // source y
+                                        tiledim, // source width
+                                        tiledim, // source height
+                                        c * this._tsizeMap,  // target x
+                                        r * this._tsizeMap, // target y
+                                        this._tsizeMap, // target width
+                                        this._tsizeMap // target height
+                                    );
+                }
                 if(showGrid) {
                     this.ctx.beginPath();
 

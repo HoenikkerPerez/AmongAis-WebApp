@@ -655,6 +655,18 @@ class MatchController {
             }
         });
 
+        // GRID VEW
+        let lowResolutionSwitch = document.getElementById("lowResolutionSwitch");
+        lowResolutionSwitch.addEventListener("change", (evt)=> {
+            if(lowResolutionSwitch.checked) {
+                model.lowResolutionMap(true);
+            }
+            else {
+                model.lowResolutionMap(false);
+            }
+        });
+
+
     };
 
     // Player-specific listeners
