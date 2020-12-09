@@ -238,23 +238,21 @@ class WorldUi {
                 this._initCanvasSize();
                 model.world._initSize = true;
             }
-            // this._clearCanvas();
-            this._drawMap();
-            this._drawTraps();
-            this._drawPlayers();
-            this._drawShoots();
-            this._drawPathfinding();
-            this._drawGrid();
-            this._drawPlayerNames();
-            this._drawMinimap();
+            if(model.needRefresh()) {
+                // console.debug("REFRESHING MAP")
+                this._drawMap();
+                this._drawTraps();
+                this._drawPlayers();
+                this._drawShoots();
+                this._drawPathfinding();
+                this._drawPlayerNames();
+                this._drawMinimap();
+                model.stopRefreshMap();
+            }
         };
         window.requestAnimationFrame(this.renderMap.bind(this));
     };
 
-
-    _drawGrid() {
-
-    };
 
 
     _drawMinimap() {

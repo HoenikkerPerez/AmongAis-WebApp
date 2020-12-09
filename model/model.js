@@ -82,13 +82,26 @@ var model = {
         tmp_objects: [],
         _imageLoaded: false,
         showGrid: false,
-        showMinimap: true
+        showMinimap: true,
+        refresh: false
     },
 
     showGrid(show) {
         this.world.showGrid = show;
     },
-    
+
+    needRefresh() {
+        return this.world.refresh;
+    },
+
+    startRefreshMap() {
+        this.world.refresh = true;
+    },
+
+    stopRefreshMap() {
+        this.world.refresh = false;
+    },
+
     showMinimap(show) {
         this.world.showMinimap = show;
     },
@@ -126,7 +139,7 @@ var model = {
         for(let i = 0; i<tmpMap.length; i++) {
             let symbol_code = tmpMap[i].charCodeAt(0);
             // update player position and direction
-            if(symbol_code >= 65 && symbol_code <= 84 || symbol_code >= 97 && symbol_code <= 116) { 
+            if(symbol_code >= 65 && symbol_code <= 87 || symbol_code >= 97 && symbol_code <= 119) { 
                 let pl = this.findPlayerBySymbol(tmpMap[i]);
                 if(pl != undefined) {
                     let name = pl.name;
@@ -158,7 +171,7 @@ var model = {
                 } 
             }
         }
-
+        this.startRefreshMap();
         document.dispatchEvent(new CustomEvent("MODEL_SETMAP", {detail: {map:map}}));
     },
 
@@ -265,6 +278,7 @@ var model = {
         this._isMePlayerStatusChange(old,status);
 
         document.dispatchEvent(new CustomEvent("MODEL_SETSTATUS", {detail: {status:status}}));
+        this.startRefreshMap();
     },
 
     // enter into the match: players & spectators

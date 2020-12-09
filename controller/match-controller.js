@@ -129,7 +129,7 @@ class MatchController {
             if(!bulletStopped) {
                 let dirLinear = (direction == "E" || direction == "W") ? "horizontal" : "vertical";
 
-                model.shoots.push({x:c, y:r, direction: dirLinear, counter:6}); // direction vertical, horizontal
+                model.shoots.push({x:c, y:r, direction: dirLinear, counter:3}); // direction vertical, horizontal
                 cells++;
             };
         };
@@ -360,9 +360,9 @@ class MatchController {
         this._tsizeMap = Math.floor(displayHeight / model.world._map.rows)
         ctx.canvas.width  = this._tsizeMap * model.world._map.rows;
         ctx.canvas.height = this._tsizeMap * model.world._map.cols;
-        // this._clearCanvas();
+        this._clearCanvas();
         // this._trackTransforms(document.getElementById("canvas").getContext("2d"))
-
+        model.startRefreshMap();
     }
 
     _zoom(clicks){
@@ -373,12 +373,14 @@ class MatchController {
         ctx.scale(factor,factor);
         ctx.translate(-pt.x,-pt.y);
         this._clearCanvas();
+        model.startRefreshMap();
     }
 
     _handleScroll(evt){
         let delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
         if (delta) this._zoom(delta);
         this._clearCanvas();
+        model.startRefreshMap();
         return evt.preventDefault() && false;
     };
     
@@ -404,6 +406,7 @@ class MatchController {
             let pt = ctx.transformedPoint(this.lastX,this.lastY);
             ctx.translate(pt.x-this._dragStart.x,pt.y-this._dragStart.y);
             this._clearCanvas();
+            model.startRefreshMap();
         }
     }
 
@@ -435,6 +438,7 @@ class MatchController {
                 if(path) { 
                     // update the model
                     model.setPath(path);
+                    model.startRefreshMap();
                 }
                 console.debug("_clickHandler: from " + "(" + start.x + ", " + start.y + ")" + " to " + "(" + targetR + ", " + targetC + ")");
             }
@@ -600,6 +604,7 @@ class MatchController {
             
             // Init map polling
             this._pollOnce(); // TODO POLLING: this._poller(); 
+            model.startRefreshMap();
             // Loads the specialized listeners
             switch(model.kind) {
                 case model.PLAYER:
@@ -676,6 +681,7 @@ class MatchController {
         
         document.addEventListener("MODEL_PLAYER_JOINED", () => {
              this._pollOnce(); // TODO POLLING: this._poller(); 
+             model.startRefreshMap();
         }, false);
 
         canvas.addEventListener("contextmenu", ((evt) => {
@@ -706,6 +712,7 @@ class MatchController {
 
         document.addEventListener("MODEL_PLAYER_JOINED", () => {
             this._pollOnce(); // TODO POLLING: this._poller(); 
+            model.startRefreshMap();
        }, false);
     }
     
