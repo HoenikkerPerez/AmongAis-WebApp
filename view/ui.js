@@ -72,7 +72,7 @@ class Ui {
                 msg += "Move view on map: Muouse-Left drag-n-drop\n"
                 msg += "Mouse Shoot: Muouse-Right\n"
                 msg += "Path-Finding: [Shift] + Mouse-Left\n"
-                popupMsg(msg,"info")
+                popupMsg(msg,"info",15000)
             }
         }, false);
 
