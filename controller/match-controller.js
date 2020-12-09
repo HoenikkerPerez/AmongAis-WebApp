@@ -392,7 +392,7 @@ class MatchController {
             this.lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
             this._dragStart = ctx.transformedPoint(this.lastX,this.lastY);
             this._dragged = false;
-            return evt.preventDefault() && false;
+            // return evt.preventDefault() && false;
         }
     };
 
