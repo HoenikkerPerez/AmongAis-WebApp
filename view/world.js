@@ -363,10 +363,12 @@ class WorldUi {
                 let [atlas, tile, tiledim, symbol, team, type] = this._getTile(c, r); // TODO do not draw players!
 
                 if(model.world.lowResolutionMap) {
+                    // draw green background
+                    
                     switch(type) {    
                         case "wall":
                             // this.ctx.beginPath();
-                            this.ctx.fillStyle = "grey"  
+                            this.ctx.fillStyle = "#464E51"  
                             this.ctx.fillRect(c * this._tsizeMap, 
                                             r * this._tsizeMap, 
                                             this._tsizeMap,
