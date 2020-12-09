@@ -1,6 +1,6 @@
 // "alert-popup"
 // "alert-popup-msg"
-popupMsg = function(msg, kind){ // kind: success / info / warning / danger
+popupMsg = function(msg, kind,timeout=3000){ // kind: success / info / warning / danger
     let d = new Date();
     let id = "popup-msg-" + d.getTime();
     $("#alert-popup").append("<div id=\""+id+"\" class=\"modal-dialog\"><div class=\"alert alert-warning\" style=\"white-space: pre;\"><strong>Warning!</strong> Indicates a warning that might need attention.</div></div>");
@@ -11,7 +11,7 @@ popupMsg = function(msg, kind){ // kind: success / info / warning / danger
     content.className = "alert alert-"+kind;
     
     $('#alert-popup').modal('show');
-    window.setTimeout(function(){ $("#"+id).remove() }.bind(this), 15000);
+    window.setTimeout(function(){ $("#"+id).remove() }.bind(this), timeout);
 };
 let maxE = 256;
 buildProgress = function(nrg){
