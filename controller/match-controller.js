@@ -385,7 +385,7 @@ class MatchController {
     };
     
     _mouseDownHandler(evt) {
-        if (!(evt.shiftKey && evt.which == 1) && !(evt.which > 1)) { // !(evt.which > 1) because 2/3 (right click) is used for shooting.
+        if (!(evt.ctrlKey && evt.which == 1) && !(evt.which > 1)) { // !(evt.which > 1) because 2/3 (right click) is used for shooting.
             let ctx = document.getElementById("canvas").getContext("2d");
             // canvas.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
             this.lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
@@ -416,7 +416,7 @@ class MatchController {
 
     _clickHandler(evt) {
         // SHIFT + mouse click
-        if (evt.shiftKey && evt.which == 1) {
+        if (evt.ctrlKey && evt.which == 1) {
             let ctx = document.getElementById("canvas").getContext("2d");
             let canvasHeight = ctx.canvas.height;
             let canvasWidth = ctx.canvas.width;

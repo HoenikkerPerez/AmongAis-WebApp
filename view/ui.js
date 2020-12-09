@@ -71,7 +71,7 @@ class Ui {
                 msg += "Zoom +/- : Mouse-Weel\n"
                 msg += "Move view on map: Muouse-Left drag-n-drop\n"
                 msg += "Mouse Shoot: Muouse-Right\n"
-                msg += "Path-Finding: [Shift] + Mouse-Left\n"
+                msg += "Path-Finding: [Ctrl] + Mouse-Left\n"
                 popupMsg(msg,"info")
             }
         }, false);
