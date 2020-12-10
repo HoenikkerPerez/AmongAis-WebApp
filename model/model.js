@@ -85,6 +85,12 @@ var model = {
         showMinimap: true,
         refresh: false
     },
+    musicVolume: 1,
+
+    setMusicVolume(volume) {
+        this.musicVolume = volume;
+        document.dispatchEvent(new CustomEvent("MODEL_MUSIC_VOLUME", {detail: {volume: volume}}));
+    },
 
     showGrid(show) {
         this.world.showGrid = show;

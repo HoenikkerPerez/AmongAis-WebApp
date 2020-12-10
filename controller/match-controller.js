@@ -594,6 +594,8 @@ class MatchController {
         // STATUS
         document.addEventListener("STATUS", this.getStatusHandler, false);
 
+        document.addEventListener("MODEL_MUSIC_VOLUME", ((evt) => {
+            this.sfxAudio.changeGameVolume(evt.detail.volume)}).bind(this))
         // document.addEventListener("MODEL_SETGAMENAME", this.init, false);
         document.addEventListener("MODEL_RUN_GAME", () => {
             // Init human commands
@@ -605,7 +607,7 @@ class MatchController {
                 });
             }
             // Start game music
-            this.sfxAudio.playGameSound(0.1);
+            this.sfxAudio.playGameSound(model.musicVolume);
             // Init map polling
             this._pollOnce(); // TODO POLLING: this._poller(); 
             model.startRefreshMap();
@@ -639,6 +641,37 @@ class MatchController {
 
         canvas.addEventListener("click", ((evt) => {this._clickHandler(evt)}).bind(this),false);
 
+        // // SHOW MINIMAP
+        // let minimapSwitch = document.getElementById("minimapSwitch");
+        // minimapSwitch.addEventListener("change", (evt)=> {
+        //     if(minimapSwitch.checked) 
+        //         model.showMinimap(true);
+        //     else 
+        //         model.showMinimap(false);
+        //     model.startRefreshMap();
+
+        // });
+
+        // // GRID VEW
+        // let gridSwitch = document.getElementById("gridViewSwitch");
+        // gridSwitch.addEventListener("change", (evt)=> {
+        //     if(gridSwitch.checked) 
+        //         model.showGrid(true);
+        //     else
+        //         model.showGrid(false);
+        //     model.startRefreshMap();
+        // });
+        // // lowResolutionMap VEW
+        // let lowResolutionSwitch = document.getElementById("lowResolutionSwitch");
+        // lowResolutionSwitch.addEventListener("change", (evt)=> {
+        //     if(lowResolutionSwitch.checked) 
+        //         model.lowResolutionMap(true);
+        //     else
+        //         model.lowResolutionMap(false);
+        //     model.startRefreshMap();
+        // });
+
+        // SETTINGS
         // SHOW MINIMAP
         let minimapSwitch = document.getElementById("minimapSwitch");
         minimapSwitch.addEventListener("change", (evt)=> {
@@ -659,7 +692,6 @@ class MatchController {
                 model.showGrid(false);
             model.startRefreshMap();
         });
-
         // lowResolutionMap VEW
         let lowResolutionSwitch = document.getElementById("lowResolutionSwitch");
         lowResolutionSwitch.addEventListener("change", (evt)=> {
@@ -670,6 +702,13 @@ class MatchController {
             model.startRefreshMap();
         });
 
+        let volumeSlider = document.getElementById("volumeSlider");
+        volumeSlider.addEventListener("change", (evt)=> {
+            model.setMusicVolume(volumeSlider.value/100);
+            // model.startRefreshMap();
+        });
+    
+       
 
     };
 

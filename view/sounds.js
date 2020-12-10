@@ -11,6 +11,11 @@ class Channel {
     stop() {
         this.resource.pause();
     }
+
+    changeVolume(volume) {
+        this.resource.volume = volume;
+    }
+
 }
 
 
@@ -31,6 +36,9 @@ class Switcher {
     stop() {
         this.channels[this.index].stop();
     }
+    changeVolume(volume) {
+        this.channels[this.index].changeVolume(volume)
+    }
 }
 
 
@@ -39,6 +47,10 @@ class Switcher {
 class SfxAudio {    
         playGameSound = function(volume) {
             this.sfx_switcher_gameSound.play(volume);
+        }
+
+        changeGameVolume = function(volume) {
+            this.sfx_switcher_gameSound.changeVolume(volume);
         }
 
         stopGameSound = function() {
