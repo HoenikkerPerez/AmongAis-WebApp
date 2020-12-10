@@ -7,8 +7,10 @@ window.onload = function () {
    let gameClient = new GameClient("GAMECLIENT");
    console.debug("Controller: loading SessionController...");
    this.session = new SessionController(gameClient);
+   // Audio
+   let sfxAudio = new SfxAudio()
    // Loading match
-   this.match = new MatchController(gameClient);
+   this.match = new MatchController(gameClient, sfxAudio);
    // Loading chat
    console.debug("Controller loading ChatController...");
    let chatClient = new ChatClient();

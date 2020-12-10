@@ -14,7 +14,8 @@ class MatchController {
     // 
 
 
-    constructor(gameClient) {
+    constructor(gameClient, sfxAudio) {
+        this.sfxAudio = sfxAudio;
         this._gameClient = gameClient;
         this.load();
         this._trackTransforms(document.getElementById("canvas").getContext("2d"))
@@ -67,7 +68,7 @@ class MatchController {
         let shooter = evt.detail.shooter;
         let direction = evt.detail.direction;
         console.debug("Match Controller has received a SHOOT: " + shooter + " in direction: " + direction);
-
+        this.sfxAudio.playShoot();
         // I'll avoid making a copy of the whole map...
         // let position = model.status.me.position;
         let position =  {x: parseInt(model.status.pl_list[shooter].x), y: parseInt(model.status.pl_list[shooter].y)};
@@ -571,6 +572,8 @@ class MatchController {
     // All listeners common to every kind of user
 
     load() {
+        // Stop Music
+        document.addEventListener("CHAT_GAME_FINISHED", (() => {this.sfxAudio.stopGameSound()}).bind(this));
         // PATHFINDING
         document.addEventListener("miticoOggettoCheNonEsiste.MOVE", ((evt) => {this._moveHandler(evt, this._gameClient)}).bind(this), false);
 
@@ -601,7 +604,8 @@ class MatchController {
                     this._gameClient.startGame(model.status.ga);
                 });
             }
-            
+            // Start game music
+            this.sfxAudio.playGameSound();
             // Init map polling
             this._pollOnce(); // TODO POLLING: this._poller(); 
             model.startRefreshMap();
