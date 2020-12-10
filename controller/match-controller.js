@@ -605,7 +605,7 @@ class MatchController {
                 });
             }
             // Start game music
-            this.sfxAudio.playGameSound();
+            this.sfxAudio.playGameSound(0.1);
             // Init map polling
             this._pollOnce(); // TODO POLLING: this._poller(); 
             model.startRefreshMap();

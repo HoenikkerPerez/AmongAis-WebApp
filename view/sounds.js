@@ -3,7 +3,8 @@ class Channel {
         this.audio_uri = audio_uri;
         this.resource = new Audio(audio_uri);
     }
-    play() {
+    play(volume=1) {
+        this.resource.volume = volume;
         this.resource.play();
     }
 
@@ -23,8 +24,8 @@ class Switcher {
             this.channels.push(new Channel(audio_uri));
         }
     }
-    play() {
-        this.channels[this.index++].play();
+    play(volume) {
+        this.channels[this.index++].play(volume);
         this.index = this.index < this.num ? this.index : 0;
     }
     stop() {
@@ -36,8 +37,8 @@ class Switcher {
 
 
 class SfxAudio {    
-        playGameSound = function() {
-            this.sfx_switcher_gameSound.play();
+        playGameSound = function(volume) {
+            this.sfx_switcher_gameSound.play(volume);
         }
 
         stopGameSound = function() {
