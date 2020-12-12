@@ -120,7 +120,7 @@ class GameClient {
         let now = new Date()
         let elapsed = now - this._lastResponse;
         if(this._waitingResponse) {
-            console.debug("_requetHandler waitingResponse: " + this._waitingResponse)
+            // console.debug("_requetHandler waitingResponse: " + this._waitingResponse)
             window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
             return;
         }
@@ -131,7 +131,7 @@ class GameClient {
             window.setTimeout(function(){ this._requestHandler() }.bind(this), deltaTimeframe);
             return;
         }
-        console.debug("Passed " + elapsed + " from previous message");
+        // console.debug("Passed " + elapsed + " from previous message");
         if(this.isOdd(this._schedulerCounter)) {
             if(this._wsRequests_cmd.length > 0) {
                 //console.debug("Game Client's request queue is not empty.");

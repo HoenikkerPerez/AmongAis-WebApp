@@ -35,6 +35,7 @@ html {
     padding: 5px;
     border-radius: 10px;
     background-color: rgba(0, 0, 0, .1);
+    overflow-y: hidden; 
 }
 
 #hud {
@@ -188,4 +189,29 @@ box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(255, 0, 0, 0.6);
 
 .others-message {
     color: black;
+}
+
+
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+  
+/* Track */
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.3); 
+    border-radius: 5px; 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgba(33, 33, 33, 0.3); 
+    border-radius: 5px; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(85, 85, 85, 0.3); 
+    border-radius: 5px; 
 }

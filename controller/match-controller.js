@@ -14,7 +14,8 @@ class MatchController {
     // 
 
 
-    constructor(gameClient) {
+    constructor(gameClient, sfxAudio) {
+        this.sfxAudio = sfxAudio;
         this._gameClient = gameClient;
         this.load();
         this._trackTransforms(document.getElementById("canvas").getContext("2d"))
@@ -67,7 +68,7 @@ class MatchController {
         let shooter = evt.detail.shooter;
         let direction = evt.detail.direction;
         console.debug("Match Controller has received a SHOOT: " + shooter + " in direction: " + direction);
-
+        this.sfxAudio.playShoot();
         // I'll avoid making a copy of the whole map...
         // let position = model.status.me.position;
         let position =  {x: parseInt(model.status.pl_list[shooter].x), y: parseInt(model.status.pl_list[shooter].y)};
@@ -129,7 +130,7 @@ class MatchController {
             if(!bulletStopped) {
                 let dirLinear = (direction == "E" || direction == "W") ? "horizontal" : "vertical";
 
-                model.shoots.push({x:c, y:r, direction: dirLinear, counter:6}); // direction vertical, horizontal
+                model.shoots.push({x:c, y:r, direction: dirLinear, counter:3}); // direction vertical, horizontal
                 cells++;
             };
         };
@@ -360,9 +361,9 @@ class MatchController {
         this._tsizeMap = Math.floor(displayHeight / model.world._map.rows)
         ctx.canvas.width  = this._tsizeMap * model.world._map.rows;
         ctx.canvas.height = this._tsizeMap * model.world._map.cols;
-        // this._clearCanvas();
+        this._clearCanvas();
         // this._trackTransforms(document.getElementById("canvas").getContext("2d"))
-
+        model.startRefreshMap();
     }
 
     _zoom(clicks){
@@ -373,24 +374,26 @@ class MatchController {
         ctx.scale(factor,factor);
         ctx.translate(-pt.x,-pt.y);
         this._clearCanvas();
+        model.startRefreshMap();
     }
 
     _handleScroll(evt){
         let delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
         if (delta) this._zoom(delta);
         this._clearCanvas();
+        model.startRefreshMap();
         return evt.preventDefault() && false;
     };
     
     _mouseDownHandler(evt) {
-        if (!(evt.shiftKey && evt.which == 1) && !(evt.which > 1)) { // !(evt.which > 1) because 2/3 (right click) is used for shooting.
+        if (!(evt.ctrlKey && evt.which == 1) && !(evt.which > 1)) { // !(evt.which > 1) because 2/3 (right click) is used for shooting.
             let ctx = document.getElementById("canvas").getContext("2d");
             // canvas.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
             this.lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
             this.lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
             this._dragStart = ctx.transformedPoint(this.lastX,this.lastY);
             this._dragged = false;
-            return evt.preventDefault() && false;
+            // return evt.preventDefault() && false;
         }
     };
 
@@ -404,6 +407,7 @@ class MatchController {
             let pt = ctx.transformedPoint(this.lastX,this.lastY);
             ctx.translate(pt.x-this._dragStart.x,pt.y-this._dragStart.y);
             this._clearCanvas();
+            model.startRefreshMap();
         }
     }
 
@@ -413,7 +417,7 @@ class MatchController {
 
     _clickHandler(evt) {
         // SHIFT + mouse click
-        if (evt.shiftKey && evt.which == 1) {
+        if (evt.ctrlKey && evt.which == 1) {
             let ctx = document.getElementById("canvas").getContext("2d");
             let canvasHeight = ctx.canvas.height;
             let canvasWidth = ctx.canvas.width;
@@ -435,6 +439,7 @@ class MatchController {
                 if(path) { 
                     // update the model
                     model.setPath(path);
+                    model.startRefreshMap();
                 }
                 console.debug("_clickHandler: from " + "(" + start.x + ", " + start.y + ")" + " to " + "(" + targetR + ", " + targetC + ")");
             }
@@ -567,6 +572,8 @@ class MatchController {
     // All listeners common to every kind of user
 
     load() {
+        // Stop Music
+        document.addEventListener("CHAT_GAME_FINISHED", (() => {this.sfxAudio.stopGameSound()}).bind(this));
         // PATHFINDING
         document.addEventListener("miticoOggettoCheNonEsiste.MOVE", ((evt) => {this._moveHandler(evt, this._gameClient)}).bind(this), false);
 
@@ -587,6 +594,8 @@ class MatchController {
         // STATUS
         document.addEventListener("STATUS", this.getStatusHandler, false);
 
+        document.addEventListener("MODEL_MUSIC_VOLUME", ((evt) => {
+            this.sfxAudio.changeGameVolume(evt.detail.volume)}).bind(this))
         // document.addEventListener("MODEL_SETGAMENAME", this.init, false);
         document.addEventListener("MODEL_RUN_GAME", () => {
             // Init human commands
@@ -597,9 +606,11 @@ class MatchController {
                     this._gameClient.startGame(model.status.ga);
                 });
             }
-            
+            // Start game music
+            this.sfxAudio.playGameSound(model.musicVolume);
             // Init map polling
             this._pollOnce(); // TODO POLLING: this._poller(); 
+            model.startRefreshMap();
             // Loads the specialized listeners
             switch(model.kind) {
                 case model.PLAYER:
@@ -630,6 +641,37 @@ class MatchController {
 
         canvas.addEventListener("click", ((evt) => {this._clickHandler(evt)}).bind(this),false);
 
+        // // SHOW MINIMAP
+        // let minimapSwitch = document.getElementById("minimapSwitch");
+        // minimapSwitch.addEventListener("change", (evt)=> {
+        //     if(minimapSwitch.checked) 
+        //         model.showMinimap(true);
+        //     else 
+        //         model.showMinimap(false);
+        //     model.startRefreshMap();
+
+        // });
+
+        // // GRID VEW
+        // let gridSwitch = document.getElementById("gridViewSwitch");
+        // gridSwitch.addEventListener("change", (evt)=> {
+        //     if(gridSwitch.checked) 
+        //         model.showGrid(true);
+        //     else
+        //         model.showGrid(false);
+        //     model.startRefreshMap();
+        // });
+        // // lowResolutionMap VEW
+        // let lowResolutionSwitch = document.getElementById("lowResolutionSwitch");
+        // lowResolutionSwitch.addEventListener("change", (evt)=> {
+        //     if(lowResolutionSwitch.checked) 
+        //         model.lowResolutionMap(true);
+        //     else
+        //         model.lowResolutionMap(false);
+        //     model.startRefreshMap();
+        // });
+
+        // SETTINGS
         // SHOW MINIMAP
         let minimapSwitch = document.getElementById("minimapSwitch");
         minimapSwitch.addEventListener("change", (evt)=> {
@@ -637,18 +679,36 @@ class MatchController {
                 model.showMinimap(true);
             else 
                 model.showMinimap(false);
+            model.startRefreshMap();
+
         });
 
         // GRID VEW
         let gridSwitch = document.getElementById("gridViewSwitch");
         gridSwitch.addEventListener("change", (evt)=> {
-            if(gridSwitch.checked) {
+            if(gridSwitch.checked) 
                 model.showGrid(true);
-            }
-            else {
+            else
                 model.showGrid(false);
-            }
+            model.startRefreshMap();
         });
+        // lowResolutionMap VEW
+        let lowResolutionSwitch = document.getElementById("lowResolutionSwitch");
+        lowResolutionSwitch.addEventListener("change", (evt)=> {
+            if(lowResolutionSwitch.checked) 
+                model.lowResolutionMap(true);
+            else
+                model.lowResolutionMap(false);
+            model.startRefreshMap();
+        });
+
+        let volumeSlider = document.getElementById("volumeSlider");
+        volumeSlider.addEventListener("change", (evt)=> {
+            model.setMusicVolume(volumeSlider.value/100);
+            // model.startRefreshMap();
+        });
+    
+       
 
     };
 
@@ -676,6 +736,7 @@ class MatchController {
         
         document.addEventListener("MODEL_PLAYER_JOINED", () => {
              this._pollOnce(); // TODO POLLING: this._poller(); 
+             model.startRefreshMap();
         }, false);
 
         canvas.addEventListener("contextmenu", ((evt) => {
@@ -706,6 +767,7 @@ class MatchController {
 
         document.addEventListener("MODEL_PLAYER_JOINED", () => {
             this._pollOnce(); // TODO POLLING: this._poller(); 
+            model.startRefreshMap();
        }, false);
     }
     
