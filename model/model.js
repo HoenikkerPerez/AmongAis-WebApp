@@ -8,12 +8,12 @@ var model = {
     nopTimeframe: 20000,
     net: {
         game: {
-            // ws: "ws://margot.di.unipi.it:8521"
-            ws: "ws://93.39.188.250:8521"
+            ws: "ws://margot.di.unipi.it:8521"
+            // ws: "ws://93.39.188.250:8521"
         },
         chat: {
-            // ws: "ws://margot.di.unipi.it:8522"
-            ws: "ws://93.39.188.250:8522"
+            ws: "ws://margot.di.unipi.it:8522"
+            // ws: "ws://93.39.188.250:8522"
         }
     },
     status: {
@@ -85,7 +85,7 @@ var model = {
         showMinimap: true,
         refresh: false
     },
-    musicVolume: 1,
+    musicVolume: 0.4,
 
     setMusicVolume(volume) {
         this.musicVolume = volume;

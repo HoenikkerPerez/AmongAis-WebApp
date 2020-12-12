@@ -2,80 +2,173 @@ class leagueClient {
 
     API_GW = "http://api.dbarasti.com";
 
-    // ​registration
-    // withdraw from a tournament
-    leaveTournament() {}
+    // get tournaments leaderboard
+    // RESPONSE:
+    // [
+    //   {
+    //     "player_name": "xxx_terminator_xxx",
+    //     "player_rank": 1,
+    //     "player_score": 999
+    //   }
+    // ]
+    getTournamentLeaderboard(tournamentId) {
+      let data = {"tournament_id": tournamentId};
 
-    // GET
-    // ​registration
+      $.ajax({
+        url: this.API_GW + '/leaderboard',
+        error: function() {
+          console.debug("Error retrieving Tournament Leaderboard");
+        },
+        data: data,
+        dataType: 'json',
+        type: "application/json",
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        success: function(data) {
+            console.debug(data)
+            //TODO process data
+        },
+        type: 'GET',
+        timeout: 10000 
+      });
+    }
+
+    // Get a view on the global leaderboard
+    getGlobalRanking() {
+      $.ajax({
+        url: this.API_GW + '/ranking',
+        error: function() {
+          console.debug("Error retrieving Tournament Leaderboard");
+        },
+        dataType: 'json',
+        type: "application/json",
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        success: function(data) {
+            console.debug(data)
+            //TODO process data
+        },
+        type: 'GET',
+        timeout: 10000 
+      });
+    }
+
+    // Withdraw from a specific tournament
+    leaveTournament(tournamentId, playerId) {
+      let data = {
+        "tournamentID": tournamentId,
+        "playerID": playerId
+      };
+
+      $.ajax({
+        url: this.API_GW + '/registration',
+        error: function(error) {
+          console.debug("Error leaving tournament");
+          console.debug(error);
+        },
+        data: data,
+        dataType: 'json',
+        type: "application/json",
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        success: function(data) {
+            console.debug(data)
+            //TODO process data
+        },
+        type: 'DELETE',
+        timeout: 10000 
+      });
+    }
+
     // Get the list of subscriptions of a tournament
-    getTournamentSubs() {}
+    getTournamentSubs(tournamentId) {
+      let data = {
+        "tournament_id": tournamentId,
+      };
+
+      $.ajax({
+        url: this.API_GW + '/registration',
+        error: function(error) {
+          console.debug("Error leaving tournament");
+          console.debug(error);
+        },
+        data: data,
+        dataType: 'json',
+        type: "application/json",
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        success: function(data) {
+            console.debug(data)
+            //TODO process data
+        },
+        type: 'DELETE',
+        timeout: 10000 
+      });
+
+    }
 
 
-    // join a tournament
+    // Join a tournament specifying the tournament ID
+    // RESPONSE
+    // {
+    //     "end_matches_date": "2020-12-07T18:05:34.761Z",
+    //     "end_subscriptions_date": "2020-12-07T18:05:34.761Z",
+    //     "name": "string",
+    //     "start_matches_date": "2020-12-07T18:05:34.761Z",
+    //     "start_subscriptions_date": "2020-12-07T18:05:34.761Z",
+    //     "type": "knok-out"
+    //   }
     joinTournament(playerId, tournamentId) {
-        // {
-        //     "end_matches_date": "2020-12-07T18:05:34.761Z",
-        //     "end_subscriptions_date": "2020-12-07T18:05:34.761Z",
-        //     "name": "string",
-        //     "start_matches_date": "2020-12-07T18:05:34.761Z",
-        //     "start_subscriptions_date": "2020-12-07T18:05:34.761Z",
-        //     "type": "knok-out"
-        //   }
-        // POST
-        let postData = {
-            "player_id": playerId,
-            "tournament_id": tournamentId
-          }
-        // ​/registration
-        $.ajax({
-            url: this.API_GW + '/registration?tournament_id='+tournamentName,
-            // url: "http://api.dbarasti.com:8081/tournaments",
-            error: function() {
-              console.debug("Error retrieving Tournament schedule");
-            },
-            data: postData,
-            dataType: 'json',
-            type: "application/json",
-            crossDomain: true,
-            contentType: 'application/json; charset=utf-8',
-            success: function(data) {
-                console.debug(data)
-            },
-            type: 'POST',
-            timeout: 10000 
-          });
+      let data = {
+        "player_id": playerId,
+        "tournament_id": tournamentId
+      }
+
+      $.ajax({
+          url: this.API_GW + '/registration',
+          // url: "http://api.dbarasti.com:8081/tournaments",
+          error: function() {
+            console.debug("Error retrieving Tournament schedule");
+          },
+          data: data,
+          dataType: 'json',
+          type: "application/json",
+          crossDomain: true,
+          contentType: 'application/json; charset=utf-8',
+          success: function(data) {
+              console.debug(data)
+          },
+          type: 'POST',
+          timeout: 10000 
+        });
 
     }
 
-    // GET
-    // ​/schedule
-    // get the full schedule of a specific tournament
-    getTournamentSchedule(tournamentName) {
-        // api.dbarasti.com/registration?tournament_id=SmartCUP2
-        $.ajax({
-            url: this.API_GW + '/registration?tournament_id='+tournamentName,
-            // url: "http://api.dbarasti.com:8081/tournaments",
-            error: function() {
-              console.debug("Error retrieving Tournament schedule");
-            },
-            dataType: 'json',
-            type: "application/json",
-            crossDomain: true,
-            contentType: 'application/json; charset=utf-8',
-            success: function(data) {
-                console.debug(data)
-            },
-            type: 'GET',
-            timeout: 10000 
-          });
+    
+    // Get the full schedule of a specific tournament
+    getTournamentSchedule(tournamentId) {
+      let data = {
+        "tournament_id": tournamentId
+      }
+
+      $.ajax({
+          url: this.API_GW + '/registration',
+          // url: "http://api.dbarasti.com:8081/tournaments",
+          error: function() {
+            console.debug("Error retrieving Tournament schedule");
+          },
+          data: data,
+          dataType: 'json',
+          type: "application/json",
+          crossDomain: true,
+          contentType: 'application/json; charset=utf-8',
+          success: function(data) {
+              console.debug(data)
+          },
+          type: 'GET',
+          timeout: 10000 
+        });
     }
-
-
-    // POST
-    // ​/schedule
-    // create a tournament schedule
-    createTournamentSchedule() {}
 
     // GET
     // ​/tournament
@@ -100,9 +193,7 @@ class leagueClient {
           });
     }
 
-    // POST
-    // ​/tournament
-    // create a tournament
-    createTournament() {}
-}
+    // Create a new tournament
+    // responsibility of League Manager
+  }
     
