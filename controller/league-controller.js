@@ -184,11 +184,15 @@ class LeagueController {
         t4.innerHTML = "START SUBS";
         let t5 = document.createElement("th");
         t5.innerHTML = "END SUBS";
+        let t6 = document.createElement("th");
+        t6.innerHTML = "ACTIONS";
+
         tr.appendChild(t1);
         tr.appendChild(t2);
         tr.appendChild(t3);
         tr.appendChild(t4);
         tr.appendChild(t5);
+        tr.appendChild(t6);
         listTournamentTable.appendChild(tr);
 
         if(listTournamentTable) {
@@ -213,11 +217,52 @@ class LeagueController {
 
                 let actionsEl = document.createElement("td");
 
+                let joinB = document.createElement("button");
+                joinB.classList.add("btn")
+                joinB.classList.add("btn-primary")   
+                joinB.classList.add("mr-1")   
+                joinB.innerHTML = "Join"
+                joinB.addEventListener("click", () => {
+                    $('#tournamentModal').modal('toggle');
+                    let tournamentModalLabel = document.getElementById("tournamentModalLabel");
+                    tournamentModalLabel.innerHTML = "Join Tournament"
+                    let tournamentModal = document.getElementById("tournamentModalBody");
+                    tournamentModal.innerHTML = "";
+
+                    let formJoin = document.createElement("div");
+
+                    let labelJoin = document.createElement("label");
+                    labelJoin.innerHTML = "Subscription Username";
+                    formJoin.appendChild(labelJoin);
+
+                    let inputJoin = document.createElement("input");
+                    inputJoin.placeholder = "username"
+                    inputJoin.classList.add("form-control")
+                    inputJoin.classList.add("mb-3")
+                    formJoin.appendChild(inputJoin);
+
+                    let buttonJoin = document.createElement("button");
+                    buttonJoin.innerHTML = "JOIN"
+                    buttonJoin.classList.add("btn");
+                    buttonJoin.classList.add("btn-primary");
+                    buttonJoin.classList.add("mb-3");
+                    buttonJoin.addEventListener("click", (evt)=>{
+                        let tournamentUsername = inputJoin.value;
+                        let tournamentName = tournament.id;
+                        this._leagueClient.joinTournament(tournamentUsername, tournamentName);
+                    })
+                    formJoin.appendChild(buttonJoin);
+
+                    tournamentModal.appendChild(formJoin)
+                    $('#tournamentModal').modal('toggle');
+                });
+                actionsEl.appendChild(joinB);
+
                 let scheduleB = document.createElement("button");
                 scheduleB.classList.add("btn")
                 scheduleB.classList.add("btn-primary")   
                 scheduleB.classList.add("mr-1")   
-                scheduleB.innerHTML = "SCHEDULE"
+                scheduleB.innerHTML = "Sched"
                 scheduleB.addEventListener("click", () => {
                     this._leagueClient.getTournamentSchedule(tournament.id);
                     // document.dispatchEvent(new CustomEvent("REQUEST_LEAGUE_SCHEDULE", {detail: {torunamentId: idTournament}}));
@@ -227,7 +272,7 @@ class LeagueController {
                 let playersB = document.createElement("button");
                 playersB.classList.add("btn")
                 playersB.classList.add("btn-primary")
-                playersB.innerHTML = "PLAYERS"
+                playersB.innerHTML = "Players"
                 playersB.addEventListener("click", () => {
                     this._leagueClient.getTournamentSubs(tournament.id);
                     // document.dispatchEvent(new CustomEvent("REQUEST_LEAGUE_SCHEDULE", {detail: {torunamentId: idTournament}}));
