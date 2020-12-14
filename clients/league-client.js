@@ -1,4 +1,4 @@
-class leagueClient {
+class LeagueClient {
 
     API_GW = "http://api.dbarasti.com";
 
@@ -64,9 +64,10 @@ class leagueClient {
         url: this.API_GW + '/registration',
         error: function(error) {
           console.debug("Error leaving tournament");
-          console.debug(error);
+          let parsedError = JSON.parse(error.responseText);
+          popupMsg(parsedError.message, "danger")
         },
-        data: data,
+        data: JSON.stringify(data),
         dataType: 'json',
         type: "application/json",
         crossDomain: true,
@@ -120,21 +121,23 @@ class leagueClient {
     //   }
     joinTournament(playerId, tournamentId) {
       let data = {
-        "player_id": playerId,
-        "tournament_id": tournamentId
+        'player_id': playerId,
+        'tournament_id': tournamentId
       }
+      console.debug(playerId, tournamentId);
 
       $.ajax({
           url: this.API_GW + '/registration',
-          // url: "http://api.dbarasti.com:8081/tournaments",
-          error: function() {
+          error: function(error) {
             console.debug("Error retrieving Tournament schedule");
+            let parsedError = JSON.parse(error.responseText);
+            popupMsg(parsedError.message, "danger")
           },
-          data: data,
-          dataType: 'json',
+          data: JSON.stringify(data),
+          dataType: 'application/json',
           type: "application/json",
           crossDomain: true,
-          contentType: 'application/json; charset=utf-8',
+          contentType: 'application/json',
           success: function(data) {
               console.debug(data)
           },
@@ -153,7 +156,6 @@ class leagueClient {
 
       $.ajax({
           url: this.API_GW + '/registration',
-          // url: "http://api.dbarasti.com:8081/tournaments",
           error: function() {
             console.debug("Error retrieving Tournament schedule");
           },
@@ -163,7 +165,9 @@ class leagueClient {
           crossDomain: true,
           contentType: 'application/json; charset=utf-8',
           success: function(data) {
-              console.debug(data)
+            console.debug("getTournamentSchedule received: " + data)
+            document.dispatchEvent(new CustomEvent("LEAGUE_SCHEDULE", {detail: {data:data}}));
+
           },
           type: 'GET',
           timeout: 10000 
@@ -184,9 +188,9 @@ class leagueClient {
             type: "application/json",
             crossDomain: true,
             contentType: 'application/json; charset=utf-8',
-            success: function(data) {
-                console.debug(data)
-              console.debug("Retrieve n. " + data.length + " Tournaments");
+            success: function(data) {            
+              console.debug("getTournamentList received: " + data)
+              document.dispatchEvent(new CustomEvent("LEAGUE_LIST", {detail: {data:data}}));
             },
             type: 'GET',
             timeout: 10000 

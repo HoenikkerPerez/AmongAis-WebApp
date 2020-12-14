@@ -5,8 +5,10 @@ window.onload = function () {
    // Loading session
    console.debug("Controller: loading GameClient...");
    let gameClient = new GameClient("GAMECLIENT");
+   let leagueClient = new LeagueClient();
+
    console.debug("Controller: loading SessionController...");
-   this.session = new SessionController(gameClient);
+   this.session = new SessionController(gameClient, leagueClient);
    // Audio
    let sfxAudio = new SfxAudio()
    // Loading match
@@ -16,6 +18,6 @@ window.onload = function () {
    let chatClient = new ChatClient();
    this.chat = new ChatController(chatClient);
    // Loading league
-   //console.debug("Controller: loading LeagueController...");
-   // ...
+   console.debug("Controller: loading LeagueController...");
+   this.leageController = new LeagueController(leagueClient);
 };

@@ -40,6 +40,7 @@
         <script src="controller/session-controller.js"></script>
         <script src="controller/match-controller.js"></script>
         <script src="controller/chat-controller.js"></script>
+        <script src="controller/league-controller.js"></script>
 
         <script src="controller/controller.js"></script>
 
@@ -270,33 +271,50 @@
 
         <!-- TOURNAMENTS -->
         <div id="joinTournament" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
-            <div class="my-3">
-                <label class="col-sm-4 mb-3 text-center">Join Tournament</label>
-                <input type="text" id="joinTournamentInput" name="joinTournamentInput" class="form-control mb-3 text-center" placeholder="smartCUP" autofocus> <!-- col-sm-4 -->
-                <input type="button" class="btn btn-primary mb-3" id="joinTournamentButton" name="joinTournamentButton" value="JOIN" disabled>
+            <label class="col-sm-4 mb-3 text-center">Join Tournament</label>
+            
+            <div class="form-row mb-3">
+                <label class="col-sm-4 mr-3 text-right">Username</label>
+                <input type="text" class="form-control col-sm-4" id="usernameJoinTournament" placeholder="username">
             </div>
+
+            <div class="form-row mb-3">
+                <label class="col-sm-4 mr-3 text-right">Tournament name</label>
+                <input type="text" class="form-control col-sm-4" id="nameJoinTournament" placeholder="smartCUP" value="">
+            </div>
+
+            <input type="button" class="btn btn-primary mb-3" id="joinTournamentButton" value="JOIN">
         </div>
         
         <div id="leaveTournament" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
-            <div class="my-3">
-                <label class="col-sm-4 mb-3 text-center">Leave Tournament</label>
-                <input type="text" id="leaveTournamentInput" name="leaveTournamentInput" class="form-control mb-3 text-center" placeholder="smartCUP" autofocus> <!-- col-sm-4 -->
-                <input type="button" class="btn btn-danger mb-3" id="leaveTournamentButton" name="leaveTournamentButton" value="LEAVE" disabled>
+            <label class="col-sm-4 mb-3 text-center">Leave Tournament</label>
+            <div class="form-row mb-3">
+                <label class="col-sm-4 mr-3 text-right">Username</label>
+                <input type="text" class="form-control col-sm-4" id="usernameLeaveTournament" placeholder="username">
             </div>
+
+            <div class="form-row mb-3">
+                <label class="col-sm-4 mr-3 text-right">Tournament name</label>
+                <input type="text" class="form-control col-sm-4" id="nameLeaveTournament" placeholder="smartCUP" value="">
+            </div>
+
+            <input type="button" class="btn btn-danger mb-3" id="leaveTournamentButton" name="leaveTournamentButton" value="LEAVE">
         </div>
 
         <div id="scheduleTournament" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
             <div class="my-3">
                 <label class="col-sm-4 mb-3 text-center ">Check Tournament Schedule</label>
                 <input type="text" id="scheduleTournamentInput" name="scheduleTournamentInput" class="form-control mb-3 text-center" placeholder="smartCUP" autofocus> <!-- col-sm-4 -->
-                <input type="button" class="btn btn-danger mb-3" id="scheduleTournamentButton" name="scheduleTournamentButton" value="JOIN" disabled>
+                <input type="button" class="btn btn-danger mb-3" id="scheduleTournamentButton" name="scheduleTournamentButton" value="SHOW SCHEDULE">
             </div>
+            <div id="scheduleTournamentContainer"></div>
         </div>
 
         <div id="listTournament" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
             <div class="my-3">
                 <label class="col-sm-4 mb-3 text-center">Tournament List</label>
-            </div>
+            <table id="listTournamentTable" class="table">
+            </table>
         </div>
 
         <div id="globalLeaderboard" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
