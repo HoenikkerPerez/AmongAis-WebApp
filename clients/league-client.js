@@ -134,12 +134,16 @@ class LeagueClient {
             popupMsg(parsedError.message, "danger")
           },
           data: JSON.stringify(data),
-          dataType: 'application/json',
+          dataType: 'json',
           type: "application/json",
           crossDomain: true,
           contentType: 'application/json',
           success: function(data) {
-              console.debug(data)
+            console.debug("joinTournament " + data);
+            if(data.status == 200)
+              popupMsg(data.message, "success")
+            else 
+            popupMsg(data.message, "danger")
           },
           type: 'POST',
           timeout: 10000 
