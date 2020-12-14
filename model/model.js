@@ -273,6 +273,15 @@ var model = {
         }
     },
 
+    isDying(name){
+        for (let i = 0; i < this.dieing.length; i++) {
+            if(this.dieing[i].name === name){
+                return true;
+            }
+        }
+        return false;
+    },
+
     setStatus: function(status) {
         let old = this.status;
         this.status = status;

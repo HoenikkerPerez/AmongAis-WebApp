@@ -266,12 +266,13 @@ class WorldUi {
 
 
     _drawDieing() {
+        let endAnim = -3;
         let dieing = model.dieing;
         let tiledim = 64;
         let cnt_pop = 0;
         for (let i=0; i<dieing.length; i++) {
             let death = dieing[i];
-            if(death.cnt<0){ cnt_pop++; break; }
+            if(death.cnt<endAnim){ cnt_pop++; break; }
             let who_die = model.status.pl_list[death.name];
             let x = who_die.x;
             let y = who_die.y;
@@ -286,11 +287,11 @@ class WorldUi {
             anims.push(Terrain.PLAYER_RED_DIE);
             anims.push(Terrain.PLAYER_BLUE_DIE);
 
-            if (death.cnt > 0) {
+            if (death.cnt >= endAnim) {
                 // console.debug("drawing shoots: " + x +", " + " " + direction + " " + counter);
                 // choose tile
                 
-                let frame = anims[who_die.team].length - death.cnt;
+                let frame = (death.cnt>0)? anims[who_die.team].length - death.cnt : anims[who_die.team].length-1;
                 tile = anims[who_die.team][frame];
                 atlas = atlases[who_die.team];
 
@@ -622,7 +623,7 @@ class WorldUi {
         model.world.tmp_players.forEach( (map_pl) => {
                         let [symbol, team, c, r] = map_pl;
                         let pl = model.findPlayerBySymbol(symbol);
-                        if(pl != undefined) {
+                        if(pl != undefined && !model.isDying(pl.name)) {
                             let state = pl.state;
                             let direction = pl_directions[pl.name];
 
