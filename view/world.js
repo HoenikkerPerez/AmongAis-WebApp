@@ -286,13 +286,14 @@ class WorldUi {
             let anims = [];
             anims.push(Terrain.PLAYER_RED_DIE);
             anims.push(Terrain.PLAYER_BLUE_DIE);
+            let anim;
 
             if (death.cnt >= endAnim) {
                 // console.debug("drawing shoots: " + x +", " + " " + direction + " " + counter);
                 // choose tile
-                
-                let frame = (death.cnt>0)? anims[who_die.team].length - death.cnt : anims[who_die.team].length-1;
-                tile = anims[who_die.team][frame];
+                anim = anims[who_die.team];
+                let frame = (death.cnt>0)? anim.length - death.cnt : anim.length-1;
+                tile = anim[frame];
                 atlas = atlases[who_die.team];
 
                 this.ctx.drawImage(
