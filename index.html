@@ -63,6 +63,35 @@
 
     </head>
     <body class="container-fluid p-3 my-3 bg-dark text-white">
+        <!-- NAVBAR -->
+        <nav id="navigation-bar" class="navbar navbar-expand-lg  bg-dark text-white" style="display:none">
+            <a class="navbar-brand" href="#">AmongAIs</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                  <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Tournaments
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="#joinTournament">Join</a>
+                    <a class="dropdown-item" href="#leaveTournament">Leave</a>
+                    <a class="dropdown-item" href="#scheduleTournament">Schedule</a>
+                    <a class="dropdown-item" href="#listTournament">List</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#globalLeaderboard">Global Leaderboard</a>
+                  </div>
+                </li>
+              </ul>
+            </div>
+        </nav>
+
         <div id="alert-popup" class="modal fade" role="alert"></div>
         <!-- SETTINGS -->
         <!-- Modal -->
@@ -239,6 +268,42 @@
 
         </div>
 
+        <!-- TOURNAMENTS -->
+        <div id="joinTournament" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
+            <div class="my-3">
+                <label class="col-sm-4 mb-3 text-center">Join Tournament</label>
+                <input type="text" id="joinTournamentInput" name="joinTournamentInput" class="form-control mb-3 text-center" placeholder="smartCUP" autofocus> <!-- col-sm-4 -->
+                <input type="button" class="btn btn-primary mb-3" id="joinTournamentButton" name="joinTournamentButton" value="JOIN" disabled>
+            </div>
+        </div>
+        
+        <div id="leaveTournament" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
+            <div class="my-3">
+                <label class="col-sm-4 mb-3 text-center">Leave Tournament</label>
+                <input type="text" id="leaveTournamentInput" name="leaveTournamentInput" class="form-control mb-3 text-center" placeholder="smartCUP" autofocus> <!-- col-sm-4 -->
+                <input type="button" class="btn btn-danger mb-3" id="leaveTournamentButton" name="leaveTournamentButton" value="LEAVE" disabled>
+            </div>
+        </div>
+
+        <div id="scheduleTournament" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
+            <div class="my-3">
+                <label class="col-sm-4 mb-3 text-center ">Check Tournament Schedule</label>
+                <input type="text" id="scheduleTournamentInput" name="scheduleTournamentInput" class="form-control mb-3 text-center" placeholder="smartCUP" autofocus> <!-- col-sm-4 -->
+                <input type="button" class="btn btn-danger mb-3" id="scheduleTournamentButton" name="scheduleTournamentButton" value="JOIN" disabled>
+            </div>
+        </div>
+
+        <div id="listTournament" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
+            <div class="my-3">
+                <label class="col-sm-4 mb-3 text-center">Tournament List</label>
+            </div>
+        </div>
+
+        <div id="globalLeaderboard" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
+            <div class="my-3">
+                <label class="col-sm-4 mb-3 text-center">Global Leaderboard</label>
+            </div>
+        </div>
     <footer class="footer">
         <p>Web App Version: v0.8-alpha</p>
     </footer>
