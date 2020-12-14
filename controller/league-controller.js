@@ -31,7 +31,13 @@ class LeagueController {
         document.addEventListener("LEAGUE_GLOBALRANKING", this._globalRankingReceiver.bind(this), false);
         
         // NAVBAR
-        window.addEventListener("hashchange", this._hashEventListener.bind(this));
+        document.getElementById("homeLink").addEventListener("click", (()=> {this._hashEventListener("#homeLink")}).bind(this))
+        document.getElementById("brandLink").addEventListener("click", (()=> {this._hashEventListener("#homeLink")}).bind(this))
+        document.getElementById("joinTournamentLink").addEventListener("click", (()=> {this._hashEventListener("#joinTournament")}).bind(this))
+        document.getElementById("leaveTournamentLink").addEventListener("click", (()=> {this._hashEventListener("#leaveTournament")}).bind(this))
+        document.getElementById("listTournamentLink").addEventListener("click", (()=> {this._hashEventListener("#listTournament")}).bind(this))
+        document.getElementById("globalLeaderboardLink").addEventListener("click", (()=> {this._hashEventListener("#globalLeaderboard")}).bind(this))
+        // window.addEventListener("hashchange", this._hashEventListener.bind(this));
     }
 
     // GLOBAL RANKING
@@ -290,9 +296,8 @@ class LeagueController {
         }
     }
 
-    _hashEventListener() {
-        if(!location.hash)
-            location.hash = "#home"
+
+    _hashEventListener(page) {
         var homeUI = document.getElementById("homeUI");
         var console = document.getElementById("console");
         var joinTournament = document.getElementById("joinTournament");
@@ -309,7 +314,7 @@ class LeagueController {
         listTournament.style.display = "none";
         globalLeaderboard.style.display = "none";
 
-        switch(location.hash) {
+        switch(page) {
             case "#home": 
                 homeUI.style.display = "";
                 break;

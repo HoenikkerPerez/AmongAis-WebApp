@@ -66,7 +66,7 @@
     <body class="container-fluid p-3 my-3 bg-dark text-white">
         <!-- NAVBAR -->
         <nav id="navigation-bar" class="navbar navbar-expand-lg  bg-dark text-white" style="display:none">
-            <a class="navbar-brand" href="#">AmongAIs</a>
+            <a class="navbar-brand"  id="brandLink" href="#">AmongAIs</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
@@ -74,19 +74,19 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                  <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                  <a class="nav-link" id="homeLink" href="#">Play</span></a>
                 </li>
                 <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Tournaments
                   </a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#joinTournament">Join</a>
-                    <a class="dropdown-item" href="#leaveTournament">Leave</a>
+                  <div class="dropdown-menu " aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" id="joinTournamentLink" href="#">Join</a>
+                    <a class="dropdown-item"  id="leaveTournamentLink" href="#">Leave</a>
                     <!-- <a class="dropdown-item" href="#scheduleTournament">Schedule</a> -->
-                    <a class="dropdown-item" href="#listTournament">Available Tournaments</a>
+                    <a class="dropdown-item" id="listTournamentLink" href="#">Available Tournaments</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#globalLeaderboard">Global Leaderboard</a>
+                    <a class="dropdown-item" id="globalLeaderboardLink" href="#">Global Leaderboard</a>
                   </div>
                 </li>
               </ul>
@@ -291,7 +291,7 @@
 
         <!-- TOURNAMENTS -->
         <div id="joinTournament" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
-            <label class="col-sm-4 mb-3 text-center">Join Tournament</label>
+            <label class="col-sm-4 mb-3 text-center"><h2>Join Tournament</h2></label>
             
             <div class="form-row mb-3">
                 <label class="col-sm-4 mr-3 text-right">Username</label>
@@ -307,7 +307,7 @@
         </div>
         
         <div id="leaveTournament" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
-            <label class="col-sm-4 mb-3 text-center">Leave Tournament</label>
+            <label class="col-sm-4 mb-3 text-center"><h2>Leave Tournament</h2></label>
             <div class="form-row mb-3">
                 <label class="col-sm-4 mr-3 text-right">Username</label>
                 <input type="text" class="form-control col-sm-4" id="usernameLeaveTournament" placeholder="username">
@@ -323,14 +323,14 @@
 
         <div id="listTournament" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
             <div class="my-3">
-                <label class="col-sm-4 mb-3 text-center">Tournament List</label>
+                <label class="col-sm-4 mb-3 text-center"><h2>Tournament List</h2></label>
             <table id="listTournamentTable" class="table"></table>
             </div>
         </div>
 
         <div id="globalLeaderboard" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
             <div class="my-3">
-                <label class="col-sm-4 mb-3 text-center">Global Leaderboard</label>
+                <label class="col-sm-4 mb-3 text-center"><h2>Global Leaderboard</h2></label>
                 <table id="globalRankingTable" class="table"></table>
             </div>
         </div>
