@@ -39,14 +39,14 @@ class LeagueClient {
         url: this.API_GW + '/ranking',
         error: function() {
           console.debug("Error retrieving Tournament Leaderboard");
+          popupMsg("ERROR", "danger")
         },
         dataType: 'json',
         type: "application/json",
         crossDomain: true,
         contentType: 'application/json; charset=utf-8',
         success: function(data) {
-            console.debug(data)
-            //TODO process data
+            document.dispatchEvent(new CustomEvent("LEAGUE_GLOBALRANKING", {detail: {data:data}}));                      
         },
         type: 'GET',
         timeout: 10000 
@@ -90,8 +90,9 @@ class LeagueClient {
       $.ajax({
         url: this.API_GW + '/registration',
         error: function(error) {
-          console.debug("Error leaving tournament");
-          console.debug(error);
+          console.debug("Error retrieving Tournament subscribers");
+          let parsedError = JSON.parse(error.responseText);
+          popupMsg(parsedError.message, "danger")
         },
         data: data,
         dataType: 'json',
@@ -99,10 +100,13 @@ class LeagueClient {
         crossDomain: true,
         contentType: 'application/json; charset=utf-8',
         success: function(data) {
-            console.debug(data)
-            //TODO process data
+          console.debug("joinTournament " + data);
+          if(data.status == 200)
+            document.dispatchEvent(new CustomEvent("LEAGUE_PLAYERS", {detail: {data:data.data}}));          
+          else 
+            popupMsg(data.message, "danger")
         },
-        type: 'DELETE',
+        type: 'GET',
         timeout: 10000 
       });
 
@@ -159,7 +163,7 @@ class LeagueClient {
       }
 
       $.ajax({
-          url: this.API_GW + '/registration',
+          url: this.API_GW + '/schedule',
           error: function() {
             console.debug("Error retrieving Tournament schedule");
           },
