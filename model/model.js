@@ -70,6 +70,7 @@ var model = {
     },
     meetingsQueue: [],
     shoots: [],
+    dieing: [], // [{name:____, cnt:5}]
     pathfindigMoves: [],
     path: [],
     createdGames:new Set(),
@@ -411,6 +412,10 @@ var model = {
     meetingEnd(){
         this.meeting.isRunning = false;
         document.dispatchEvent(new CustomEvent("MODEL_MEETING_END"));
+    },
+
+    murderCatched(murder, murdered){
+        this.dieing.push({name:murdered,cnt:5});
     },
 
     // Endgame
