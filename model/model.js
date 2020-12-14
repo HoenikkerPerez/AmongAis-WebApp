@@ -68,6 +68,7 @@ var model = {
         isRunning: false,
         iVote: false,
     },
+    meetingsQueue: [],
     shoots: [],
     pathfindigMoves: [],
     path: [],

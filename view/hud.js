@@ -49,55 +49,70 @@ class HudUi {
             model.removeCreatedGames(model.status.ga);
         }, false);
 
-        document.addEventListener("MODEL_MEETING_START", () => {
+        document.addEventListener("MODEL_MEETING_START", (evt) => {
             console.debug("hud EMERGENCY MEETING START");
             popupMsg("EMERGENCY MEETING START!!!", "danger");
             let meet_div = document.getElementById("emergency-meeting");
+            
+            let who_start_name = evt.detail;
+            let who_start = model.status.pl_list[who_start_name];
+            let id = who_start.team;
+            model.meetingsQueue.push(id);
+            $("#emergency-meeting").append("<div id=\"emergency-meeting-"+id+"\" class=\"emergency-meeting-yellow\"></div>");        
+            
             meet_div.style.display="";
             // <div class="spinner-border"></div>
-            // TODO: Improve countdown Design <---------------- !!!
-            $("#emergency-meeting").append("<div id=\"countdown\"class=\"spinner-border\"></div>");
-            window.setTimeout(function(){ this.meeting_countdown(15) }.bind(this), 1000);
+            $("#emergency-meeting-"+id).append("<div id=\"countdown-" + id + "\"class=\"spinner-border\"></div>");
+            window.setTimeout(function(){ this.meeting_countdown(15,id) }.bind(this), 1000);
         }, false);
 
         document.addEventListener("MODEL_MEETING_END", () => {
             console.debug("hud EMERGENCY MEETING END");
             // popupMsg("EMERGENCY MEETING END!!!", "danger");
-            let eMeeting = document.getElementById("emergency-meeting");
-            eMeeting.className = "emergency-meeting-ended";;
+            let id = model.meetingsQueue.shift();
+            let eMeeting = document.getElementById("emergency-meeting-"+id);
+            eMeeting.className = "emergency-meeting-ended";
             window.setTimeout(function(){ 
-                let meet_div = document.getElementById("emergency-meeting");
-                meet_div.style.display="none";
-                meet_div.innerText="";
+                let meet_div_id = document.getElementById("emergency-meeting-"+id);
+                meet_div_id.style.display="none";
+                if(model.meetingsQueue.length<=0){
+                    let meet_div = document.getElementById("emergency-meeting");
+                    meet_div.innerText="";
+                    meet_div.style.display="none";
+                }
             }, 5000);
         }, false);
 
         document.addEventListener("MODEL_MEETING_ACCUSE", (evt) => {
-            console.debug("hud displaying EMERGENCY MEETING START");
+            console.debug("hud displaying EMERGENCY MEETING ACCUSE");
+            let who = model.status.pl_list[evt.detail.accuser];
+            let id = who.team;
             let msg = evt.detail.accuser + " --accuse--> " + evt.detail.accused;
-            $("#emergency-meeting").prepend("<div>" + msg + "</div>");
+            $("#emergency-meeting-"+id).prepend("<div>" + msg + "</div>");
         }, false);
 
         document.addEventListener("MODEL_MEETING_MSG", (evt) => {
-            console.debug("hud displaying EMERGENCY MEETING START");
+            console.debug("hud displaying EMERGENCY MEETING MSG");
+            // if(model.meetingsQueue.length<=0){ return; }
+            // let id = model.meetingsQueue[0];
             let msg = evt.detail;
             $("#emergency-meeting").prepend("<div>" + msg + "</div>");
         }, false);
     };
 
-    meeting_countdown(times){
+    meeting_countdown(times, id){
         if (times>5) {
-            let cnt_div = document.getElementById("countdown");
+            let cnt_div = document.getElementById("countdown-" + id);
             cnt_div.textContent = times;
         } else {
-            let eMeeting = document.getElementById("emergency-meeting");
+            let eMeeting = document.getElementById("emergency-meeting-" + id);
             eMeeting.className = "emergency-meeting-red";
-            let cnt_div = document.getElementById("countdown");
+            let cnt_div = document.getElementById("countdown-" + id);
             cnt_div.textContent = "";
         }
 
         if(times>0){
-            window.setTimeout(function(){ this.meeting_countdown(times-1) }.bind(this), 1000);
+            window.setTimeout(function(){ this.meeting_countdown(times-1,id) }.bind(this), 1000);
         }
     }
     
