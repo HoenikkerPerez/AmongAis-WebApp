@@ -28,6 +28,9 @@ const Terrain = {
     BULLET_VERTICAL: [0,0],
     BULLET_HORIZONTAL: [0,0], //TODO laser tile
     PATHFINDING: [0,0], // TODO path tile
+    // DIEING 20
+    PLAYER_BLUE_DIE: [[0,20],[1,20],[2,20],[3,20],[4,20],[5,20]], // All animation steps/tiles
+    PLAYER_RED_DIE: [[0,20],[1,20],[2,20],[3,20],[4,20],[5,20]],
     // GRAVES
     PLAYER_BLUE_KILLED: [3, 0],
     PLAYER_RED_KILLED: [3, 0]
@@ -252,6 +255,7 @@ class WorldUi {
                 this._drawShoots();
                 this._drawPathfinding();
                 this._drawPlayerNames();
+                this._drawDieing();
                 if(model.world.showMinimap)
                     this._drawMinimap();
                 model.stopRefreshMap();
@@ -259,6 +263,59 @@ class WorldUi {
         };
         window.requestAnimationFrame(this.renderMap.bind(this));
     };
+
+
+    _drawDieing() {
+        let endAnim = -3;
+        let dieing = model.dieing;
+        let tiledim = 64;
+        let cnt_pop = 0;
+        for (let i=0; i<dieing.length; i++) {
+            let death = dieing[i];
+            if(death.cnt<endAnim){ cnt_pop++; break; }
+            let who_die = model.status.pl_list[death.name];
+            let x = who_die.x;
+            let y = who_die.y;
+            let tile;
+
+            let atlases = [];
+            atlases.push(this.tilePlayerRed);
+            atlases.push(this.tilePlayerBlue);
+            let atlas;
+
+            let anims = [];
+            anims.push(Terrain.PLAYER_RED_DIE);
+            anims.push(Terrain.PLAYER_BLUE_DIE);
+            let anim;
+
+            if (death.cnt >= endAnim) {
+                // console.debug("drawing shoots: " + x +", " + " " + direction + " " + counter);
+                // choose tile
+                anim = anims[who_die.team];
+                let frame = (death.cnt>0)? anim.length - death.cnt : anim.length-1;
+                tile = anim[frame];
+                atlas = atlases[who_die.team];
+
+                this.ctx.drawImage(
+                    atlas, // image
+                    tile[0] * tiledim, // source x
+                    tile[1] * tiledim, // source y
+                    tiledim, // source width
+                    tiledim, // source height
+                    x * this._tsizeMap,  // target x
+                    y * this._tsizeMap, // target y
+                    this._tsizeMap, // target width
+                    this._tsizeMap // target height
+                );
+                dieing[i].cnt--;  // TODO terrible modify the model
+            }
+        }
+        while(cnt_pop>0){
+            dieing.shift();
+            cnt_pop--;
+        }
+        model.dieing = dieing;
+    }
 
 
 
@@ -567,7 +624,7 @@ class WorldUi {
         model.world.tmp_players.forEach( (map_pl) => {
                         let [symbol, team, c, r] = map_pl;
                         let pl = model.findPlayerBySymbol(symbol);
-                        if(pl != undefined) {
+                        if(pl != undefined && !model.isDying(pl.name)) {
                             let state = pl.state;
                             let direction = pl_directions[pl.name];
 

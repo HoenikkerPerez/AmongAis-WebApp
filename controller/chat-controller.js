@@ -141,6 +141,15 @@ class ChatController {
             return;
         }
 
+        // Hit-Catch
+        if(msgspl[1]==="hit"){
+            let murder = model.status.pl_list[msgspl[0]];
+            let murdered = model.status.pl_list[msgspl[2]];
+            if(murder!=undefined && murdered!=undefined){
+                model.murderCatched(murder.name, murdered.name);
+                // return;
+            }
+        }
         model.addMessageChat(channel, name, msg);
     }
 

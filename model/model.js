@@ -68,7 +68,9 @@ var model = {
         isRunning: false,
         iVote: false,
     },
+    meetingsQueue: [],
     shoots: [],
+    dieing: [], // [{name:____, cnt:5}]
     pathfindigMoves: [],
     path: [],
     createdGames:new Set(),
@@ -271,6 +273,15 @@ var model = {
         }
     },
 
+    isDying(name){
+        for (let i = 0; i < this.dieing.length; i++) {
+            if(this.dieing[i].name === name){
+                return true;
+            }
+        }
+        return false;
+    },
+
     setStatus: function(status) {
         let old = this.status;
         this.status = status;
@@ -410,6 +421,10 @@ var model = {
     meetingEnd(){
         this.meeting.isRunning = false;
         document.dispatchEvent(new CustomEvent("MODEL_MEETING_END"));
+    },
+
+    murderCatched(murder, murdered){
+        this.dieing.push({name:murdered,cnt:5});
     },
 
     // Endgame
