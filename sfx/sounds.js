@@ -3,7 +3,9 @@ class Channel {
         this.audio_uri = audio_uri;
         this.resource = new Audio(audio_uri);
     }
-    play(volume=1) {
+    play(volume=1, repeat=false) {
+        if(repeat)
+            this.resource.loop = true;
         this.resource.volume = volume;
         this.resource.play();
     }
@@ -24,13 +26,13 @@ class Switcher {
         this.channels = [];
         this.num = num;
         this.index = 0;
-
+            
         for (var i = 0; i < num; i++) {
             this.channels.push(new Channel(audio_uri));
         }
     }
-    play(volume) {
-        this.channels[this.index++].play(volume);
+    play(volume, repeat=false) {
+        this.channels[this.index++].play(volume, repeat);
         this.index = this.index < this.num ? this.index : 0;
     }
     stop() {
@@ -46,7 +48,7 @@ class Switcher {
 
 class SfxAudio {    
         playGameSound = function(volume) {
-            this.sfx_switcher_gameSound.play(volume);
+            this.sfx_switcher_gameSound.play(volume, true);
         }
 
         changeGameVolume = function(volume) {
@@ -58,7 +60,7 @@ class SfxAudio {
         }
 
         playMenuSound = function(volume) {
-            this.sfx_switcher_menuSound.play(volume);
+            this.sfx_switcher_menuSound.play(volume, true);
         }
 
         changeMenuVolume = function(volume) {
@@ -91,7 +93,8 @@ class SfxAudio {
         this.sfx_switcher_success = new Switcher('sfx/success.mp3', 2);
         this.sfx_switcher_start   = new Switcher('sfx/start.mp3', 1);
         this.sfx_switcher_gameSound   = new Switcher('sfx/Total_Reboot.mp3', 1);
-        this.sfx_switcher_menuSound   = new Switcher('sfx/LocalForecast.mp3', 1);
+        // this.sfx_switcher_menuSound   = new Switcher('sfx/LocalForecast.mp3', 1);
+        this.sfx_switcher_menuSound   = new Switcher('sfx/success.mp3', 1);
     };
 
     _load() {
