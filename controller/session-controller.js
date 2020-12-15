@@ -3,10 +3,11 @@ class SessionController {
     _gameClient;
     _leagueClient;
 
-    constructor(gameClient, leagueClient) {
+    constructor(gameClient, leagueClient, sfxAudio) {
         console.debug("SessionController: loading the GameClient instance...");
         this._gameClient = gameClient;
         this._leagueClient = leagueClient;
+        this.sfxAudio = sfxAudio;
         this._load();
 
         console.debug("SessionController: loading the listeners for UI events...");
@@ -20,7 +21,7 @@ class SessionController {
         this._loadUI();
         // Listeners for reacting to server responses
         this._loadWsMessages();
-
+        this.sfxAudio.playMenuSound(.1);
     }
 
     static PLAYER = "player";

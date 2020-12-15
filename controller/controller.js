@@ -8,9 +8,9 @@ window.onload = function () {
    let leagueClient = new LeagueClient();
 
    console.debug("Controller: loading SessionController...");
-   this.session = new SessionController(gameClient, leagueClient);
-   // Audio
    let sfxAudio = new SfxAudio()
+   this.session = new SessionController(gameClient, leagueClient, sfxAudio);
+   // Audio
    // Loading match
    this.match = new MatchController(gameClient, sfxAudio);
    // Loading chat
