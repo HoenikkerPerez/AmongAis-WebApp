@@ -29,6 +29,7 @@ class LeagueController {
         document.addEventListener("LEAGUE_JOIN", this._joinTournamentReceiver.bind(this), false);
         document.addEventListener("LEAGUE_LIST", this._listTournamentReceiver.bind(this), false);
         document.addEventListener("LEAGUE_GLOBALRANKING", this._globalRankingReceiver.bind(this), false);
+        document.addEventListener("LEAGUE_LEADERBOARD", this._leaderboardTournamentReceiver.bind(this), false);
         
         // NAVBAR
         document.getElementById("homeLink").addEventListener("click", (()=> {this._hashEventListener("#homeLink")}).bind(this))
@@ -81,8 +82,6 @@ class LeagueController {
 
             globalRankingTable.appendChild(tEl);
         });
-
-
     }
 
     // JOIN TOURNAMENT
@@ -171,6 +170,55 @@ class LeagueController {
         tournamentModal.appendChild(playerTable)
     }
 
+    _leaderboardTournamentReceiver(evt) {
+        $('#tournamentModal').modal('toggle');
+        let players = evt.detail.data;
+        //  show on modal
+        let tournamentModalLabel = document.getElementById("tournamentModalLabel");
+        tournamentModalLabel.innerHTML = "LEADERBOARD"
+
+        let tournamentModal = document.getElementById("tournamentModalBody");
+        tournamentModal.innerHTML = "";
+
+        let leaderboardTable = document.createElement("table")
+        leaderboardTable.classList.add("table");
+
+        let tr = document.createElement("tr");
+
+        let t1= document.createElement("th");
+        t1.innerHTML = "Rank";
+        let t2 = document.createElement("th");
+        t2.innerHTML = "Name";
+        let t3 = document.createElement("th");
+        t3.innerHTML = "Score";
+       
+        tr.appendChild(t1);
+        tr.appendChild(t2);
+        tr.appendChild(t3);
+
+        leaderboardTable.appendChild(tr);
+
+        players.forEach( (player) => {
+            let tEl = document.createElement("tr");
+                
+            let rank = document.createElement("td");
+            rank.innerHTML = player.player_rank;
+            
+            let player_id = document.createElement("td");
+            player_id.innerHTML = player.player_name;
+            player_id.classList.add("font-weight-bold")
+
+            let player_score = document.createElement("td");
+            player_score.innerHTML = player.player_score;
+
+            tEl.appendChild(rank);
+            tEl.appendChild(player_id);
+            tEl.appendChild(player_score);
+
+            leaderboardTable.appendChild(tEl);
+        });    
+    }
+
     // LIST
     _listTournamentReceiver(evt) {
         let data = evt.detail.data;
@@ -226,7 +274,9 @@ class LeagueController {
                 let joinB = document.createElement("button");
                 joinB.classList.add("btn")
                 joinB.classList.add("btn-primary")   
+                joinB.classList.add("btn-sm")   
                 joinB.classList.add("mr-1")   
+                joinB.classList.add("mt-1")   
                 joinB.innerHTML = "Join"
                 joinB.addEventListener("click", () => {
                     $('#tournamentModal').modal('toggle');
@@ -266,8 +316,10 @@ class LeagueController {
 
                 let scheduleB = document.createElement("button");
                 scheduleB.classList.add("btn")
-                scheduleB.classList.add("btn-primary")   
+                scheduleB.classList.add("btn-primary")  
+                scheduleB.classList.add("btn-sm")   
                 scheduleB.classList.add("mr-1")   
+                scheduleB.classList.add("mt-1")   
                 scheduleB.innerHTML = "Sched"
                 scheduleB.addEventListener("click", () => {
                     this._leagueClient.getTournamentSchedule(tournament.id);
@@ -278,12 +330,28 @@ class LeagueController {
                 let playersB = document.createElement("button");
                 playersB.classList.add("btn")
                 playersB.classList.add("btn-primary")
+                playersB.classList.add("btn-sm")   
+                playersB.classList.add("mr-1")   
+                playersB.classList.add("mt-1")                   
                 playersB.innerHTML = "Players"
                 playersB.addEventListener("click", () => {
                     this._leagueClient.getTournamentSubs(tournament.id);
                     // document.dispatchEvent(new CustomEvent("REQUEST_LEAGUE_SCHEDULE", {detail: {torunamentId: idTournament}}));
                 });                
                 actionsEl.appendChild(playersB);
+
+                let leaderBoardB = document.createElement("button");
+                leaderBoardB.classList.add("btn")
+                leaderBoardB.classList.add("btn-primary")   
+                leaderBoardB.classList.add("btn-sm")   
+                leaderBoardB.classList.add("mr-1")   
+                leaderBoardB.classList.add("mt-1")   
+                leaderBoardB.innerHTML = "LeaderB"
+                leaderBoardB.addEventListener("click", () => {
+                    this._leagueClient.getTournamentLeaderboard(tournament.id);
+                    // document.dispatchEvent(new CustomEvent("REQUEST_LEAGUE_SCHEDULE", {detail: {torunamentId: idTournament}}));
+                });
+                actionsEl.appendChild(leaderBoardB);
 
                 tEl.appendChild(idTournament);
                 tEl.appendChild(startTournamentEl);

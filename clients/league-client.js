@@ -18,6 +18,7 @@ class LeagueClient {
         url: this.API_GW + '/leaderboard',
         error: function() {
           console.debug("Error retrieving Tournament Leaderboard");
+          popupMsg("ERROR", "danger")
         },
         data: data,
         dataType: 'json',
@@ -26,7 +27,7 @@ class LeagueClient {
         contentType: 'application/json; charset=utf-8',
         success: function(data) {
             console.debug(data)
-            //TODO process data
+            document.dispatchEvent(new CustomEvent("LEAGUE_LEADERBOARD", {detail: {data:data}}));                      
         },
         type: 'GET',
         timeout: 10000 
@@ -38,7 +39,7 @@ class LeagueClient {
       $.ajax({
         url: this.API_GW + '/ranking',
         error: function() {
-          console.debug("Error retrieving Tournament Leaderboard");
+          console.debug("Error retrieving Global Ranking");
           popupMsg("ERROR", "danger")
         },
         dataType: 'json',
@@ -46,6 +47,7 @@ class LeagueClient {
         crossDomain: true,
         contentType: 'application/json; charset=utf-8',
         success: function(data) {
+            console.debug(data)
             document.dispatchEvent(new CustomEvent("LEAGUE_GLOBALRANKING", {detail: {data:data}}));                      
         },
         type: 'GET',
