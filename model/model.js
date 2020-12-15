@@ -87,7 +87,7 @@ var model = {
         showMinimap: true,
         refresh: false
     },
-    musicVolume: 0.4,
+    musicVolume: 0.3,
 
     setMusicVolume(volume) {
         this.musicVolume = volume;

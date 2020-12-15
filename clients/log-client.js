@@ -20,4 +20,12 @@ class LogClient {
             console.error("Game Client error: " + evt); 
         };
     }
+
+    log(type, op) {
+        let message = {
+            typeOp: type,
+            op: op 
+        }
+        this._ws.send(JSON.stringify(message));
+    }
 };
