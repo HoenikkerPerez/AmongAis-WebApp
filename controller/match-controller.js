@@ -606,6 +606,8 @@ class MatchController {
                     this._gameClient.startGame(model.status.ga);
                 });
             }
+            // Stop menu music
+            this.sfxAudio.stopMenuSound();
             // Start game music
             this.sfxAudio.playGameSound(model.musicVolume);
             // Init map polling
