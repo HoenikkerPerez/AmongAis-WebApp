@@ -30,6 +30,24 @@ html {
     margin-top: 5%;
 }
 
+.redDot {
+    height: 25px;
+    width: 25px;
+    background-color: red;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.blueDot {
+    height: 25px;
+    width: 25px;
+    background-color: blue;
+    border-radius: 50%;
+    display: inline-block;
+}
+#resultsModal {
+    overflow: auto !important;
+}
 #left-hud {
     width: 15%;
     height: 100%;

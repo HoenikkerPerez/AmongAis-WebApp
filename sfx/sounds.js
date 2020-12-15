@@ -93,8 +93,8 @@ class SfxAudio {
         this.sfx_switcher_success = new Switcher('sfx/success.mp3', 2);
         this.sfx_switcher_start   = new Switcher('sfx/start.mp3', 1);
         this.sfx_switcher_gameSound   = new Switcher('sfx/Total_Reboot.mp3', 1);
-        // this.sfx_switcher_menuSound   = new Switcher('sfx/LocalForecast.mp3', 1);
-        this.sfx_switcher_menuSound   = new Switcher('sfx/success.mp3', 1);
+        this.sfx_switcher_menuSound   = new Switcher('sfx/LocalForecast.mp3', 1);
+        // this.sfx_switcher_menuSound   = new Switcher('sfx/success.mp3', 1);
     };
 
     _load() {
