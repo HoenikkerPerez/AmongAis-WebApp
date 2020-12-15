@@ -20,6 +20,7 @@ class Ui {
     _gameActivated() {
         // Start game
         document.getElementById("homeUI").remove();
+        document.getElementById("navigation-bar").remove();
         console.debug("UI: gameActivated");
         // Start canvas
         let context = document.getElementById("canvas").getContext("2d");

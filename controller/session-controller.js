@@ -1,10 +1,12 @@
 class SessionController {
 
     _gameClient;
+    _leagueClient;
 
-    constructor(gameClient) {
+    constructor(gameClient, leagueClient) {
         console.debug("SessionController: loading the GameClient instance...");
         this._gameClient = gameClient;
+        this._leagueClient = leagueClient;
         this._load();
 
         console.debug("SessionController: loading the listeners for UI events...");
@@ -56,6 +58,9 @@ class SessionController {
                 // model.inGameName = document.getElementById("ingamenameInput").value;
                 document.getElementById("login-form-wrapper").style.display="none";
                 document.getElementById("startgame-form-wrapper").style.display="";
+                // this._hashEventListener();
+                document.getElementById("navigation-bar").style.display="";
+
                 document.getElementById("ingamenameInput").focus();
                 // enter event
                 document.removeEventListener("keydown", this._keydownLogin, false);
@@ -170,8 +175,54 @@ class SessionController {
             location.reload(); 
         });
 
-        
+        // NAVBAR
+        // window.addEventListener("hashchange", this._hashEventListener);
     }
+
+
+    // _hashEventListener() {
+    //     if(!location.hash)
+    //         location.hash = "#home"
+    //     var homeUI = document.getElementById("homeUI");
+    //     var console = document.getElementById("console");
+    //     var joinTournament = document.getElementById("joinTournament");
+    //     var leaveTournament = document.getElementById("leaveTournament");
+    //     var scheduleTournament = document.getElementById("scheduleTournament");
+    //     var listTournament = document.getElementById("listTournament");
+    //     var globalLeaderboard = document.getElementById("globalLeaderboard");
+        
+    //     homeUI.style.display = "none";
+    //     console.style.display = "none";
+    //     joinTournament.style.display = "none";
+    //     leaveTournament.style.display = "none";
+    //     scheduleTournament.style.display = "none";
+    //     listTournament.style.display = "none";
+    //     globalLeaderboard.style.display = "none";
+
+    //     switch(location.hash) {
+    //         case "#home": 
+    //             homeUI.style.display = "";
+    //             break;
+    //         case "#joinTournament":
+    //             joinTournament.style.display = "";
+    //             break;
+    //         case "#leaveTournament":
+    //             leaveTournament.style.display = "";
+    //             break;
+    //         case "#scheduleTournament":
+    //             scheduleTournament.style.display = "";
+    //             break;
+    //         case "#listTournament":
+    //             listTournament.style.display = "";
+    //             break;
+    //         case "#globalLeaderboard":
+    //             globalLeaderboard.style.display = "";
+    //             break;
+    //         default:
+    //             homeUI.style.display = "";
+    //             break;
+    //     }
+    // }
 
     _keydownLogin(evt) {
         if(evt.key == "Enter")
