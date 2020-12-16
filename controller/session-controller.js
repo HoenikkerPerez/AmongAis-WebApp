@@ -21,7 +21,6 @@ class SessionController {
         this._loadUI();
         // Listeners for reacting to server responses
         this._loadWsMessages();
-        this.sfxAudio.playMenuSound(.1);
     }
 
     static PLAYER = "player";
@@ -55,6 +54,7 @@ class SessionController {
             let username = document.getElementById("usernameInput").value;
             console.debug("LoginController: try to login for " + username);
             if(this._gameClient.login(username)){
+                this.sfxAudio.playMenuSound(.1);
                 model.username = username;
                 // model.inGameName = document.getElementById("ingamenameInput").value;
                 document.getElementById("login-form-wrapper").style.display="none";
