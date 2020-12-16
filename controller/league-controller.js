@@ -216,7 +216,8 @@ class LeagueController {
             tEl.appendChild(player_score);
 
             leaderboardTable.appendChild(tEl);
-        });    
+        });   
+        tournamentModal.appendChild(leaderboardTable)
     }
 
     // LIST
