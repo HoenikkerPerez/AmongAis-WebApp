@@ -141,6 +141,7 @@ class LeagueController {
         tournamentModal.innerHTML = "";
         let playerTable = document.createElement("table")
         playerTable.classList.add("table");
+        playerTable.classList.add("text-white");
         
         let tr = document.createElement("tr");
 
@@ -182,6 +183,7 @@ class LeagueController {
 
         let leaderboardTable = document.createElement("table")
         leaderboardTable.classList.add("table");
+        leaderboardTable.classList.add("text-white");
 
         let tr = document.createElement("tr");
 

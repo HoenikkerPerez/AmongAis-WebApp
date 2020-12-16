@@ -69,6 +69,7 @@ class Ui {
 
         let resultsTable = document.createElement("table")
         resultsTable.classList.add("table");
+        resultsTable.classList.add("text-white");
         
         let tr = document.createElement("tr");
 
