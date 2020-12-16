@@ -207,9 +207,9 @@ class GameClient {
 
     /* SESSION interface */
 
-    createGame(gameName, type, mapSize, balancedTeams) {
+    createGame(gameName, type, mapSize, balancedTeams, battleOfSpecies) {
         //console.debug("Game Client is requesting a game creation for " + gameName);
-        let msg = this._lobby.createGame(gameName, type, mapSize, balancedTeams);
+        let msg = this._lobby.createGame(gameName, type, mapSize, balancedTeams, battleOfSpecies);
         this._send("miticoOggettoCheNonEsiste.CREATE_GAME", msg);
     }
 

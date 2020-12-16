@@ -83,7 +83,8 @@ class SessionController {
             let mapSize = Array.from(document.getElementsByName("mapSizeRadio")).find(r => r.checked).value;
             let mapType = Array.from(document.getElementsByName("mapTypeRadio")).find(r => r.checked).value;
             let balancedTeam = Array.from(document.getElementsByName("teamBalancedRadio")).find(r => r.checked).value == "B"; 
-            this._gameClient.createGame(gameName, mapType, mapSize, balancedTeam);
+            let battleOfSpecies = document.getElementById("battleOfSpeciesCheckbox").checked;
+            this._gameClient.createGame(gameName, mapType, mapSize, balancedTeam, battleOfSpecies);
         });
 
         // Join game
@@ -105,6 +106,7 @@ class SessionController {
         let usernameInput = document.getElementById("usernameInput");
         usernameInput.addEventListener("input", this._validateLogin);
         
+        $('#popoverBattleOfSpecies').popover({ trigger: "hover" });
     }
 
     _loadWsMessages() {
