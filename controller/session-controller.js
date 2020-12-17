@@ -107,6 +107,8 @@ class SessionController {
         usernameInput.addEventListener("input", this._validateLogin);
         
         $('#popoverBattleOfSpecies').popover({ trigger: "hover" });
+        $('#popoverUsernameInput').popover({ trigger: "hover" });
+
     }
 
     _loadWsMessages() {
@@ -237,10 +239,15 @@ class SessionController {
         let loginButton = document.getElementById("loginButton");
         // set focus on login button
 
-        if(usernameInput.value.length == 0) {
+        if(usernameInput.value.length == 0) 
                 loginButton.disabled = true
-        } else {
-            loginButton.disabled = false
+        else {
+            // check ^[a-zA-Z0-9-]+$
+            let letters = /^[a-zA-Z0-9-]+$/;
+            if(usernameInput.value.match(letters)) 
+                loginButton.disabled = false
+            else 
+                loginButton.disabled = true
         }
     };
     
