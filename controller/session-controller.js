@@ -260,13 +260,14 @@ class SessionController {
         let spectateButton = document.getElementById("spectateButton");
         let startButtonNoJoin = document.getElementById("startButtonNoJoin");
 
-        if(gameNameInput.value.length == 0 || ingamenameInput.value.length == 0) {
+        if(gameNameInput.value.length == 0 || ingamenameInput.value.length == 0 || ingamenameInput.value.includes("=")) {
             joinButton.disabled = true;
             spectateButton.disabled = true;
         } else {
             joinButton.disabled = false;
             spectateButton.disabled = false;
         }
+        
         if(gameNameInput.value.length == 0) {
             createButton.disabled = true;
             startButtonNoJoin.disabled = true;
