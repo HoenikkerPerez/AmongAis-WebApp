@@ -34,7 +34,6 @@ class SessionController {
         console.debug("SessionController: joining a name called " + gameName + " as " + inGameName + " (" + userKind + ")");
         // Join game
         // Spectate game
-        ModelManager.snap();
         switch(userKind) {
             case SessionController.PLAYER:
                 this._gameClient.joinGame(gameName, inGameName, username);
@@ -149,6 +148,7 @@ class SessionController {
         }, false);
 
         document.addEventListener("miticoOggettoCheNonEsiste.JOIN_GAME", (evt) => {
+            ModelManager.snap();
             console.debug("SessionController has received a JOIN_GAME response from WS. " + evt.detail);
             let msg = evt.detail;
             if(msg.startsWith("OK")) {
@@ -167,6 +167,7 @@ class SessionController {
         }, false);
 
         document.addEventListener("miticoOggettoCheNonEsiste.SPECTATE_GAME", (evt) => {
+            ModelManager.snap();
             console.debug("SessionController has received a SPECTATE_GAME response from WS. " + evt.detail);
             let msg = evt.detail;
             let msgOk= msg.startsWith("OK");

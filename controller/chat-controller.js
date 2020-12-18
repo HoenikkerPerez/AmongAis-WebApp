@@ -23,7 +23,7 @@ class ChatController {
                 document.getElementById(l.obj).removeEventListener(l.tag, l.handler);
         });
         // Leave game channel
-        this._chat_client.leaveChannel(gamename);
+        this._chat_client.leaveChannel(model.gamename);
         // Terminate this chat instance
         closeChat();
     }

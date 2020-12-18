@@ -442,14 +442,28 @@ var ModelManager = {
     snapshot: undefined,
 
     snap: function() {
-        this.snapshot = JSON.parse(JSON.stringify(person));
+        let createdGames = model.createdGames;
+        let values = JSON.parse(JSON.stringify(model, function(key, val){
+            if(typeof(val) != "function") {
+                console.debug("I'm cloning " + key);
+                return val;
+            } else {
+                console.debug("SKIPPED " + key);
+            }
+        }));
+        this.snapshot = {
+            createdGames: createdGames,
+            values: values
+        }
     },
 
     shot: function() {
         if(this.snapshot) {
-            Object.keys(this.snapshot).forEach((k => {
-                model[k] = this.snapshot[k];
+            Object.keys(this.snapshot.values).forEach((k => {
+                console.debug("Restoring " + k);
+                model[k] = this.snapshot.values[k];
             }).bind(this));
+            model.createdGames = this.snapshot.createdGames;
             this.snapshot = undefined;
         } else {
             console.error("ModelManager is trying to restore a snapshot without having one.");
