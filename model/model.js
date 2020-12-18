@@ -31,16 +31,6 @@ var model = {
             lastDirection: undefined
         },
         pl_list:[]
-        //     pl_list: (2) […]
-            //     0: {…}
-                //     name: "undesiderable1"
-                //     state: "LOBBYOWNER" / "LOBBYGUEST" / "ACTIVE" / "KILLED"
-                //     symbol: "A"
-                //     team: "0"
-                //     x: "13"
-                //     y: "25"
-                // *touring
-                // direction N,E,S,W
     },
 
     NONE: "NONE",
@@ -288,10 +278,10 @@ var model = {
         this.status = status;
         
         // Postprocess the status after it is received from the server
-        if(old != undefined) {
-            this._restoreTouringGame(old, this.status);
-            this._restoreLastDirection(old, this.status);
-        }
+        // if(old != undefined) {
+        this._restoreTouringGame(old, this.status);
+        this._restoreLastDirection(old, this.status);
+        // }
 
         // Fire an event if the match status actually changed
         this._isMatchStatusChange(old.state,status.state);
@@ -451,18 +441,15 @@ var ModelManager = {
 
     snapshot: undefined,
 
-    snap: () => {
-        this.snapshot = {},
-        Object.keys(model).forEach(k => {
-                this.snapshot[k] = model[k];
-        });
+    snap: function() {
+        this.snapshot = JSON.parse(JSON.stringify(person));
     },
 
-    shot: () => {
+    shot: function() {
         if(this.snapshot) {
-            Object.keys(this.snapshot).forEach(k => {
+            Object.keys(this.snapshot).forEach((k => {
                 model[k] = this.snapshot[k];
-            });
+            }).bind(this));
             this.snapshot = undefined;
         } else {
             console.error("ModelManager is trying to restore a snapshot without having one.");
