@@ -77,11 +77,11 @@ class DsController {
         let itsMe = evt.detail.itsMe;
         let data = evt.detail.data;
         let historyList = data.history;
-        
+        let historyTable;
         if(itsMe)
-            let historyTable = document.getElementById("yourHistoryTable");
+            historyTable = document.getElementById("yourHistoryTable");
         else
-            let historyTable = document.getElementById("searchPlayerHistoryTable");
+            historyTable = document.getElementById("searchPlayerHistoryTable");
         
         historyTable.innerHTML = "";
         
