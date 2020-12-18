@@ -32,6 +32,7 @@
         <script src="clients/game-client/lobby-manager.js"></script>
         <script src="clients/game-client/game-client.js"></script>
         <script src="clients/league-client.js"></script>
+        <script src="clients/ds-client.js"></script>        
         <script src="clients/chat-client.js"></script>
 
         <!-- Controller -->
@@ -41,6 +42,7 @@
         <script src="controller/match-controller.js"></script>
         <script src="controller/chat-controller.js"></script>
         <script src="controller/league-controller.js"></script>
+        <script src="controller/ds-controller.js"></script>
 
         <script src="controller/controller.js"></script>
 
@@ -81,14 +83,16 @@
           
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav mr-auto">
+                  
                 <li class="nav-item active">
                   <a class="nav-link" id="homeLink" href="#">Play</span></a>
                 </li>
+
                 <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Tournaments
                   </a>
-                  <div class="dropdown-menu " aria-labelledby="navbarDropdown">
+                  <div class="dropdown-menu " aria-labelledby="navbarDropdown1">
                     <a class="dropdown-item" id="joinTournamentLink" href="#">Join</a>
                     <a class="dropdown-item"  id="leaveTournamentLink" href="#">Leave</a>
                     <!-- <a class="dropdown-item" href="#scheduleTournament">Schedule</a> -->
@@ -96,6 +100,20 @@
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" id="globalLeaderboardLink" href="#">Global Leaderboard</a>
                   </div>
+
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Statistics
+                    </a>
+                    <div class="dropdown-menu " aria-labelledby="navbarDropdown2">
+                      <a class="dropdown-item" id="yourGlobalStatsLink" href="#">Your Global Statistics</a>
+                      <a class="dropdown-item"  id="yourHistoryLink" href="#">Your History</a>
+                      <!-- <a class="dropdown-item" href="#scheduleTournament">Schedule</a> -->
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" id="searchPlayerLink" href="#">Search player</a>
+                    </div>
+                  </li>
+
                 </li>
               </ul>
             </div>
@@ -381,6 +399,37 @@
                 <table id="globalRankingTable" class="table text-white"></table>
             </div>
         </div>
+
+        <!-- STATISTICS -->
+        <div id="yourGlobalStats" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
+            <div class="my-3">
+                <label class="col-sm-4 mb-3 text-center"><h2>Your Global Stats</h2></label>
+                <table id="yourGlobalStatsTable" class="table text-white"></table>
+            </div>            
+        </div>
+        
+        <div id="yourHistory" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
+            <div class="my-3">
+                <label class="col-sm-4 mb-3 text-center"><h2>Your History</h2></label>
+                <table id="yourHistoryTable" class="table text-white"></table>
+            </div>            
+        </div>
+
+        <div id="searchPlayer" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
+            <label class="mb-3 text-center"><h2>Search player</h2></label>
+            <div class="form-row mb-3">
+                <label class="col-sm-4 text-right"></label>
+                <input type="text" class="form-control col-sm-3" id="usernameSearchPlayer" placeholder="username">
+                <input type="button" class="btn btn-danger col-sm-1 ml-1" id="searchPlayerButton" name="searchPlayerButton" value="SEARCH">
+            </div>
+
+            <table id="searchPlayerGlobalStatsTable" class="table text-white"></table>
+
+            <table id="searchPlayerHistoryTable" class="table text-white"></table>
+
+        </div>
+
+
     <footer class="footer">
         <p>Web App Version: v0.9-alpha</p>
     </footer>

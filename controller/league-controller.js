@@ -38,6 +38,9 @@ class LeagueController {
         document.getElementById("leaveTournamentLink").addEventListener("click", (()=> {this._hashEventListener("#leaveTournament")}).bind(this))
         document.getElementById("listTournamentLink").addEventListener("click", (()=> {this._hashEventListener("#listTournament")}).bind(this))
         document.getElementById("globalLeaderboardLink").addEventListener("click", (()=> {this._hashEventListener("#globalLeaderboard")}).bind(this))
+        document.getElementById("yourGlobalStatsLink").addEventListener("click", (()=> {this._hashEventListener("#yourGlobalStatsLink")}).bind(this))
+        document.getElementById("yourHistoryLink").addEventListener("click", (()=> {this._hashEventListener("#yourHistoryLink")}).bind(this))
+        document.getElementById("searchPlayerLink").addEventListener("click", (()=> {this._hashEventListener("#searchPlayerLink")}).bind(this))
         // window.addEventListener("hashchange", this._hashEventListener.bind(this));
     }
 
@@ -369,14 +372,20 @@ class LeagueController {
 
 
     _hashEventListener(page) {
-        var homeUI = document.getElementById("homeUI");
-        var console = document.getElementById("console");
-        var joinTournament = document.getElementById("joinTournament");
-        var leaveTournament = document.getElementById("leaveTournament");
-        // var scheduleTournament = document.getElementById("scheduleTournament");
-        var listTournament = document.getElementById("listTournament");
-        var globalLeaderboard = document.getElementById("globalLeaderboard");
+        let homeUI = document.getElementById("homeUI");
+        let console = document.getElementById("console");
+        let joinTournament = document.getElementById("joinTournament");
+        let leaveTournament = document.getElementById("leaveTournament");
+        // let scheduleTournament = document.getElementById("scheduleTournament");
+        let listTournament = document.getElementById("listTournament");
+        let globalLeaderboard = document.getElementById("globalLeaderboard");
+        // stats
+        let yourGlobalStats = document.getElementById("yourGlobalStats");
+        let yourHistory = document.getElementById("yourHistory");
+        let searchPlayer = document.getElementById("searchPlayer");
         
+
+
         homeUI.style.display = "none";
         console.style.display = "none";
         joinTournament.style.display = "none";
@@ -384,6 +393,10 @@ class LeagueController {
         // scheduleTournament.style.display = "none";
         listTournament.style.display = "none";
         globalLeaderboard.style.display = "none";
+
+        yourGlobalStats.style.display = "none";
+        yourHistory.style.display = "none";
+        searchPlayer.style.display = "none";
 
         switch(page) {
             case "#home": 
@@ -405,6 +418,15 @@ class LeagueController {
             case "#globalLeaderboard":
                 globalLeaderboard.style.display = "";
                 this._leagueClient.getGlobalRanking();
+                break;
+            case "#yourGlobalStatsLink":
+                yourGlobalStats.style.display = "";
+                break;
+            case "#yourHistoryLink":
+                yourHistory.style.display = "";
+                break;
+            case "#searchPlayerLink":
+                searchPlayer.style.display = "";
                 break;
             default:
                 homeUI.style.display = "";
