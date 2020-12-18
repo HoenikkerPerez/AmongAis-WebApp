@@ -630,7 +630,9 @@ class MatchController {
             }
             // Change model
             model.setRunningGame(false, model.kind);
-            // Dispatch event
+            // Restore model snapshot before join
+            ModelManager.shot();
+            // Dispatch "exit game" event
             document.dispatchEvent(new CustomEvent("miticoOggettoCheNonEsiste.EXIT_GAME"));
         });
 

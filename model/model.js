@@ -16,6 +16,7 @@ var model = {
             // ws: "ws://93.39.188.250:8522"
         }
     },
+
     status: {
         ga: "gamename",
         state: "lobby-started-ended",
@@ -445,3 +446,26 @@ var model = {
 // PL: symbol=A name=ardo team=0 x=3 y=27
 // PL: symbol=a name=edo team=1 x=23 y=5
 // «ENDOFSTATUS»
+
+var ModelManager = {
+
+    snapshot: undefined,
+
+    snap: () => {
+        this.snapshot = {},
+        Object.keys(model).forEach(k => {
+                this.snapshot[k] = model[k];
+        });
+    },
+
+    shot: () => {
+        if(this.snapshot) {
+            Object.keys(this.snapshot).forEach(k => {
+                model[k] = this.snapshot[k];
+            });
+            this.snapshot = undefined;
+        } else {
+            console.error("ModelManager is trying to restore a snapshot without having one.");
+        }
+    }
+}

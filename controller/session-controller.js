@@ -34,6 +34,7 @@ class SessionController {
         console.debug("SessionController: joining a name called " + gameName + " as " + inGameName + " (" + userKind + ")");
         // Join game
         // Spectate game
+        ModelManager.snap();
         switch(userKind) {
             case SessionController.PLAYER:
                 this._gameClient.joinGame(gameName, inGameName, username);
