@@ -38,6 +38,8 @@ class MatchController {
         // Stop music
         console.debug("MatchController is stopping the music.");
         this.sfxAudio.stopGameSound();
+        // Terminate this controller instance
+        closeMatch();
     }
 
     constructor(gameClient, sfxAudio) {

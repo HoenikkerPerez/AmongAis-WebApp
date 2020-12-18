@@ -6,6 +6,10 @@ loadChat = function() {
    console.debug("Controller has loaded the Chat.");
 }
 
+closeChat = function() {
+   delete this.chat;
+}
+
 loadMatch = function() {
    // Load Chat
    loadChat();
@@ -13,6 +17,10 @@ loadMatch = function() {
    console.debug("Controller is loading MatchController...");
    this.match = new MatchController(this.gameClient, this.sfxAudio);
    console.debug("Controller has loaded the MatchController.");
+}
+
+closeMatch = function() {
+   delete this.match;
 }
 
 window.onload = function () {

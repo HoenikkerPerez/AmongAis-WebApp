@@ -22,6 +22,8 @@ class ChatController {
             else
                 document.getElementById(l.obj).removeEventListener(l.tag, l.handler);
         });
+        // Terminate this chat instance
+        closeChat();
     }
 
     _parseChatMessage(item) {
