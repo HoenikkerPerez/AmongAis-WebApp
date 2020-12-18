@@ -730,7 +730,11 @@ class MatchController {
                 this._gameClient.accuse(evt.detail);
             }, false);
             // Start game
-            model.timeframe = model.playerTimeframe;
+            // model.timeframe = model.playerTimeframe;
+            model.timeframeMap = model.playerTimeframe;
+            model.connectionTimeframe = model.playerTimeframe;
+            model.timeframeStatus = model.playerTimeframe * 10;
+            
             model.setStartGameTime();
             canvas.focus();
             this._poller();
@@ -762,7 +766,9 @@ class MatchController {
     _loadSpectatorOnRunGame() {
         document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
             // Init human commands
-            model.timeframe = model.spectatorTimeframe;
+            model.timeframeMap = model.spectatorTimeframe;
+            model.connectionTimeframe = model.spectatorTimeframe;
+            model.timeframeStatus = model.spectatorTimeframe * 10;
             document.getElementById("canvas").focus();
             this._poller();
         }, false);
