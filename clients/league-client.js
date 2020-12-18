@@ -1,6 +1,6 @@
 class LeagueClient {
 
-    API_GW = "http://api.dbarasti.com";
+    API_GW = "http://api.dbarasti.com:8080";
 
     // get tournaments leaderboard
     // RESPONSE:
