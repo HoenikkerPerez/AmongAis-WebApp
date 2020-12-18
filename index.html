@@ -275,7 +275,6 @@
             
             <div id="left-hud">
                 <button id="start-button" type="button" class="btn btn-primary" style="display: none;">START</button>
-                <button id="close-button" type="button" class="btn btn-outlne-danger" style="display: none;">CLOSE</button>
                 <div id="emergency-meeting" class="emergency-meeting-yellow"style="display: none;"></div>
                 <!-- <div id="emergency-meeting"></div> -->
 
@@ -286,13 +285,14 @@
                 <canvas id="canvas" tabindex='1'></canvas>
             </div>
 
-            <!-- chat -->
+            <!-- Right column -->
             <div  id="right-hud"> 
                 <div class="form-group">
                     <!-- Button trigger modal -->
                     <button type="button" class="btn btn-primary mr-1 transparent-input" data-toggle="modal" data-target="#settingsModal">
                     Settings
                     </button>
+                    <button id="close-button" type="button" class="btn btn-outlne-danger">CLOSE</button>
                     <!-- <div>
                         <input type="checkbox" id="minimapSwitch" checked>
                         <label for="minimapSwitch">Minimap</label>
