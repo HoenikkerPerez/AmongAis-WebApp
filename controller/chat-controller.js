@@ -1,6 +1,30 @@
 class ChatController {
     _chat_client
 
+    _listeners = [];
+
+    _addChatListener(toWhat, tag, handler, consumes) {
+        if(toWhat === document) {
+            document.addEventListener(tag, handler, consumes);
+        } else {
+            console.debug("ChatController is adding an EventListener for " + toWhat);
+            document.getElementById(toWhat).addEventListener(tag, handler);
+        }
+        this._listeners.push({obj: toWhat, handler: handler});
+    }
+
+    _clearChat() {
+        // Remove listeners
+        this._listeners.forEach((l) => {
+            if(l.obj === document)
+                document.removeEventListener(l.handler);
+            else
+                document.getElementById(l.obj).removeEventListener(l.handler);
+        });
+        // Gently close ChatClient connection
+        delete this._chat_client;
+    }
+
     _parseChatMessage(item) {
         let trimmed = item.replace(/  +/g, ' ');
         let spltmsg = trimmed.split(" ");
@@ -43,7 +67,7 @@ class ChatController {
                     if(parsed.name != undefined) {
                         if(name.startsWith("@") && (channel == model.status.ga)) {
                             let kind = this._parseSystemMessage(text, channel, name);
-                            
+
                             switch(kind) {
                                 case "endgame":
                                     this._receivingEndScores = true;
@@ -71,7 +95,10 @@ class ChatController {
                 }
             }
         });
+        // Load listeners
         this.load();
+        // Load close management
+        this._addChatListener(document, 'miticoOggettoCheNonEsiste.EXIT_GAME', this._clearChat, false);
     }
 
     _parseSystemMessage(msg, channel, name) {
@@ -115,7 +142,7 @@ class ChatController {
             document.dispatchEvent(shootEvent);
             return;
         }
-        
+
         // TODO LEAVING PLAYER
 
         // EMERGENCY MEETING start
@@ -186,29 +213,29 @@ class ChatController {
     }
 
     load() {
-        document.getElementById("chatChannelInput").addEventListener("input", this._validateChannel);
-        document.getElementById("chatChannelButton").addEventListener("click", () => {
+        this._addChatListener("chatChannelInput", "input", this._validateChannel);
+        this._addChatListener("chatChannelButton", "click", () => {
             this._subscribeChatChannel();
             document.getElementById("canvas").focus();
         });
 
-        document.getElementById("chatSendMessageInput").addEventListener("input", this._validateSend);
-        document.getElementById("chatSendMessageInput").addEventListener("keyup", (evt) => {
+        this._addChatListener("chatSendMessageInput", "input", this._validateSend);
+        this._addChatListener("chatSendMessageInput", "keyup", (evt) => {
             if(evt.key === 'Enter') {
                 this._sendChatMessage();
                 document.getElementById("chatSendMessageInput").value = "";
                 this._validateSend();
                 document.getElementById("canvas").focus();
             }});
-        document.getElementById("chatSendChannelInput").addEventListener("input", this._validateSend);
-        document.getElementById("chatSendButton").addEventListener("click", () => {
+        this._addChatListener("chatSendChannelInput", "input", this._validateSend);
+        this._addChatListener("chatSendButton", "click", () => {
             this._sendChatMessage();
             document.getElementById("chatSendMessageInput").value = "";
             this._validateSend();
             document.getElementById("canvas").focus();
         });
         
-        document.addEventListener("MODEL_RUN_GAME", () => {
+        this._addChatListener(document, "MODEL_RUN_GAME", () => {
             // JOIN chat with login name
             console.debug("chat-controller USERNAME SET")
             let username = model.inGameName
@@ -225,13 +252,12 @@ class ChatController {
 
         }, false);
 
-        document.addEventListener("BUTTON_UNSUBSRIBECHANNEL", (evt) => {
+        this._addChatListener(document, "BUTTON_UNSUBSRIBECHANNEL", (evt) => {
             let channel = evt.detail.channel;
             this._chat_client.leaveChannel(channel);
             popupMsg("Channel " + channel + " left", "success");
             model.removeSubscribedChannel(channel);
             document.getElementById("canvas").focus();
-
         });
 
     };

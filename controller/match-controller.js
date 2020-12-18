@@ -1,5 +1,5 @@
 class MatchController {
-    
+
     // This class controls:
     // PHYSICAL GAME
     // MAP HANDLING
@@ -11,14 +11,44 @@ class MatchController {
 
     _gameClient;
 
-    // 
+    _listeners = [];
 
+    _addMatchListener(toWhat, tag, handler, consumes) {
+        if(toWhat === document) {
+            document.addEventListener(tag, handler, consumes);
+        } else {
+            console.debug("ChatController is adding an EventListener for " + toWhat);
+            document.getElementById(toWhat).addEventListener(tag, handler);
+        }
+        this._listeners.push({obj: toWhat, handler: handler});
+    }
+
+    _clearMatch() {
+        // Remove listeners
+        this._listeners.forEach((l) => {
+            console.debug("MatchController is clearing listener on " + l.obj);
+            if(l.obj === document)
+                document.removeEventListener(l.handler);
+            else
+                document.getElementById(l.obj).removeEventListener(l.handler);
+        });
+        // Stop polling
+        console.debug("MatchController is shutting polling down.");
+        this._stopPoller();
+        // Stop music
+        console.debug("MatchController is stopping the music.");
+        this.sfxAudio.stopGameSound();
+    }
 
     constructor(gameClient, sfxAudio) {
         this.sfxAudio = sfxAudio;
         this._gameClient = gameClient;
+        // Load listeners
         this.load();
-        this._trackTransforms(document.getElementById("canvas").getContext("2d"))
+        // Load close management
+        this._addMatchListener(document, 'miticoOggettoCheNonEsiste.EXIT_GAME', this._clearMatch, false);
+        // Canvas stuff
+        this._trackTransforms(document.getElementById("canvas").getContext("2d"));
     }
 
     /* PHYSICAL GAME */
@@ -172,25 +202,8 @@ class MatchController {
         // extract local interesting information from the map
     };
 
-    
-    /* STATUS HANDLING */
 
-    startHandler = function (evt) {
-        switch(evt.key) {
-            // case "Enter":
-            //     // START
-                //  console.debug("MatchController is asking the game client to START the joined game after the ENTER key.");
-            //     this._gameClient.startGame();
-            // break;
-            case "Escape":
-                // LEAVE
-                if(model.status.gameActive){
-                    console.debug("MatchController is asking the game client to LEAVE after the ESCAPE key.");
-                    this._gameClient.leave();
-                }
-                break;
-        }
-    };
+    /* STATUS HANDLING */
 
     getStatusHandler(evt){
         //console.debug("getStatusHandler: " + evt.detail);
@@ -277,24 +290,22 @@ class MatchController {
         this._mapPoller();
     };
 
-    // _poller() {
-    //     let timeframe = model.timeframe;
-    //     this._pollOnce();
-    //     window.setTimeout(function(){ this._poller() }.bind(this), timeframe);
-    // };
-
-
     _statusPoller() {
         let timeframe = model.timeframeStatus;
         this._getStatus();
-        window.setTimeout(function(){ this._statusPoller() }.bind(this), timeframe);
+        this._sPoller = window.setTimeout(function(){ this._statusPoller() }.bind(this), timeframe);
     };
 
     _mapPoller() {
         let timeframe = model.timeframeMap;
         this._getMap();
-        window.setTimeout(function(){ this._mapPoller() }.bind(this), timeframe);
+        this._mPoller = window.setTimeout(function(){ this._mapPoller() }.bind(this), timeframe);
     };
+
+    _stopPoller() {
+        window.clearTimeout(this._sPoller);
+        window.clearTimeout(this._mPoller);
+    }
 
     /* SOCIAL DEDUCTION GAME */
 
@@ -573,35 +584,45 @@ class MatchController {
 
     load() {
         // Stop Music
-        document.addEventListener("CHAT_GAME_FINISHED", (() => {this.sfxAudio.stopGameSound()}).bind(this));
-        // PATHFINDING
-        document.addEventListener("miticoOggettoCheNonEsiste.MOVE", ((evt) => {this._moveHandler(evt, this._gameClient)}).bind(this), false);
+        this._addMatchListener(document,"CHAT_GAME_FINISHED", (() => {this.sfxAudio.stopGameSound()}).bind(this));
 
-        document.addEventListener("MODEL_SETPATHFINDING",  ((evt) => {this._pathfindingMove(evt, this._gameClient)}).bind(this), false);
+        // Exit match
+        this._addMatchListener('close-button', 'click', () => {
+            if(model.status.gameActive){
+                console.debug("MatchController is asking the game client to LEAVE after the ESCAPE key.");
+                this._gameClient.leave();
+            }
+            document.dispatchEvent(new CustomEvent("miticoOggettoCheNonEsiste.EXIT_GAME"));
+        });
+
+        // PATHFINDING
+        this._addMatchListener(document,"miticoOggettoCheNonEsiste.MOVE", ((evt) => {this._moveHandler(evt, this._gameClient)}).bind(this), false);
+
+        this._addMatchListener(document,"MODEL_SETPATHFINDING",  ((evt) => {this._pathfindingMove(evt, this._gameClient)}).bind(this), false);
 
         // MAP
-        document.addEventListener("miticoOggettoCheNonEsiste.LOOK_MAP", (this.lookMapHandler).bind(this), false);
+        this._addMatchListener(document,"miticoOggettoCheNonEsiste.LOOK_MAP", (this.lookMapHandler).bind(this), false);
 
         // Shoot OK event is handled by chat for every player (included "me")
-        document.addEventListener("CHAT_SHOOT", (evt) => {this.shootHandler(evt);});
+        this._addMatchListener(document,"CHAT_SHOOT", (evt) => {this.shootHandler(evt);});
 
         // ACCUSE 
-        document.addEventListener("miticoOggettoCheNonEsiste.ACCUSE", ((evt) => { this.accuseResponseHandler(evt) }).bind(this), false);
+        this._addMatchListener(document,"miticoOggettoCheNonEsiste.ACCUSE", ((evt) => { this.accuseResponseHandler(evt) }).bind(this), false);
 
         // TOURING
-        document.addEventListener("miticoOggettoCheNonEsiste.TOURING", ((evt) => { this.touringResponseHandler(evt, this._touringQueue.shift()) }).bind(this), false);
+        this._addMatchListener(document,"miticoOggettoCheNonEsiste.TOURING", ((evt) => { this.touringResponseHandler(evt, this._touringQueue.shift()) }).bind(this), false);
 
         // STATUS
-        document.addEventListener("STATUS", this.getStatusHandler, false);
+        this._addMatchListener(document,"STATUS", this.getStatusHandler, false);
 
-        document.addEventListener("MODEL_MUSIC_VOLUME", ((evt) => {
+        this._addMatchListener(document,"MODEL_MUSIC_VOLUME", ((evt) => {
             this.sfxAudio.changeGameVolume(evt.detail.volume)}).bind(this))
-        // document.addEventListener("MODEL_SETGAMENAME", this.init, false);
-        document.addEventListener("MODEL_RUN_GAME", () => {
+        // this._addMatchListener(document,"MODEL_SETGAMENAME", this.init, false);
+        this._addMatchListener(document,"MODEL_RUN_GAME", () => {
             // Init human commands
             // Session-related commands during the lobby (keys)
             if(model.imCreator(model.status.ga)){
-                document.getElementById("start-button").addEventListener("click", () => {
+                this._addMatchListener("start-button","click", () => {
                     console.debug("MatchController is asking the game client to START the joined game");
                     this._gameClient.startGame(model.status.ga);
                 });
@@ -629,54 +650,22 @@ class MatchController {
             }
         }, false);
 
-        let canvas = document.getElementById("canvas");
-        canvas.addEventListener('mousedown', ((evt) => {this._mouseDownHandler(evt)}).bind(this),false);
+        //let canvas = document.getElementById("canvas");
+        this._addMatchListener('canvas','mousedown', ((evt) => {this._mouseDownHandler(evt)}).bind(this),false);
 
-        canvas.addEventListener('mousemove', ((evt) => {this._mouseMoveHandler(evt)}).bind(this),false);
+        this._addMatchListener('canvas','mousemove', ((evt) => {this._mouseMoveHandler(evt)}).bind(this),false);
 
-        canvas.addEventListener('mouseup', ((evt) => {this._mouseUpHandler(evt)}).bind(this),false);
+        this._addMatchListener('canvas','mouseup', ((evt) => {this._mouseUpHandler(evt)}).bind(this),false);
 
-        canvas.addEventListener('DOMMouseScroll', ((evt) => {this._handleScroll(evt)}).bind(this),false);
-        canvas.addEventListener('mousewheel', ((evt) => {this._handleScroll(evt)}).bind(this),false);
+        this._addMatchListener('canvas','DOMMouseScroll', ((evt) => {this._handleScroll(evt)}).bind(this),false);
+        this._addMatchListener('canvas','mousewheel', ((evt) => {this._handleScroll(evt)}).bind(this),false);
 
-        // window.addEventListener("resize", ((evt) => {this._resizeCanvasHandler(evt)}).bind(this),false);
-
-        canvas.addEventListener("click", ((evt) => {this._clickHandler(evt)}).bind(this),false);
-
-        // // SHOW MINIMAP
-        // let minimapSwitch = document.getElementById("minimapSwitch");
-        // minimapSwitch.addEventListener("change", (evt)=> {
-        //     if(minimapSwitch.checked) 
-        //         model.showMinimap(true);
-        //     else 
-        //         model.showMinimap(false);
-        //     model.startRefreshMap();
-
-        // });
-
-        // // GRID VEW
-        // let gridSwitch = document.getElementById("gridViewSwitch");
-        // gridSwitch.addEventListener("change", (evt)=> {
-        //     if(gridSwitch.checked) 
-        //         model.showGrid(true);
-        //     else
-        //         model.showGrid(false);
-        //     model.startRefreshMap();
-        // });
-        // // lowResolutionMap VEW
-        // let lowResolutionSwitch = document.getElementById("lowResolutionSwitch");
-        // lowResolutionSwitch.addEventListener("change", (evt)=> {
-        //     if(lowResolutionSwitch.checked) 
-        //         model.lowResolutionMap(true);
-        //     else
-        //         model.lowResolutionMap(false);
-        //     model.startRefreshMap();
-        // });
+        this._addMatchListener('canvas',"click", ((evt) => {this._clickHandler(evt)}).bind(this),false);
 
         // SETTINGS
         // SHOW MINIMAP
         let minimapSwitch = document.getElementById("minimapSwitch");
-        minimapSwitch.addEventListener("change", (evt)=> {
+        this._addMatchListener('minimapSwitch',"change", (evt)=> {
             if(minimapSwitch.checked) 
                 model.showMinimap(true);
             else 
@@ -687,7 +676,7 @@ class MatchController {
 
         // GRID VEW
         let gridSwitch = document.getElementById("gridViewSwitch");
-        gridSwitch.addEventListener("change", (evt)=> {
+        this._addMatchListener('gridViewSwitch',"change", (evt)=> {
             if(gridSwitch.checked) 
                 model.showGrid(true);
             else
@@ -696,7 +685,7 @@ class MatchController {
         });
         // lowResolutionMap VEW
         let lowResolutionSwitch = document.getElementById("lowResolutionSwitch");
-        lowResolutionSwitch.addEventListener("change", (evt)=> {
+        this._addMatchListener('lowResolutionSwitch',"change", (evt)=> {
             if(lowResolutionSwitch.checked) 
                 model.lowResolutionMap(true);
             else
@@ -705,7 +694,7 @@ class MatchController {
         });
 
         let volumeSlider = document.getElementById("volumeSlider");
-        volumeSlider.addEventListener("change", (evt)=> {
+        this._addMatchListener('volumeSlider',"change", (evt)=> {
             model.setMusicVolume(volumeSlider.value/100);
             // model.startRefreshMap();
         });
@@ -718,13 +707,13 @@ class MatchController {
 
     _loadPlayerOnRunGame() {
 
-        document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
+        this._addMatchListener(document,"MODEL_MATCH_STATUS_ACTIVE", () => {
             // Init human commands
             console.debug("match-controller catches MODEL_MATCH_STATUS_ACTIVE")
             let canvas = document.getElementById("canvas");
-            canvas.addEventListener("keyup", (evt) => {this.humanHandler(evt, this._gameClient)}, false);
+            this._addMatchListener('canvas',"keyup", (evt) => {this.humanHandler(evt, this._gameClient)}, false);
             // Accuse Button
-            document.addEventListener("BUTTON_ACCUSE", (evt) => {
+            this._addMatchListener(document,"BUTTON_ACCUSE", (evt) => {
                 let teammateName = evt.detail;
                 // popupMsg("A vote of no confidence for teammate: " + teammateName, "warning");
                 this._gameClient.accuse(evt.detail);
@@ -736,12 +725,12 @@ class MatchController {
             this._poller();
         }, false);
         
-        document.addEventListener("MODEL_PLAYER_JOINED", () => {
+        this._addMatchListener(document,"MODEL_PLAYER_JOINED", () => {
              this._pollOnce(); // TODO POLLING: this._poller(); 
              model.startRefreshMap();
         }, false);
 
-        canvas.addEventListener("contextmenu", ((evt) => {
+        this._addMatchListener('canvas',"contextmenu", ((evt) => {
             // Prevent opening right click menu
             if(evt.preventDefault != undefined) evt.preventDefault(); if(evt.stopPropagation != undefined) evt.stopPropagation();
             // Compute direction and shoot
@@ -749,7 +738,7 @@ class MatchController {
         }).bind(this),false);
 
         // Touring Button
-        document.addEventListener("BUTTON_TOURING", (evt) => {
+        this._addMatchListener(document,"BUTTON_TOURING", (evt) => {
             let name = evt.detail.name;
             let touringChoice = evt.detail.touring;
             this._touringQueue.push({name: name, touring: touringChoice});
@@ -760,14 +749,14 @@ class MatchController {
     // Spectator-specific listeners
 
     _loadSpectatorOnRunGame() {
-        document.addEventListener("MODEL_MATCH_STATUS_ACTIVE", () => {
+        this._addMatchListener(document,"MODEL_MATCH_STATUS_ACTIVE", () => {
             // Init human commands
             model.timeframe = model.spectatorTimeframe;
             document.getElementById("canvas").focus();
             this._poller();
         }, false);
 
-        document.addEventListener("MODEL_PLAYER_JOINED", () => {
+        this._addMatchListener(document,"MODEL_PLAYER_JOINED", () => {
             this._pollOnce(); // TODO POLLING: this._poller(); 
             model.startRefreshMap();
        }, false);

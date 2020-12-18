@@ -1,12 +1,11 @@
 class SessionController {
 
     _gameClient;
-    _leagueClient;
+    sfxAudio;
 
-    constructor(gameClient, leagueClient, sfxAudio) {
+    constructor(gameClient, sfxAudio) {
         console.debug("SessionController: loading the GameClient instance...");
         this._gameClient = gameClient;
-        this._leagueClient = leagueClient;
         this.sfxAudio = sfxAudio;
         this._load();
 
@@ -47,6 +46,25 @@ class SessionController {
         }
     }
 
+    _loginButShouldBeInView() {
+        this.sfxAudio.playMenuSound(.1);
+        // model.inGameName = document.getElementById("ingamenameInput").value;
+        document.getElementById("login-form-wrapper").style.display="none";
+        document.getElementById("startgame-form-wrapper").style.display="";
+        // this._hashEventListener();
+        document.getElementById("navigation-bar").style.display="";
+        document.getElementById("ingamenameInput").focus();
+    }
+
+    _logoutButShouldBeInView() {
+        this.sfxAudio.stopMenuSound();
+        // model.inGameName = document.getElementById("ingamenameInput").value;
+        document.getElementById("login-form-wrapper").style.display="";
+        document.getElementById("startgame-form-wrapper").style.display="none";
+        // this._hashEventListener();
+        document.getElementById("navigation-bar").style.display="none";
+    }
+
     _loadUI() {
         // Login
         document.getElementById("loginButton").addEventListener("click", () => {
@@ -54,15 +72,8 @@ class SessionController {
             let username = document.getElementById("usernameInput").value;
             console.debug("LoginController: try to login for " + username);
             if(this._gameClient.login(username)){
-                this.sfxAudio.playMenuSound(.1);
                 model.username = username;
-                // model.inGameName = document.getElementById("ingamenameInput").value;
-                document.getElementById("login-form-wrapper").style.display="none";
-                document.getElementById("startgame-form-wrapper").style.display="";
-                // this._hashEventListener();
-                document.getElementById("navigation-bar").style.display="";
-
-                document.getElementById("ingamenameInput").focus();
+                this._loginButShouldBeInView();
                 // enter event
                 document.removeEventListener("keydown", this._keydownLogin, false);
             }
@@ -107,6 +118,13 @@ class SessionController {
         usernameInput.addEventListener("input", this._validateLogin);
         
         $('#popoverBattleOfSpecies').popover({ trigger: "hover" });
+
+        // Logout
+        document.getElementById('logoutLink').addEventListener("click", () => {
+            model.username = undefined; // Better to avoid explicit null values with model.logout()
+            this._logoutButShouldBeInView();
+            document.addEventListener("keydown", this._keydownLogin, false);
+        }, false)
     }
 
     _loadWsMessages() {
@@ -136,10 +154,12 @@ class SessionController {
                 // Remove home UI elements
                 console.debug("Session Controller is going to set the game as running with user kind " + model.PLAYER);
                 model.setRunningGame(true, model.PLAYER);
+                loadMatch();
             } else if(msg.startsWith("ERROR 502")) {
                 console.debug("Session Controller is going to force the spectator mode because of server error: " + msg);
                 popupMsg(msg + " received from the server. Activating spectator mode for game " + model.status.ga, "success");
                 this._gameClient.spectateGame(model.status.ga);
+                loadMatch();
             } else {
                 popupMsg(msg,"danger")
             } 
@@ -177,55 +197,7 @@ class SessionController {
             alert("This has been so refreshing!");
             location.reload(); 
         });
-
-        // NAVBAR
-        // window.addEventListener("hashchange", this._hashEventListener);
     }
-
-
-    // _hashEventListener() {
-    //     if(!location.hash)
-    //         location.hash = "#home"
-    //     var homeUI = document.getElementById("homeUI");
-    //     var console = document.getElementById("console");
-    //     var joinTournament = document.getElementById("joinTournament");
-    //     var leaveTournament = document.getElementById("leaveTournament");
-    //     var scheduleTournament = document.getElementById("scheduleTournament");
-    //     var listTournament = document.getElementById("listTournament");
-    //     var globalLeaderboard = document.getElementById("globalLeaderboard");
-        
-    //     homeUI.style.display = "none";
-    //     console.style.display = "none";
-    //     joinTournament.style.display = "none";
-    //     leaveTournament.style.display = "none";
-    //     scheduleTournament.style.display = "none";
-    //     listTournament.style.display = "none";
-    //     globalLeaderboard.style.display = "none";
-
-    //     switch(location.hash) {
-    //         case "#home": 
-    //             homeUI.style.display = "";
-    //             break;
-    //         case "#joinTournament":
-    //             joinTournament.style.display = "";
-    //             break;
-    //         case "#leaveTournament":
-    //             leaveTournament.style.display = "";
-    //             break;
-    //         case "#scheduleTournament":
-    //             scheduleTournament.style.display = "";
-    //             break;
-    //         case "#listTournament":
-    //             listTournament.style.display = "";
-    //             break;
-    //         case "#globalLeaderboard":
-    //             globalLeaderboard.style.display = "";
-    //             break;
-    //         default:
-    //             homeUI.style.display = "";
-    //             break;
-    //     }
-    // }
 
     _keydownLogin(evt) {
         if(evt.key == "Enter")
