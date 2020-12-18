@@ -23,7 +23,7 @@ closeMatch = function() {
    delete this.match;
 }
 
-window.onload = function () {
+loadController = function() {
    // Loading session
    console.debug("Controller: loading GameClient...");
    let gameClient = new GameClient("GAMECLIENT");

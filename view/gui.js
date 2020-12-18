@@ -1,6 +1,6 @@
-// window.onload = function () {
+loadView = function() {
     console.debug("Gui: loading Ui...");
     let ui = new Ui();
-    console.debug("WorldUi: loading WorldUi...");
+    // console.debug("WorldUi: loading WorldUi...");
     // let worldui = new WorldUi();
-//  };
+}

@@ -308,7 +308,7 @@ var model = {
         this.kind = kindOfUser;
         // preprocess status
         this.isRunning = isRunning;
-        document.dispatchEvent(new CustomEvent("MODEL_RUN_GAME", {detail:isRunning}));
+        document.dispatchEvent(new CustomEvent("MODEL_RUN_GAME", { detail: {running: isRunning} }));
     },
 
     setGameActive: function(){

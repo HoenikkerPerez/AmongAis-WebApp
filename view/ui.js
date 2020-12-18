@@ -15,22 +15,32 @@ class Ui {
         // Listeners for UI
         this._loadWsMessages();
         this._loadUI();
+        // Load WorldUI
+        let context = document.getElementById("canvas").getContext("2d");
+        let worldui = new WorldUi(context);
+        // Load HUD
+        let hudui = new HudUi();
     };
 
     _gameActivated() {
         // Start game
-        document.getElementById("homeUI").remove();
-        document.getElementById("navigation-bar").remove();
+        document.getElementById("homeUI").style.display = "none";
+        document.getElementById("navigation-bar").style.display = "none";
         console.debug("UI: gameActivated");
-        // Start canvas
-        let context = document.getElementById("canvas").getContext("2d");
-        
+
         // create table for WORLD | HUD | CHAT
-        document.getElementById("console").style.display = "";
-        let worldui = new WorldUi(context);
-        let hudui = new HudUi();
-        
+        document.getElementById("console").style.display = "";        
     };
+
+    _gameDeactivated() {
+        // Enable home view
+        document.getElementById("homeUI").style.display = "";
+        document.getElementById("navigation-bar").style.display = "";
+        console.debug("UI: gameDeactivated");
+
+        // Remove match view
+        document.getElementById("console").style.display = "none";
+    }
 
     _gameStarted(){
         popupMsg("Match is START: Let's get ready to rumble!!!!!", "success");
@@ -116,17 +126,23 @@ class Ui {
     _loadWsMessages() {
         console.debug("UI: _loadWsMessages");
 
-        document.addEventListener("MODEL_RUN_GAME", () => {
-            this._gameActivated();
-            if(model.kind == model.PLAYER){
-                let msg = "Gameplay instructions:\n";
-                msg += "Keyboard movement: [W][A][S][D]\n"
-                msg += "Keyboard Shoot: [  space-bar  ]\n"
-                msg += "Zoom +/- : Mouse-Weel\n"
-                msg += "Move view on map: Muouse-Left drag-n-drop\n"
-                msg += "Mouse Shoot: Muouse-Right\n"
-                msg += "Path-Finding: [Ctrl] + Mouse-Left\n"
-                popupMsg(msg,"info",15000);
+        document.addEventListener("MODEL_RUN_GAME", (e) => {
+            let running = e.detail.running;
+            console.debug("Ui has received a running variation. So isRunning is now " + running);
+            if(running) {
+                this._gameActivated();
+                if(model.kind == model.PLAYER) {
+                    let msg = "Gameplay instructions:\n";
+                    msg += "Keyboard movement: [W][A][S][D]\n"
+                    msg += "Keyboard Shoot: [  space-bar  ]\n"
+                    msg += "Zoom +/- : Mouse-Weel\n"
+                    msg += "Move view on map: Muouse-Left drag-n-drop\n"
+                    msg += "Mouse Shoot: Muouse-Right\n"
+                    msg += "Path-Finding: [Ctrl] + Mouse-Left\n"
+                    popupMsg(msg,"info",15000);
+                }
+            } else {
+                this._gameDeactivated();
             }
         }, false);
 

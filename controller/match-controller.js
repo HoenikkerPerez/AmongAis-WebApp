@@ -628,6 +628,9 @@ class MatchController {
                 console.debug("MatchController is asking the game client to LEAVE after the ESCAPE key.");
                 this._gameClient.leave();
             }
+            // Change model
+            model.setRunningGame(false, model.kind);
+            // Dispatch event
             document.dispatchEvent(new CustomEvent("miticoOggettoCheNonEsiste.EXIT_GAME"));
         });
 
