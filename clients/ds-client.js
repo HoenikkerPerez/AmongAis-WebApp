@@ -18,7 +18,7 @@ class DsClient {
         contentType: 'application/json; charset=utf-8',
         success: function(data) {
             console.debug(data)
-            document.dispatchEvent(new CustomEvent("DS_GLOBALSTATISTICS", {detail: {data:data}}));                      
+            document.dispatchEvent(new CustomEvent("DS_GLOBALSTATISTICS", {detail: {itsMe: false, data:data}}));                      
         },
         type: 'GET',
         timeout: 10000 
@@ -40,7 +40,7 @@ class DsClient {
           contentType: 'application/json; charset=utf-8',
           success: function(data) {
               console.debug(data)
-              document.dispatchEvent(new CustomEvent("DS_HISTORY", {detail: {data:data}}));                      
+              document.dispatchEvent(new CustomEvent("DS_HISTORY", {detail: {itsMe: false, data:data}}));                      
           },
           type: 'GET',
           timeout: 10000 
@@ -64,7 +64,7 @@ class DsClient {
             contentType: 'application/json; charset=utf-8',
             success: function(data) {
                 console.debug(data)
-                document.dispatchEvent(new CustomEvent("DS_MYHISTORY", {detail: {data:data}}));                      
+                document.dispatchEvent(new CustomEvent("DS_HISTORY", {detail: {itsMe: true, data:data}}));                      
             },
             type: 'GET',
             timeout: 10000 
@@ -89,7 +89,7 @@ class DsClient {
             contentType: 'application/json; charset=utf-8',
             success: function(data) {
                 console.debug(data)
-                document.dispatchEvent(new CustomEvent("DS_MYGLOBALSTATISTICS", {detail: {data:data}}));                      
+                document.dispatchEvent(new CustomEvent("DS_GLOBALSTATISTICS", {detail: {itsMe: false, data:data}}));                      
             },
             type: 'GET',
             timeout: 10000 
