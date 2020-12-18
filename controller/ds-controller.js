@@ -64,11 +64,11 @@ class DsController {
         let itsMe = evt.detail.itsMe;
         let data = evt.detail.data;
         let globalStatistics = data.global_statistics;
-        
+        let globalStatisticsTable;
         if(itsMe)
-            let globalStatisticsTable = document.getElementById("yourGlobalStatsTable");
+            globalStatisticsTable = document.getElementById("yourGlobalStatsTable");
         else
-            let globalStatisticsTable = document.getElementById("searchPlayerGlobalStatsTable");
+            globalStatisticsTable = document.getElementById("searchPlayerGlobalStatsTable");
 
     }
 
