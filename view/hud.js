@@ -98,6 +98,22 @@ class HudUi {
             let msg = evt.detail;
             $("#emergency-meeting").prepend("<div>" + msg + "</div>");
         }, false);
+
+        document.addEventListener("CHAT_KILL", (evt) => {
+            let murder = evt.detail.murder;
+            let murdered = evt.detail.murdered;
+            let murderColor = murder.team == "0" ? "red" : "blue";
+            let murderedColor = murder.team == "0" ? "red" : "blue";
+            console.debug("hud displaying kill: " + murder + " kills " + murdered);
+            let notificationHtml = '<p>' 
+                            + '<span style="color: ' + murderColor +  '" >' + murdered.name + '</span>' 
+                            + ' killed by '
+                            + '<span style="color: ' + murderedColor +  '" >' + murder.name + '</span></p>';
+            console.debug("notification toast kill shows: " + notificationHtml)
+            $('#notificationToast')
+                .html(notificationHtml)
+                .toast("show");
+        }, false);
     };
 
     meeting_countdown(times, id){

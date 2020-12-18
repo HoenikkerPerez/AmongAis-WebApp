@@ -107,6 +107,8 @@ class SessionController {
         usernameInput.addEventListener("input", this._validateLogin);
         
         $('#popoverBattleOfSpecies').popover({ trigger: "hover" });
+        $('#popoverUsernameInput').popover({ trigger: "hover" });
+
     }
 
     _loadWsMessages() {
@@ -237,10 +239,15 @@ class SessionController {
         let loginButton = document.getElementById("loginButton");
         // set focus on login button
 
-        if(usernameInput.value.length == 0) {
+        if(usernameInput.value.length == 0) 
                 loginButton.disabled = true
-        } else {
-            loginButton.disabled = false
+        else {
+            // check ^[a-zA-Z0-9-]+$
+            let letters = /^[a-zA-Z0-9-]+$/;
+            if(usernameInput.value.match(letters)) 
+                loginButton.disabled = false
+            else 
+                loginButton.disabled = true
         }
     };
     
@@ -253,13 +260,14 @@ class SessionController {
         let spectateButton = document.getElementById("spectateButton");
         let startButtonNoJoin = document.getElementById("startButtonNoJoin");
 
-        if(gameNameInput.value.length == 0 || ingamenameInput.value.length == 0) {
+        if(gameNameInput.value.length == 0 || ingamenameInput.value.length == 0 || ingamenameInput.value.includes("=")) {
             joinButton.disabled = true;
             spectateButton.disabled = true;
         } else {
             joinButton.disabled = false;
             spectateButton.disabled = false;
         }
+        
         if(gameNameInput.value.length == 0) {
             createButton.disabled = true;
             startButtonNoJoin.disabled = true;
