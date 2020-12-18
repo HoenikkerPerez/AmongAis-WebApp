@@ -22,6 +22,8 @@ class ChatController {
             else
                 document.getElementById(l.obj).removeEventListener(l.tag, l.handler);
         });
+        // Leave game channel
+        this._chat_client.leaveChannel(gamename);
         // Terminate this chat instance
         closeChat();
     }
