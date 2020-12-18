@@ -60,6 +60,7 @@ class SessionController {
                 document.getElementById("login-form-wrapper").style.display="none";
                 document.getElementById("startgame-form-wrapper").style.display="";
                 // this._hashEventListener();
+                document.getElementById("usernameNavbar").innerHTML = username;
                 document.getElementById("navigation-bar").style.display="";
 
                 document.getElementById("ingamenameInput").focus();
