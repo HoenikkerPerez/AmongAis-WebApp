@@ -124,7 +124,7 @@ class WorldUi {
 
         this._load();
 
-        model.shooting.duration = SHOOTING_SEQUENCE.length
+        model.shooting.duration = Terrain.SHOOTING_SEQUENCE.length
 
     };
 
@@ -644,7 +644,10 @@ class WorldUi {
                                     case "S": tile = Terrain.PLAYER_RED[3]; break;
                                     default:  tile = Terrain.PLAYER_RED[3]; break;
                                 }
-                                tile[0]=model.getShootAnimationStep(pl.name);
+                                let shoot_step = model.getShootAnimationStep(pl.name);
+                                if(shoot_step>=0){
+                                    tile = [Terrain.SHOOTING_SEQUENCE[shoot_step], tile[1]];
+                                }
                                 if (team == 0) {
                                     atlas = this.tilePlayerRed;
                                     tiledim = 64;

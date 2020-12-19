@@ -209,7 +209,7 @@ var model = {
             this.shooting.animations[shooter] -= 1;
             return this.shooting.duration - s;
         }
-        return  0;
+        return  -1;
     },
 
     setPath(steps) {
