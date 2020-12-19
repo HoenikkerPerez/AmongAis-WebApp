@@ -632,6 +632,7 @@ class MatchController {
             // Change model
             model.setRunningGame(false, model.kind);
             // Restore model snapshot before join
+            window.cancelAnimationFrame(model.world.animation); // stop map animations
             ModelManager.shot();
             // Dispatch "exit game" event
             document.dispatchEvent(new CustomEvent("miticoOggettoCheNonEsiste.EXIT_GAME"));

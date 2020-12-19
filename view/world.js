@@ -227,22 +227,22 @@ class WorldUi {
 
     _initCanvasSize() {
         // Lookup the size the browser is displaying the canvas.
-        let displayWidth  = window.innerWidth//*0.90;
-        let displayHeight = window.innerHeight//*0.90;
+        model.displayWidth  = window.innerWidth//*0.90;
+        model.displayHeight = window.innerHeight//*0.90;
 
         if(model.world._map.cols == model.world._map.rows) { //SQUARE MAP
-            displayWidth = displayHeight = Math.min(displayWidth, displayHeight);
+            model.displayWidth = model.displayHeight = Math.min(model.displayWidth, model.displayHeight);
         } else { // WIDE MAP
-            displayWidth = displayHeight = Math.min(displayWidth/2, displayHeight);
+            model.displayWidth = model.displayHeight = Math.min(model.displayWidth/2, model.displayHeight);
         }
         // map fit all the screen
-        this._tsizeMap = Math.floor(displayHeight / model.world._map.rows)
+        this._tsizeMap = Math.floor(model.displayHeight / model.world._map.rows)
         this.ctx.canvas.width  = this._tsizeMap * model.world._map.cols;
         this.ctx.canvas.height = this._tsizeMap * model.world._map.rows;
     }
 
     renderMap() {
-        if (model.world._imageLoaded && model.world._map != undefined) {
+        if (model.world._imageLoaded && model.world._map != undefined && model.world._map != []) {
             if (!model.world._initSize) {
                 this._initCanvasSize();
                 model.world._initSize = true;
@@ -261,7 +261,7 @@ class WorldUi {
                 model.stopRefreshMap();
             }
         };
-        window.requestAnimationFrame(this.renderMap.bind(this));
+        model.world.animation = window.requestAnimationFrame(this.renderMap.bind(this));
     };
 
 

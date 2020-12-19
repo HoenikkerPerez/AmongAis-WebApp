@@ -76,7 +76,8 @@ var model = {
         _imageLoaded: false,
         showGrid: false,
         showMinimap: true,
-        refresh: false
+        refresh: false,
+        animation: undefined
     },
     musicVolume: 0.3,
 
