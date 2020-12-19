@@ -70,6 +70,10 @@ var model = {
     },
     meetingsQueue: [],
     shoots: [],
+    shooting: {
+        duration: 10,
+        animations: {} // {name:____, cnt:10}
+    }, 
     dieing: [], // [{name:____, cnt:5}]
     pathfindigMoves: [],
     path: [],
@@ -185,6 +189,27 @@ var model = {
         }
         this.startRefreshMap();
         document.dispatchEvent(new CustomEvent("MODEL_SETMAP", {detail: {map:map}}));
+    },
+
+    setDirection(name, direction){
+        this.pl_directions[name] = direction;
+    },
+
+    // Shooting Animation
+    shootAnimationStart(shooter, direction) {
+        // if(this.shooting.animations[shooter]==undefined){
+        // }
+        this.shooting.animations[shooter] = this.shooting.duration;
+        this.setDirection(direction);
+    },
+
+    getShootAnimationStep(shooter) {
+        let s = this.shooting.animations[shooter]
+        if((s != undefined) && (s>0)){
+            this.shooting.animations[shooter] -= 1;
+            return this.shooting.duration - s;
+        }
+        return  0;
     },
 
     setPath(steps) {
