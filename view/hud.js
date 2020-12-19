@@ -29,12 +29,12 @@ class HudUi {
 
         document.addEventListener("MODEL_STATE_KILLED", () => {
             console.debug("hud displaying killing status");
-            popupMsg("WASTED!!!\nYou are dead ... not a BIG surprise!", "danger");
+            _popupMsg("WASTED!!!\nYou are dead ... not a BIG surprise!", "danger");
         }, false);
 
         document.addEventListener("MODEL_STATE_LOBBYGUEST", () => {
             console.debug("hud displaying lobbyguess status");
-            popupMsg("Welcome! Please wait for the match beginning", "success");
+            _popupMsg("Welcome! Please wait for the match beginning", "success");
         }, false);
 
         // Show-Start Button
@@ -51,7 +51,7 @@ class HudUi {
 
         document.addEventListener("MODEL_MEETING_START", (evt) => {
             console.debug("hud EMERGENCY MEETING START");
-            popupMsg("EMERGENCY MEETING START!!!", "danger");
+            _popupMsg("EMERGENCY MEETING START!!!", "danger");
             let meet_div = document.getElementById("emergency-meeting");
             
             let who_start_name = evt.detail;
@@ -68,7 +68,7 @@ class HudUi {
 
         document.addEventListener("MODEL_MEETING_END", () => {
             console.debug("hud EMERGENCY MEETING END");
-            // popupMsg("EMERGENCY MEETING END!!!", "danger");
+            // _popupMsg("EMERGENCY MEETING END!!!", "danger");
             let id = model.meetingsQueue.shift();
             let eMeeting = document.getElementById("emergency-meeting-"+id);
             eMeeting.className = "emergency-meeting-ended";

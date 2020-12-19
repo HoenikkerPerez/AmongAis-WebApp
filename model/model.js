@@ -460,6 +460,10 @@ var model = {
         this.endgameScore.push(endscore);
         this.endgameScore.sort((a,b) => (a.score < b.score) ? 1 : ((b.score < a.score) ? -1 : 0));
         document.dispatchEvent(new CustomEvent("MODEL_ENDGAME_SCORE_ADDED"));
+    },
+
+    newPopupMsg(msg, kind, timeout) {
+        document.dispatchEvent(new CustomEvent("MODEL_POPUP_MSG", {detail: {msg:msg, kind:kind,timeout:timeout}}));
     }
 
 };
