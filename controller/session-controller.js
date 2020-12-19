@@ -176,6 +176,8 @@ class SessionController {
                 // Remove home UI elements
                 console.debug("Session Controller is going to set the game as running with user kind " + model.SPECTATOR);
                 model.setRunningGame(true, model.SPECTATOR);
+                loadMatch();
+
             } else {
                 // alert("GAME NOT EXIST")
                 popupMsg(msg,"danger")
