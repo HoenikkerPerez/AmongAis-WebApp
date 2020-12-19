@@ -200,7 +200,7 @@ var model = {
         // if(this.shooting.animations[shooter]==undefined){
         // }
         this.shooting.animations[shooter] = this.shooting.duration;
-        this.setDirection(direction);
+        this.setDirection(shooter, direction);
     },
 
     getShootAnimationStep(shooter) {
