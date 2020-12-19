@@ -22,11 +22,14 @@ class ChatController {
             else
                 document.getElementById(l.obj).removeEventListener(l.tag, l.handler);
         });
-        // Leave game channel
-        this._chat_client.leaveChannel(model.gamename);
+        // Leave all the channels
+        // this._chat_client.leaveChannel(model.gamename);
+
         // Terminate this chat instance
+        this._chat_client.close()
         closeChat();
     }
+
 
     _parseChatMessage(item) {
         let trimmed = item.replace(/  +/g, ' ');

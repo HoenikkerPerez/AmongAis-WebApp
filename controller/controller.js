@@ -2,7 +2,7 @@
 
 loadChat = function() {
    console.debug("Controller is loading ChatController...");
-   this.chat = new ChatController(this.chatClient);
+   this.chat = new ChatController(new ChatClient());
    console.debug("Controller has loaded the Chat.");
 }
 
@@ -35,8 +35,8 @@ loadController = function() {
 
    // Load chat
    console.debug("Controller is loading ChatClient...");
-   let chatClient = new ChatClient();
-   this.chatClient = chatClient;
+   // let chatClient = new ChatClient();
+   // this.chatClient = chatClient;
 
    // Loading league
    console.debug("Controller: loading LeagueController...");
