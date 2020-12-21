@@ -103,7 +103,7 @@ class HudUi {
             let murder = evt.detail.murder;
             let murdered = evt.detail.murdered;
             let murderColor = murder.team == "0" ? "red" : "blue";
-            let murderedColor = murder.team == "0" ? "red" : "blue";
+            let murderedColor = murdered.team == "0" ? "red" : "blue";
             console.debug("hud displaying kill: " + murder + " kills " + murdered);
             let notificationHtml = '<p>' 
                             + '<span style="color: ' + murderColor +  '" >' + murdered.name + '</span>' 

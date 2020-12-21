@@ -18,9 +18,15 @@ _popupMsg = function(msg, kind,timeout=3000){ // kind: success / info / warning 
     content.className = "alert alert-"+kind;
     
     $('#alert-popup').modal('show');
+    model.popupAck();
+
     window.setTimeout(function(){ 
         console.debug(id + " Timeout Expired after " + timeout + "msec")
         $("#"+id).remove(); 
+        let remain = model.popupEnd();
+        if(remain<=0){
+            $(".modal-backdrop").remove();
+        }
     }.bind(this), timeout);
 };
 
