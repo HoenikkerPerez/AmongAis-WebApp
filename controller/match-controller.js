@@ -727,7 +727,7 @@ class MatchController {
             // Accuse Button
             document.addEventListener("BUTTON_ACCUSE", (evt) => {
                 let teammateName = evt.detail;
-                // popupMsg("A vote of no confidence for teammate: " + teammateName, "warning");
+                // _popupMsg("A vote of no confidence for teammate: " + teammateName, "warning");
                 this._gameClient.accuse(evt.detail);
             }, false);
             // Start game

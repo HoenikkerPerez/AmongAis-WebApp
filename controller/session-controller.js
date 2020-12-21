@@ -180,6 +180,10 @@ class SessionController {
             location.reload(); 
         });
 
+        document.addEventListener("POPUP_MSG", (evt) => {
+            model.newPopupMsg(evt.detail.msg, evt.detail.kind, evt.detail.timeout);
+        }, false);
+
         // NAVBAR
         // window.addEventListener("hashchange", this._hashEventListener);
     }
