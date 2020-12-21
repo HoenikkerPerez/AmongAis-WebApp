@@ -1,9 +1,16 @@
 // "alert-popup"
 // "alert-popup-msg"
-popupMsg = function(msg, kind,timeout=3000){ // kind: success / info / warning / danger
+
+popupMsg = function(msg, kind,timeout=3000){
+    document.dispatchEvent(new CustomEvent("POPUP_MSG", {detail: {msg:msg, kind:kind,timeout:timeout}}));
+}
+
+_popupMsg = function(msg, kind,timeout=3000){ // kind: success / info / warning / danger
     let d = new Date();
     let id = "popup-msg-" + d.getTime();
     $("#alert-popup").append("<div id=\""+id+"\" class=\"modal-dialog\"><div class=\"alert alert-warning\" style=\"white-space: pre;\"><strong>Warning!</strong> Indicates a warning that might need attention.</div></div>");
+    console.debug("New popup Appended: " + id);
+    console.debug("msg: " + msg);
     // alert_msg.className = 
     let content = document.getElementById(id);
     content = content.childNodes[0]
@@ -11,9 +18,14 @@ popupMsg = function(msg, kind,timeout=3000){ // kind: success / info / warning /
     content.className = "alert alert-"+kind;
     
     $('#alert-popup').modal('show');
-    window.setTimeout(function(){ $("#"+id).remove() }.bind(this), timeout);
+    window.setTimeout(function(){ 
+        console.debug(id + " Timeout Expired after " + timeout + "msec")
+        $("#"+id).remove(); 
+    }.bind(this), timeout);
 };
+
 let maxE = 256;
+
 buildProgress = function(nrg){
     let p_nrg = (nrg/maxE)*100;
     let color;

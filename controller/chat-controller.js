@@ -201,6 +201,7 @@ class ChatController {
             if(murder!=undefined && murdered!=undefined){
                 model.murderCatched(murder.name, murdered.name);
                 // return;
+                document.dispatchEvent(new CustomEvent("CHAT_KILL", {detail: { murder: murder, murdered:  murdered} }));
             }
         }
         model.addMessageChat(channel, name, msg);

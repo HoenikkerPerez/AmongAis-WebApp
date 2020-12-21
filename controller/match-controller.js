@@ -140,6 +140,7 @@ class MatchController {
         // let position = model.status.me.position;
         let position =  {x: parseInt(model.status.pl_list[shooter].x), y: parseInt(model.status.pl_list[shooter].y)};
         this.computeShootOnMap(position, direction);
+        model.shootAnimationStart(shooter,direction);
         console.debug("Match Controller computed the map with the shot and is going to set the new map in the model.");
         model.setMap(model.world._map); // update needed to fire the rendering action
     }
@@ -150,8 +151,10 @@ class MatchController {
         let stopsBullet = (tile) => {
             //console.debug("check &");
             if(tile == "&") return true;
-            //console.error("check #");
+            //console.debug("check #");
             if(tile == "#") return true;
+            //console.debug("check players");
+            if(/^[A-Ta-t]$/.test(tile)) return true;
             return false;
         }
 
@@ -726,11 +729,15 @@ class MatchController {
             // Accuse Button
             this._addMatchListener(this._listeners, document,"BUTTON_ACCUSE", (evt) => {
                 let teammateName = evt.detail;
-                // popupMsg("A vote of no confidence for teammate: " + teammateName, "warning");
+                // _popupMsg("A vote of no confidence for teammate: " + teammateName, "warning");
                 this._gameClient.accuse(evt.detail);
             }, false);
             // Start game
-            model.timeframe = model.playerTimeframe;
+            // model.timeframe = model.playerTimeframe;
+            model.timeframeMap = model.playerTimeframe;
+            model.connectionTimeframe = model.playerTimeframe;
+            model.timeframeStatus = model.playerTimeframe * 10;
+            
             model.setStartGameTime();
             canvas.focus();
             this._poller();
@@ -762,7 +769,9 @@ class MatchController {
     _loadSpectatorOnRunGame() {
         this._addMatchListener(this._listeners, document,"MODEL_MATCH_STATUS_ACTIVE", () => {
             // Init human commands
-            model.timeframe = model.spectatorTimeframe;
+            model.timeframeMap = model.spectatorTimeframe;
+            model.connectionTimeframe = model.spectatorTimeframe;
+            model.timeframeStatus = model.spectatorTimeframe * 10;
             document.getElementById("canvas").focus();
             this._poller();
         }, false);

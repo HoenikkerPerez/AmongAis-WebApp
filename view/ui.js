@@ -43,11 +43,11 @@ class Ui {
     }
 
     _gameStarted(){
-        popupMsg("Match is START: Let's get ready to rumble!!!!!", "success");
+        _popupMsg("Match is START: Let's get ready to rumble!!!!!", "success");
     }
 
     _gameEnded(message) {
-        popupMsg("This is the END ... my only friend, the END! (The Doors)" 
+        _popupMsg("This is the END ... my only friend, the END! (The Doors)" 
         + "\nThank you for using our Web Client!", "info");
 
         document.getElementById("endgame-title").innerText = message;
@@ -79,6 +79,7 @@ class Ui {
 
         let resultsTable = document.createElement("table")
         resultsTable.classList.add("table");
+        resultsTable.classList.add("text-white");
         
         let tr = document.createElement("tr");
 
@@ -166,6 +167,11 @@ class Ui {
         document.addEventListener("MODEL_ENDGAME_SCORE_ADDED", () => {
             this._refreshLadder();
         });
+
+        document.addEventListener("MODEL_POPUP_MSG", (evt) => {
+            let popup = evt.detail;
+            _popupMsg(popup.msg, popup.kind, popup.timeout);
+        }, false);
     };
 
      _loadUI() {

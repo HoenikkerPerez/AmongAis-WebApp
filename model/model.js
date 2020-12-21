@@ -1,9 +1,9 @@
 var model = {
-    timeframe: 150, // Default map polling rate
-    timeframeMap: 150,
-    timeframeStatus:1500,
-    spectatorTimeframe: 150, // Spectator's map polling rate
+    // timeframe: 150, // Default map polling rate
+    spectatorTimeframe: 50, // Spectator's map polling rate
     playerTimeframe: 150, // Player's map polling rate
+    timeframeMap: undefined,
+    timeframeStatus: undefined,
     connectionTimeframe: 150, // Minimum delay between requests
     nopTimeframe: 20000,
     net: {
@@ -61,6 +61,10 @@ var model = {
     },
     meetingsQueue: [],
     shoots: [],
+    shooting: {
+        duration: 10,
+        animations: {} // {name:____, cnt:10}
+    }, 
     dieing: [], // [{name:____, cnt:5}]
     pathfindigMoves: [],
     path: [],
@@ -177,6 +181,27 @@ var model = {
         }
         this.startRefreshMap();
         document.dispatchEvent(new CustomEvent("MODEL_SETMAP", {detail: {map:map}}));
+    },
+
+    setDirection(name, direction){
+        this.pl_directions[name] = direction;
+    },
+
+    // Shooting Animation
+    shootAnimationStart(shooter, direction) {
+        // if(this.shooting.animations[shooter]==undefined){
+        // }
+        this.shooting.animations[shooter] = this.shooting.duration;
+        this.setDirection(shooter, direction);
+    },
+
+    getShootAnimationStep(shooter) {
+        let s = this.shooting.animations[shooter]
+        if((s != undefined) && (s>0)){
+            this.shooting.animations[shooter] -= 1;
+            return this.shooting.duration - s;
+        }
+        return  -1;
     },
 
     setPath(steps) {
@@ -427,6 +452,10 @@ var model = {
         this.endgameScore.push(endscore);
         this.endgameScore.sort((a,b) => (a.score < b.score) ? 1 : ((b.score < a.score) ? -1 : 0));
         document.dispatchEvent(new CustomEvent("MODEL_ENDGAME_SCORE_ADDED"));
+    },
+
+    newPopupMsg(msg, kind, timeout) {
+        document.dispatchEvent(new CustomEvent("MODEL_POPUP_MSG", {detail: {msg:msg, kind:kind,timeout:timeout}}));
     }
 
 };
