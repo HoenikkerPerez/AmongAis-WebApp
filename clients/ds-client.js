@@ -105,7 +105,7 @@ class DsClient {
                   console.debug(request.responseText);
                   popupMsg("You don't have any stats yet.\nPlay and build your reputation!", "warning");
                 } else {
-                  console.log(respJson.message);
+                  console.log(request.message);
                 }
             },
             // data: data,

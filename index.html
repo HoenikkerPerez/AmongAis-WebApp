@@ -428,11 +428,17 @@
             <!-- <table id="searchPlayerGlobalStatsTable" class="col-6 table text-white"></table> -->
             <div class="row">
                 <div class="col mr-3">
-                    <h1>Global Stats</h1>
+                    <h1 style="display:none">Global Stats</h1>
+                    <div class="spinner-border text-primary" style="display:none" id="searchPlayerGlobalStatsSpinner" role="status"> 
+                        <span class="sr-only">Loading...</span> 
+                    </div> 
                     <table id="searchPlayerGlobalStatsTable" class="table bg-dark table-hover text-white"></table>
                 </div>
                 <div class="col ml-3">
-                    <h1>Match history</h1>
+                    <h1 style="display:none">Match history</h1>
+                    <div class="spinner-border text-primary" style="display:none" id="searchPlayerHistorySpinner" role="status"> 
+                        <span class="sr-only">Loading...</span> 
+                    </div> 
                     <table id="searchPlayerHistoryTable" class="table bg-dark table-hover text-white"></table>
                 </div>
             </div>
