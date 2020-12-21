@@ -127,6 +127,11 @@ input.transparent-input{
     color: white !important;
 }
 
+
+.table tbody tr:hover td, .table tbody tr:hover th {
+    background-color: #eeeeea;
+}
+
 .footer {
     position: fixed;
     left: 0;

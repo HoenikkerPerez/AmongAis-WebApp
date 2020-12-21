@@ -38,8 +38,7 @@ class LeagueController {
         document.getElementById("leaveTournamentLink").addEventListener("click", (()=> {this._hashEventListener("#leaveTournament")}).bind(this))
         document.getElementById("listTournamentLink").addEventListener("click", (()=> {this._hashEventListener("#listTournament")}).bind(this))
         document.getElementById("globalLeaderboardLink").addEventListener("click", (()=> {this._hashEventListener("#globalLeaderboard")}).bind(this))
-        document.getElementById("yourGlobalStatsLink").addEventListener("click", (()=> {this._hashEventListener("#yourGlobalStatsLink")}).bind(this))
-        document.getElementById("yourHistoryLink").addEventListener("click", (()=> {this._hashEventListener("#yourHistoryLink")}).bind(this))
+        document.getElementById("yourStatsLink").addEventListener("click", (()=> {this._hashEventListener("#yourStatsLink")}).bind(this))
         document.getElementById("searchPlayerLink").addEventListener("click", (()=> {this._hashEventListener("#searchPlayerLink")}).bind(this))
         // window.addEventListener("hashchange", this._hashEventListener.bind(this));
     }
@@ -380,8 +379,7 @@ class LeagueController {
         let listTournament = document.getElementById("listTournament");
         let globalLeaderboard = document.getElementById("globalLeaderboard");
         // stats
-        let yourGlobalStats = document.getElementById("yourGlobalStats");
-        let yourHistory = document.getElementById("yourHistory");
+        let yourStats = document.getElementById("yourStats");
         let searchPlayer = document.getElementById("searchPlayer");
         
 
@@ -394,8 +392,7 @@ class LeagueController {
         listTournament.style.display = "none";
         globalLeaderboard.style.display = "none";
 
-        yourGlobalStats.style.display = "none";
-        yourHistory.style.display = "none";
+        yourStats.style.display = "none";
         searchPlayer.style.display = "none";
 
         switch(page) {
@@ -419,14 +416,14 @@ class LeagueController {
                 globalLeaderboard.style.display = "";
                 this._leagueClient.getGlobalRanking();
                 break;
-            case "#yourGlobalStatsLink":
-                yourGlobalStats.style.display = "";
-                break;
-            case "#yourHistoryLink":
-                yourHistory.style.display = "";
+            case "#yourStatsLink":
+                yourStats.style.display = "";
+                document.dispatchEvent(new CustomEvent("PAGE_YOUR_STATISTICS"));                      
+
                 break;
             case "#searchPlayerLink":
                 searchPlayer.style.display = "";
+                document.dispatchEvent(new CustomEvent("PAGE_SEARCH_PLAYER"));                      
                 break;
             default:
                 homeUI.style.display = "";

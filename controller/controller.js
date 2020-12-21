@@ -23,6 +23,6 @@ window.onload = function () {
    this.leageController = new LeagueController(leagueClient);
    // Loading statistics
    console.debug("Controller: loading DsController...");
-   // this.dsController = new DsController(dsClient);
+   this.dsController = new DsController(dsClient);
 
 };

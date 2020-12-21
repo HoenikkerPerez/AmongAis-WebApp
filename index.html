@@ -106,8 +106,7 @@
                       Statistics
                     </a>
                     <div class="dropdown-menu " aria-labelledby="navbarDropdown2">
-                      <a class="dropdown-item" id="yourGlobalStatsLink" href="#">Your Global Statistics</a>
-                      <a class="dropdown-item"  id="yourHistoryLink" href="#">Your History</a>
+                      <a class="dropdown-item" id="yourStatsLink" href="#">Your Statistics</a>
                       <!-- <a class="dropdown-item" href="#scheduleTournament">Schedule</a> -->
                       <div class="dropdown-divider"></div>
                       <a class="dropdown-item" id="searchPlayerLink" href="#">Search player</a>
@@ -403,18 +402,19 @@
         </div>
 
         <!-- STATISTICS -->
-        <div id="yourGlobalStats" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
-            <div class="my-3">
-                <label class="col-sm-4 mb-3 text-center"><h2>Your Global Stats</h2></label>
-                <table id="yourGlobalStatsTable" class="table text-white"></table>
-            </div>            
-        </div>
-        
-        <div id="yourHistory" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
-            <div class="my-3">
-                <label class="col-sm-4 mb-3 text-center"><h2>Your History</h2></label>
-                <table id="yourHistoryTable" class="table text-white"></table>
-            </div>            
+        <div id="yourStats" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
+            <label class="mb-3 text-center"><h2>Your Statistics</h2></label>
+
+            <div class="row">
+                <div class="col mr-3">
+                    <h1>Global Stats</h1>
+                    <table id="yourGlobalStatsTable" class="table bg-dark table-hover text-white"></table>
+                </div>
+                <div class="col ml-3">
+                    <h1>Match history</h1>
+                    <table id="yourHistoryTable" class="table bg-dark table-hover text-white"></table>
+                </div>
+            </div>
         </div>
 
         <div id="searchPlayer" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
@@ -425,12 +425,53 @@
                 <input type="button" class="btn btn-danger col-sm-1 ml-1" id="searchPlayerButton" name="searchPlayerButton" value="SEARCH">
             </div>
 
-            <table id="searchPlayerGlobalStatsTable" class="table text-white"></table>
-
-            <table id="searchPlayerHistoryTable" class="table text-white"></table>
-
+            <!-- <table id="searchPlayerGlobalStatsTable" class="col-6 table text-white"></table> -->
+            <div class="row">
+                <div class="col mr-3">
+                    <h1>Global Stats</h1>
+                    <table id="searchPlayerGlobalStatsTable" class="table bg-dark table-hover text-white"></table>
+                </div>
+                <div class="col ml-3">
+                    <h1>Match history</h1>
+                    <table id="searchPlayerHistoryTable" class="table bg-dark table-hover text-white"></table>
+                </div>
+            </div>
         </div>
 
+
+
+    <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+        <!-- Position it -->
+        <div style="position: absolute; top: 0; right: 0;">
+        
+            <!-- Then put toasts within -->
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="mr-auto">Bootstrap</strong>
+                <small class="text-muted">just now</small>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body">
+                See? Just like this.
+            </div>
+            </div>
+        
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="mr-auto">Bootstrap</strong>
+                <small class="text-muted">2 seconds ago</small>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body">
+                Heads up, toasts will stack automatically
+            </div>
+            </div>
+        </div>
+        </div>
 
     <footer class="footer">
         <p>Web App Version: v0.9-alpha</p>

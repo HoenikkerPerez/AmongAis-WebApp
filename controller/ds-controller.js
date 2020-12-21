@@ -22,36 +22,28 @@ class DsController {
     _loadWsMessages() {
         document.addEventListener("DS_GLOBALSTATISTICS", this._globalStatisticsReceiver.bind(this), false);
         document.addEventListener("DS_HISTORY", this._historyReceiver.bind(this), false);
+
+        document.addEventListener("PAGE_YOUR_STATISTICS", this._yourStatisticsPage.bind(this), false);
+        // document.addEventListener("PAGE_PLAYER_STATISTICS", this._playerPage.bind(this), false);
     }
     
     
+    _yourStatisticsPage() {
+        this._dsClient.getMyGlobalStatistics();
+        this._dsClient.getMyHistory();
+    }
 
-
+    _searchPlayerHandler() {
+        let player = document.getElementById("usernameSearchPlayer").value
+        this._dsClient.getGlobalStatistics(player);
+        this._dsClient.getHistory(player);
+    }
     // DS GLOBALSTATISTICS
     // {
     //     "global_statistics": {
     //       "best_score": 270,
     //       "id": 124,
     //       "is_human": true,
-    //       "matches_stats": [
-    //         {
-    //           "id": 14,
-    //           "match": {
-    //             "datetime": "2020-11-10T12:33:00Z",
-    //             "id": 12,
-    //             "name": "Cool Match",
-    //             "scores": "string"
-    //           },
-    //           "match_id": 57,
-    //           "player_accuracy": 0.8,
-    //           "player_id": 22,
-    //           "player_in_match_name": "fabiofazio",
-    //           "player_kills": 5,
-    //           "player_leaderboard_position": 3,
-    //           "player_real_name": "username",
-    //           "player_was_killed": false
-    //         }
-    //       ],
     //       "name": "AI-Slayer",
     //       "total_accuracy": 0.72,
     //       "total_kill_death_ratio": 0,
@@ -60,7 +52,7 @@ class DsController {
     //     }
     //   }
 
-    _globalStatisticsReceiver() {
+    _globalStatisticsReceiver(evt) {
         let itsMe = evt.detail.itsMe;
         let data = evt.detail.data;
         let globalStatistics = data.global_statistics;
@@ -69,6 +61,30 @@ class DsController {
             globalStatisticsTable = document.getElementById("yourGlobalStatsTable");
         else
             globalStatisticsTable = document.getElementById("searchPlayerGlobalStatsTable");
+            // globalStatisticsTable = document.getElementById("searchPlayerGlobalStatsDiv");
+        globalStatisticsTable.innerHTML = "";
+        let pairs = [["BEST SCORE", globalStatistics.best_score],
+                    ["SPECIES", globalStatistics.is_human], 
+                    ["NAME", globalStatistics.name], 
+                    ["PLAYED MATCHES",globalStatistics.name],
+                    ["ACCURACY", globalStatistics.total_accuracy], 
+                    ["K / D", globalStatistics.total_kill_death_ratio],
+                    ["KILLS",globalStatistics.total_kills],
+                    ["DEATHS",globalStatistics.total_deaths],
+                    [ "SCORE",globalStatistics.total_score]];
+
+        pairs.forEach((pair)=> {
+            let tbody = document.createElement("tbody");
+            let tr = document.createElement("tr");
+            let th = document.createElement("th");
+            th.innerHTML = pair[0];
+            tr.appendChild(th);
+            let td = document.createElement("td");
+            td.innerHTML = pair[1];
+            tr.appendChild(td);
+            tbody.appendChild(tr);
+            globalStatisticsTable.appendChild(tbody);
+        });
 
     }
 
@@ -109,6 +125,7 @@ class DsController {
         historyTable.appendChild(tr);
 
         historyList.forEach( (history) => {
+            let tbody = document.createElement("tbody");
             let tEl = document.createElement("tr");
             
             let player_accuracy = document.createElement("td");
@@ -136,7 +153,8 @@ class DsController {
             tEl.appendChild(player_leaderboard_position);
             tEl.appendChild(player_score);
             tEl.appendChild(player_was_killed);
-            historyTable.appendChild(tEl);
+            tbody.appendChild(tEl);
+            historyTable.appendChild(tbody);
         });
     }
 
