@@ -73,6 +73,7 @@ class MatchController {
         // let position = model.status.me.position;
         let position =  {x: parseInt(model.status.pl_list[shooter].x), y: parseInt(model.status.pl_list[shooter].y)};
         this.computeShootOnMap(position, direction);
+        model.shootAnimationStart(shooter,direction);
         console.debug("Match Controller computed the map with the shot and is going to set the new map in the model.");
         model.setMap(model.world._map); // update needed to fire the rendering action
     }

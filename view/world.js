@@ -23,10 +23,11 @@ const Terrain = {
     FLAG_RED: [0,0],
     RECHARGE: [0,0],
     BARRIER: [0,0],
-    PLAYER_BLUE: [[4,19],[4,17],[4,16],[4,18]], //E W N S
-    PLAYER_RED: [[4,19],[4,17],[4,16],[4,18]],
+    PLAYER_BLUE: [[8,19],[8,17],[8,16],[8,18]], //E W N S
+    PLAYER_RED: [[8,19],[8,17],[8,16],[8,18]],
     BULLET_VERTICAL: [0,0],
     BULLET_HORIZONTAL: [0,0], //TODO laser tile
+    SHOOTING_SEQUENCE: [8,9,10,0,1,2,3,4,5,6,7],
     PATHFINDING: [0,0], // TODO path tile
     // DIEING 20
     PLAYER_BLUE_DIE: [[0,20],[1,20],[2,20],[3,20],[4,20],[5,20]], // All animation steps/tiles
@@ -122,6 +123,8 @@ class WorldUi {
         }.bind(this));
 
         this._load();
+
+        model.shooting.duration = Terrain.SHOOTING_SEQUENCE.length
 
     };
 
@@ -640,6 +643,10 @@ class WorldUi {
                                     case "N": tile = Terrain.PLAYER_RED[2]; break;
                                     case "S": tile = Terrain.PLAYER_RED[3]; break;
                                     default:  tile = Terrain.PLAYER_RED[3]; break;
+                                }
+                                let shoot_step = model.getShootAnimationStep(pl.name);
+                                if(shoot_step>=0){
+                                    tile = [Terrain.SHOOTING_SEQUENCE[shoot_step], tile[1]];
                                 }
                                 if (team == 0) {
                                     atlas = this.tilePlayerRed;
