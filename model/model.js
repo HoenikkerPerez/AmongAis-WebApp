@@ -16,6 +16,7 @@ var model = {
             // ws: "ws://93.39.188.250:8522"
         }
     },
+
     status: {
         ga: "gamename",
         state: "lobby-started-ended",
@@ -30,16 +31,6 @@ var model = {
             lastDirection: undefined
         },
         pl_list:[]
-        //     pl_list: (2) […]
-            //     0: {…}
-                //     name: "undesiderable1"
-                //     state: "LOBBYOWNER" / "LOBBYGUEST" / "ACTIVE" / "KILLED"
-                //     symbol: "A"
-                //     team: "0"
-                //     x: "13"
-                //     y: "25"
-                // *touring
-                // direction N,E,S,W
     },
 
     NONE: "NONE",
@@ -89,7 +80,8 @@ var model = {
         _imageLoaded: false,
         showGrid: false,
         showMinimap: true,
-        refresh: false
+        refresh: false,
+        animation: undefined
     },
     musicVolume: 0.3,
 
@@ -312,10 +304,10 @@ var model = {
         this.status = status;
         
         // Postprocess the status after it is received from the server
-        if(old != undefined) {
-            this._restoreTouringGame(old, this.status);
-            this._restoreLastDirection(old, this.status);
-        }
+        // if(old != undefined) {
+        this._restoreTouringGame(old, this.status);
+        this._restoreLastDirection(old, this.status);
+        // }
 
         // Fire an event if the match status actually changed
         this._isMatchStatusChange(old.state,status.state);
@@ -333,7 +325,7 @@ var model = {
         this.kind = kindOfUser;
         // preprocess status
         this.isRunning = isRunning;
-        document.dispatchEvent(new CustomEvent("MODEL_RUN_GAME", {detail:isRunning}));
+        document.dispatchEvent(new CustomEvent("MODEL_RUN_GAME", { detail: {running: isRunning} }));
     },
 
     setGameActive: function(){
@@ -474,3 +466,37 @@ var model = {
 // PL: symbol=A name=ardo team=0 x=3 y=27
 // PL: symbol=a name=edo team=1 x=23 y=5
 // «ENDOFSTATUS»
+
+var ModelManager = {
+
+    snapshot: undefined,
+
+    snap: function() {
+        let createdGames = model.createdGames;
+        let values = JSON.parse(JSON.stringify(model, function(key, val){
+            if(typeof(val) != "function") {
+                console.debug("I'm cloning " + key);
+                return val;
+            } else {
+                console.debug("SKIPPED " + key);
+            }
+        }));
+        this.snapshot = {
+            createdGames: createdGames,
+            values: values
+        }
+    },
+
+    shot: function() {
+        if(this.snapshot) {
+            Object.keys(this.snapshot.values).forEach((k => {
+                console.debug("Restoring " + k);
+                model[k] = this.snapshot.values[k];
+            }).bind(this));
+            model.createdGames = this.snapshot.createdGames;
+            this.snapshot = undefined;
+        } else {
+            console.error("ModelManager is trying to restore a snapshot without having one.");
+        }
+    }
+}

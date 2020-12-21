@@ -12,6 +12,7 @@ class Channel {
 
     stop() {
         this.resource.pause();
+        this.resource.currentTime = 0;
     }
 
     changeVolume(volume) {
