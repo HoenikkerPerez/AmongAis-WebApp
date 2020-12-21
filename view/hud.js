@@ -106,9 +106,9 @@ class HudUi {
             let murderedColor = murdered.team == "0" ? "red" : "blue";
             console.debug("hud displaying kill: " + murder + " kills " + murdered);
             let notificationHtml = '<p>' 
-                            + '<span style="color: ' + murderColor +  '" >' + murdered.name + '</span>' 
+                            + '<span style="color: ' + murderedColor +  '" >' + murdered.name + '</span>' 
                             + ' killed by '
-                            + '<span style="color: ' + murderedColor +  '" >' + murder.name + '</span></p>';
+                            + '<span style="color: ' + murderColor +  '" >' + murder.name + '</span></p>';
             console.debug("notification toast kill shows: " + notificationHtml)
             $('#notificationToast')
                 .html(notificationHtml)
