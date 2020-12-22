@@ -63,15 +63,16 @@ class DsController {
             globalStatisticsTable = document.getElementById("searchPlayerGlobalStatsTable");
             // globalStatisticsTable = document.getElementById("searchPlayerGlobalStatsDiv");
         globalStatisticsTable.innerHTML = "";
+        let species = globalStatistics.is_human ? "HUMAN" : "AI"
         let pairs = [["BEST SCORE", globalStatistics.best_score],
-                    ["SPECIES", globalStatistics.is_human], 
+                    ["SPECIES", species], 
                     ["NAME", globalStatistics.name], 
                     ["PLAYED MATCHES",globalStatistics.name],
                     ["ACCURACY", globalStatistics.total_accuracy], 
                     ["K / D", globalStatistics.total_kill_death_ratio],
                     ["KILLS",globalStatistics.total_kills],
                     ["DEATHS",globalStatistics.total_deaths],
-                    [ "SCORE",globalStatistics.total_score]];
+                    [ "TOTAL SCORE",globalStatistics.total_score]];
 
         pairs.forEach((pair)=> {
             let tbody = document.createElement("tbody");
@@ -114,7 +115,7 @@ class DsController {
         let t5 = document.createElement("th");
         t5.innerHTML = "SCORE";
         let t6 = document.createElement("th");
-        t6.innerHTML = "KILLED";
+        t6.innerHTML = "ENDGAME";
 
         tr.appendChild(t1);
         tr.appendChild(t2);
@@ -144,7 +145,8 @@ class DsController {
             player_score.innerHTML = history.player_score;
 
             let player_was_killed = document.createElement("td");
-            player_was_killed.innerHTML = history.player_was_killed;
+            let endGame = history.player_was_killed ? "KILLED" : "SURVIROR";
+            player_was_killed.innerHTML = endGame;
             
 
             tEl.appendChild(player_accuracy);
