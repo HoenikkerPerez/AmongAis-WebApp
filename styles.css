@@ -132,6 +132,10 @@ input.transparent-input{
     background-color: #eeeeea;
 }
 
+#setting-button, #close-button {
+    fill: #007bff;
+}
+
 .footer {
     position: fixed;
     left: 0;
