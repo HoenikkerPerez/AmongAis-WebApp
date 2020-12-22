@@ -42,7 +42,7 @@ class DsClient {
             if(request.status == "404") {
               let respJson = JSON.parse(request.responseText);
               console.log(respJson.message);
-              popupMsg("Player not found", "warning");
+              // popupMsg("Player not found", "warning");
             } else {
               console.log(respJson.message);
             }
@@ -72,7 +72,7 @@ class DsClient {
               if(request.status == "404") {
                 let respJson = JSON.parse(request.responseText);
                 console.log(respJson.message);
-                popupMsg("You don't have any stats yet.\nPlay and build your reputation!", "warning");
+                // popupMsg("You don't have any stats yet.\nPlay and build your reputation!", "warning");
               } else {
                 console.log(respJson.message);
               }

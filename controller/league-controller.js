@@ -497,6 +497,7 @@ class LeagueController {
                 joinTournament.style.display = "";
                 break;
             case "#leaveTournament":
+                this._leagueClient.getTournamentList()
                 leaveTournament.style.display = "";
                 break;
             // case "#scheduleTournament":
