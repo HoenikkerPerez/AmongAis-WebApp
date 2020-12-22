@@ -46,12 +46,13 @@ class SessionController {
         }
     }
 
-    _loginButShouldBeInView() {
+    _loginButShouldBeInView(username) {
         this.sfxAudio.playMenuSound(.1);
         // model.inGameName = document.getElementById("ingamenameInput").value;
         document.getElementById("login-form-wrapper").style.display="none";
         document.getElementById("startgame-form-wrapper").style.display="";
         // this._hashEventListener();
+        document.getElementById("usernameNavbar").innerHTML = username;
         document.getElementById("navigation-bar").style.display="";
         document.getElementById("ingamenameInput").focus();
     }
@@ -73,7 +74,7 @@ class SessionController {
             console.debug("LoginController: try to login for " + username);
             if(this._gameClient.login(username)){
                 model.username = username;
-                this._loginButShouldBeInView();
+                this._loginButShouldBeInView(username);
                 // enter event
                 document.removeEventListener("keydown", this._keydownLogin, false);
             }
