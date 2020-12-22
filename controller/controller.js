@@ -1,25 +1,52 @@
 // Controller
 
+loadChat = function() {
+   console.debug("Controller is loading ChatController...");
+   this.chat = new ChatController(new ChatClient());
+   console.debug("Controller has loaded the Chat.");
+}
 
-window.onload = function () {
+closeChat = function() {
+   delete this.chat;
+}
+
+loadMatch = function() {
+   // Load Chat
+   loadChat();
+   // Load Match
+   console.debug("Controller is loading MatchController...");
+   this.match = new MatchController(this.gameClient, this.sfxAudio);
+   console.debug("Controller has loaded the MatchController.");
+}
+
+closeMatch = function() {
+   delete this.match;
+}
+
+loadController = function() {
    // Loading session
    console.debug("Controller: loading GameClient...");
    let gameClient = new GameClient("GAMECLIENT");
+<<<<<<< HEAD
    let leagueClient = new LeagueClient();
    let dsClient = new DsClient();
 
+=======
+   this.gameClient = gameClient;
+>>>>>>> origin/develop
    console.debug("Controller: loading SessionController...");
    let sfxAudio = new SfxAudio()
-   this.session = new SessionController(gameClient, leagueClient, sfxAudio);
-   // Audio
-   // Loading match
-   this.match = new MatchController(gameClient, sfxAudio);
-   // Loading chat
-   console.debug("Controller loading ChatController...");
-   let chatClient = new ChatClient();
-   this.chat = new ChatController(chatClient);
+   this.sfxAudio = sfxAudio;
+   this.session = new SessionController(gameClient, sfxAudio);
+
+   // Load chat
+   console.debug("Controller is loading ChatClient...");
+   // let chatClient = new ChatClient();
+   // this.chatClient = chatClient;
+
    // Loading league
    console.debug("Controller: loading LeagueController...");
+   let leagueClient = new LeagueClient();
    this.leageController = new LeagueController(leagueClient);
    // Loading statistics
    console.debug("Controller: loading DsController...");
