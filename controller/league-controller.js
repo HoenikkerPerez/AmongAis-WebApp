@@ -32,16 +32,18 @@ class LeagueController {
         document.addEventListener("LEAGUE_LIST", this._listTournamentForSelectionReceiver.bind(this), false);
         document.addEventListener("LEAGUE_GLOBALRANKING", this._globalRankingReceiver.bind(this), false);
         document.addEventListener("LEAGUE_LEADERBOARD", this._leaderboardTournamentReceiver.bind(this), false);
+        document.addEventListener("PAGE_GET_TOURNAMENT", () => {this._leagueClient.getTournamentList()}, false);
+        document.addEventListener("PAGE_GLOBALRANKING", () => {this._leagueClient.getGlobalRanking()}, false);
         
-        // NAVBAR
-        document.getElementById("homeLink").addEventListener("click", (()=> {this._hashEventListener("#homeLink")}).bind(this))
-        document.getElementById("brandLink").addEventListener("click", (()=> {this._hashEventListener("#homeLink")}).bind(this))
-        document.getElementById("joinTournamentLink").addEventListener("click", (()=> {this._hashEventListener("#joinTournament")}).bind(this))
-        document.getElementById("leaveTournamentLink").addEventListener("click", (()=> {this._hashEventListener("#leaveTournament")}).bind(this))
-        document.getElementById("listTournamentLink").addEventListener("click", (()=> {this._hashEventListener("#listTournament")}).bind(this))
-        document.getElementById("globalLeaderboardLink").addEventListener("click", (()=> {this._hashEventListener("#globalLeaderboard")}).bind(this))
-        document.getElementById("yourStatsLink").addEventListener("click", (()=> {this._hashEventListener("#yourStatsLink")}).bind(this))
-        document.getElementById("searchPlayerLink").addEventListener("click", (()=> {this._hashEventListener("#searchPlayerLink")}).bind(this))
+        // // NAVBAR
+        // document.getElementById("homeLink").addEventListener("click", (()=> {this._hashEventListener("#homeLink")}).bind(this))
+        // document.getElementById("brandLink").addEventListener("click", (()=> {this._hashEventListener("#homeLink")}).bind(this))
+        // document.getElementById("joinTournamentLink").addEventListener("click", (()=> {this._hashEventListener("#joinTournament")}).bind(this))
+        // document.getElementById("leaveTournamentLink").addEventListener("click", (()=> {this._hashEventListener("#leaveTournament")}).bind(this))
+        // document.getElementById("listTournamentLink").addEventListener("click", (()=> {this._hashEventListener("#listTournament")}).bind(this))
+        // document.getElementById("globalLeaderboardLink").addEventListener("click", (()=> {this._hashEventListener("#globalLeaderboard")}).bind(this))
+        // document.getElementById("yourStatsLink").addEventListener("click", (()=> {this._hashEventListener("#yourStatsLink")}).bind(this))
+        // document.getElementById("searchPlayerLink").addEventListener("click", (()=> {this._hashEventListener("#searchPlayerLink")}).bind(this))
         // window.addEventListener("hashchange", this._hashEventListener.bind(this));
     }
 
@@ -463,67 +465,67 @@ class LeagueController {
         });
     }
     
-    _hashEventListener(page) {
-        let homeUI = document.getElementById("homeUI");
-        let console = document.getElementById("console");
-        let joinTournament = document.getElementById("joinTournament");
-        let leaveTournament = document.getElementById("leaveTournament");
-        // let scheduleTournament = document.getElementById("scheduleTournament");
-        let listTournament = document.getElementById("listTournament");
-        let globalLeaderboard = document.getElementById("globalLeaderboard");
-        // stats
-        let yourStats = document.getElementById("yourStats");
-        let searchPlayer = document.getElementById("searchPlayer");
+    // _hashEventListener(page) {
+    //     let homeUI = document.getElementById("homeUI");
+    //     let console = document.getElementById("console");
+    //     let joinTournament = document.getElementById("joinTournament");
+    //     let leaveTournament = document.getElementById("leaveTournament");
+    //     // let scheduleTournament = document.getElementById("scheduleTournament");
+    //     let listTournament = document.getElementById("listTournament");
+    //     let globalLeaderboard = document.getElementById("globalLeaderboard");
+    //     // stats
+    //     let yourStats = document.getElementById("yourStats");
+    //     let searchPlayer = document.getElementById("searchPlayer");
         
 
 
-        homeUI.style.display = "none";
-        console.style.display = "none";
-        joinTournament.style.display = "none";
-        leaveTournament.style.display = "none";
-        // scheduleTournament.style.display = "none";
-        listTournament.style.display = "none";
-        globalLeaderboard.style.display = "none";
+    //     homeUI.style.display = "none";
+    //     console.style.display = "none";
+    //     joinTournament.style.display = "none";
+    //     leaveTournament.style.display = "none";
+    //     // scheduleTournament.style.display = "none";
+    //     listTournament.style.display = "none";
+    //     globalLeaderboard.style.display = "none";
 
-        yourStats.style.display = "none";
-        searchPlayer.style.display = "none";
+    //     yourStats.style.display = "none";
+    //     searchPlayer.style.display = "none";
 
-        switch(page) {
-            case "#home": 
-                homeUI.style.display = "";
-                break;
-            case "#joinTournament":
-                this._leagueClient.getTournamentList()
-                joinTournament.style.display = "";
-                break;
-            case "#leaveTournament":
-                this._leagueClient.getTournamentList()
-                leaveTournament.style.display = "";
-                break;
-            // case "#scheduleTournament":
-            //     scheduleTournament.style.display = "";
-            //     break;
-            case "#listTournament":
-                listTournament.style.display = "";
-                this._leagueClient.getTournamentList();
-                break;
-            case "#globalLeaderboard":
-                globalLeaderboard.style.display = "";
-                this._leagueClient.getGlobalRanking();
-                break;
-            case "#yourStatsLink":
-                yourStats.style.display = "";
-                document.dispatchEvent(new CustomEvent("PAGE_YOUR_STATISTICS"));                      
+    //     switch(page) {
+    //         case "#home": 
+    //             homeUI.style.display = "";
+    //             break;
+    //         case "#joinTournament":
+    //             this._leagueClient.getTournamentList()
+    //             joinTournament.style.display = "";
+    //             break;
+    //         case "#leaveTournament":
+    //             this._leagueClient.getTournamentList()
+    //             leaveTournament.style.display = "";
+    //             break;
+    //         // case "#scheduleTournament":
+    //         //     scheduleTournament.style.display = "";
+    //         //     break;
+    //         case "#listTournament":
+    //             listTournament.style.display = "";
+    //             this._leagueClient.getTournamentList();
+    //             break;
+    //         case "#globalLeaderboard":
+    //             globalLeaderboard.style.display = "";
+    //             this._leagueClient.getGlobalRanking();
+    //             break;
+    //         case "#yourStatsLink":
+    //             yourStats.style.display = "";
+    //             document.dispatchEvent(new CustomEvent("PAGE_YOUR_STATISTICS"));                      
 
-                break;
-            case "#searchPlayerLink":
-                searchPlayer.style.display = "";
-                document.dispatchEvent(new CustomEvent("PAGE_SEARCH_PLAYER"));                      
-                break;
-            default:
-                homeUI.style.display = "";
-                break;
-        }
-    }
+    //             break;
+    //         case "#searchPlayerLink":
+    //             searchPlayer.style.display = "";
+    //             document.dispatchEvent(new CustomEvent("PAGE_SEARCH_PLAYER"));                      
+    //             break;
+    //         default:
+    //             homeUI.style.display = "";
+    //             break;
+    //     }
+    // }
 
 }
