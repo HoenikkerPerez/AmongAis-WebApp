@@ -201,7 +201,19 @@ class HudUi {
             if(model.kind == model.PLAYER && _p.name != model.status.me.name) {
                 // Touring game visualization
                 let touring_button_human = document.createElement("button");
-                touring_button_human.innerText = "H";
+                // touring_button_human.innerText = "H";
+                // 
+                let svgHuman = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                svgHuman.setAttribute("xmlns","http://www.w3.org/2000/svg")
+                svgHuman.setAttribute("viewBox","0 0 16 16")
+                svgHuman.setAttribute("width","16")
+                svgHuman.setAttribute("height","16")
+                let pathHuman = document.createElementNS("http://www.w3.org/2000/svg", 'path'); //Create a path in SVG's namespace
+                pathHuman.setAttribute("fill-rule","evenodd"); //Set path's data fill-rule="evenodd"
+                pathHuman.setAttribute("d","M10.5 5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm.061 3.073a4 4 0 10-5.123 0 6.004 6.004 0 00-3.431 5.142.75.75 0 001.498.07 4.5 4.5 0 018.99 0 .75.75 0 101.498-.07 6.005 6.005 0 00-3.432-5.142z");
+                svgHuman.appendChild(pathHuman);
+                touring_button_human.appendChild(svgHuman)
+
                 let human_button_id = "touring-button-human";
                 touring_button_human.classList.add(human_button_id);
                 touring_button_human.classList.add("btn");
@@ -212,7 +224,19 @@ class HudUi {
                 touring_button_human.classList.add("ml-1");
 
                 let touring_button_ai = document.createElement("button");
-                touring_button_ai.innerText = "AI";
+                let svgAi = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                svgAi.setAttribute("xmlns","http://www.w3.org/2000/svg")
+                svgAi.setAttribute("viewBox","0 0 16 16")
+                svgAi.setAttribute("width","16")
+                svgAi.setAttribute("height","16")
+                let pathAi = document.createElementNS("http://www.w3.org/2000/svg", 'path'); //Create a path in SVG's namespace
+                pathAi.setAttribute("fill-rule","evenodd"); //Set path's data fill-rule="evenodd"
+                pathAi.setAttribute("d","M0 8a8 8 0 1116 0v5.25a.75.75 0 01-1.5 0V8a6.5 6.5 0 10-13 0v5.25a.75.75 0 01-1.5 0V8zm5.5 4.25a.75.75 0 01.75-.75h3.5a.75.75 0 010 1.5h-3.5a.75.75 0 01-.75-.75zM3 6.75C3 5.784 3.784 5 4.75 5h6.5c.966 0 1.75.784 1.75 1.75v1.5A1.75 1.75 0 0111.25 10h-6.5A1.75 1.75 0 013 8.25v-1.5zm1.47-.53a.75.75 0 011.06 0l.97.97.97-.97a.75.75 0 011.06 0l.97.97.97-.97a.75.75 0 111.06 1.06l-1.5 1.5a.75.75 0 01-1.06 0L8 7.81l-.97.97a.75.75 0 01-1.06 0l-1.5-1.5a.75.75 0 010-1.06z");
+                // newElement.style.stroke = "#000"; //Set stroke colour
+                // newElement.style.strokeWidth = "5px"; //Set stroke width
+                svgAi.appendChild(pathAi);
+                touring_button_ai.appendChild(svgAi)
+
                 let ai_button_id = "touring-button-ai";
                 touring_button_ai.classList.add(ai_button_id);
                 touring_button_ai.classList.add("btn");
