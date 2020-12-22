@@ -57,25 +57,29 @@ class LeagueClient {
 
     // Withdraw from a specific tournament
     leaveTournament(tournamentId, playerId) {
-      let data = {
-        "tournamentID": tournamentId,
-        "playerID": playerId
+      let dataJson = {
+        "tournament_id": tournamentId,
+        "player_id": playerId
       };
-
+      let queries = '?tournament_id=' + 
+                        tournamentId +
+                        '&player_id=' + 
+                        playerId;
       $.ajax({
-        url: this.API_GW + '/registration',
+        url: this.API_GW + '/registration' + queries,
         error: function(error) {
           console.debug("Error leaving tournament");
           let parsedError = JSON.parse(error.responseText);
           popupMsg(parsedError.message, "danger")
         },
-        data: JSON.stringify(data),
+        // data: dataJson,
         dataType: 'json',
         type: "application/json",
         crossDomain: true,
         contentType: 'application/json; charset=utf-8',
         success: function(data) {
             console.debug(data)
+            popupMsg(data.description, "success")
             //TODO process data
         },
         type: 'DELETE',
@@ -149,7 +153,7 @@ class LeagueClient {
             if(data.status == 200)
               popupMsg(data.message, "success")
             else 
-            popupMsg(data.message, "danger")
+            popupMsg(data, "danger")
           },
           type: 'POST',
           timeout: 10000 
