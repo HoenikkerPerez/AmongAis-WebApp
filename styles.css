@@ -1,9 +1,18 @@
 html {
     margin: 0 !important;;
     padding: 0 !important;;
-    height: 100% !important;;
 }
 
+body {
+    background-image: url('assets/green.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100% 100%;
+}
+
+.navbar.transparent.navbar-inverse .navbar-inner .bg-dark{
+    background: rgba(0,0,0,0.4) !important;
+ }
 
 .p-3 {
     padding: 0!important;
