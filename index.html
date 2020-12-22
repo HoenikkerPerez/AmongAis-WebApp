@@ -32,6 +32,7 @@
         <script src="clients/game-client/lobby-manager.js"></script>
         <script src="clients/game-client/game-client.js"></script>
         <script src="clients/league-client.js"></script>
+        <script src="clients/ds-client.js"></script>        
         <script src="clients/chat-client.js"></script>
 
         <!-- Controller -->
@@ -41,6 +42,7 @@
         <script src="controller/match-controller.js"></script>
         <script src="controller/chat-controller.js"></script>
         <script src="controller/league-controller.js"></script>
+        <script src="controller/ds-controller.js"></script>
 
         <script src="controller/controller.js"></script>
 
@@ -80,7 +82,7 @@
     </head>
     <body class="container-fluid p-3 my-3 bg-dark text-white">
         <!-- NAVBAR -->
-        <nav id="navigation-bar" class="navbar navbar-expand-lg  bg-dark text-white" style="display:none">
+        <nav id="navigation-bar" class="navbar navbar-dark navbar-expand-lg bg-dark text-white" style="display:none">
             <a class="navbar-brand"  id="brandLink" href="#">AmongAIs</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -88,14 +90,16 @@
           
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav mr-auto">
+                  
                 <li class="nav-item active">
                   <a class="nav-link" id="homeLink" href="#">Play</a>
                 </li>
+
                 <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Tournaments
                   </a>
-                  <div class="dropdown-menu " aria-labelledby="navbarDropdown">
+                  <div class="dropdown-menu " aria-labelledby="navbarDropdown1">
                     <a class="dropdown-item" id="joinTournamentLink" href="#">Join</a>
                     <a class="dropdown-item"  id="leaveTournamentLink" href="#">Leave</a>
                     <!-- <a class="dropdown-item" href="#scheduleTournament">Schedule</a> -->
@@ -103,11 +107,26 @@
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" id="globalLeaderboardLink" href="#">Global Leaderboard</a>
                   </div>
+
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Statistics
+                    </a>
+                    <div class="dropdown-menu " aria-labelledby="navbarDropdown2">
+                      <a class="dropdown-item" id="yourStatsLink" href="#">Your Statistics</a>
+                      <!-- <a class="dropdown-item" href="#scheduleTournament">Schedule</a> -->
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" id="searchPlayerLink" href="#">Search player</a>
+                    </div>
+                  </li>
+
                 </li>
                 <li class="nav-item active">
                     <a class="nav-link" id="logoutLink" href="#">Logout</a>
                 </li>
               </ul>
+              <span class="navbar-text" id="usernameNavbar">
+              </span>
             </div>
         </nav>
 
@@ -358,7 +377,8 @@
 
             <div class="form-row mb-3">
                 <label class="col-sm-4 mr-3 text-right">Tournament name</label>
-                <input type="text" class="form-control col-sm-4" id="nameJoinTournament" placeholder="smartCUP" value="">
+                <select class="selectpicker form-control col-sm-4" id="nameJoinTournament" data-live-search="true"></select>
+                <!-- <input type="text" class="form-control col-sm-4" id="nameJoinTournament" placeholder="smartCUP" value=""> -->
             </div>
 
             <input type="button" class="btn btn-primary mb-3" id="joinTournamentButton" value="JOIN">
@@ -373,7 +393,7 @@
 
             <div class="form-row mb-3">
                 <label class="col-sm-4 mr-3 text-right">Tournament name</label>
-                <input type="text" class="form-control col-sm-4" id="nameLeaveTournament" placeholder="smartCUP" value="">
+                <select class="selectpicker form-control col-sm-4" id="nameLeaveTournament" data-live-search="true"></select>
             </div>
 
             <input type="button" class="btn btn-danger mb-3" id="leaveTournamentButton" name="leaveTournamentButton" value="LEAVE">
@@ -392,6 +412,85 @@
                 <table id="globalRankingTable" class="table text-white"></table>
             </div>
         </div>
+
+        <!-- STATISTICS -->
+        <div id="yourStats" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
+            <label class="mb-3 text-center"><h2>Your Statistics</h2></label>
+
+            <div class="row">
+                <div class="col mr-3">
+                    <h1>Global Stats</h1>
+                    <table id="yourGlobalStatsTable" class="table bg-dark table-hover text-white"></table>
+                </div>
+                <div class="col ml-3">
+                    <h1>Match history</h1>
+                    <table id="yourHistoryTable" class="table bg-dark table-hover text-white"></table>
+                </div>
+            </div>
+        </div>
+
+        <div id="searchPlayer" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
+            <label class="mb-3 text-center"><h2>Search player</h2></label>
+            <div class="form-row mb-3">
+                <label class="col-sm-4 text-right"></label>
+                <input type="text" class="form-control col-sm-3" id="usernameSearchPlayer" placeholder="username">
+                <input type="button" class="btn btn-danger col-sm-1 ml-1" id="searchPlayerButton" name="searchPlayerButton" value="SEARCH">
+            </div>
+
+            <!-- <table id="searchPlayerGlobalStatsTable" class="col-6 table text-white"></table> -->
+            <div class="row">
+                <div class="col mr-3">
+                    <h1 style="display:none">Global Stats</h1>
+                    <div class="spinner-border text-primary" style="display:none" id="searchPlayerGlobalStatsSpinner" role="status"> 
+                        <span class="sr-only">Loading...</span> 
+                    </div> 
+                    <table id="searchPlayerGlobalStatsTable" class="table bg-dark table-hover text-white"></table>
+                </div>
+                <div class="col ml-3">
+                    <h1 style="display:none">Match history</h1>
+                    <div class="spinner-border text-primary" style="display:none" id="searchPlayerHistorySpinner" role="status"> 
+                        <span class="sr-only">Loading...</span> 
+                    </div> 
+                    <table id="searchPlayerHistoryTable" class="table bg-dark table-hover text-white"></table>
+                </div>
+            </div>
+        </div>
+
+
+
+    <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+        <!-- Position it -->
+        <div style="position: absolute; top: 0; right: 0;">
+        
+            <!-- Then put toasts within -->
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="mr-auto">Bootstrap</strong>
+                <small class="text-muted">just now</small>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body">
+                See? Just like this.
+            </div>
+            </div>
+        
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="mr-auto">Bootstrap</strong>
+                <small class="text-muted">2 seconds ago</small>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body">
+                Heads up, toasts will stack automatically
+            </div>
+            </div>
+        </div>
+        </div>
+
     <footer class="footer">
         <p>Web App Version: v0.9-alpha</p>
     </footer>

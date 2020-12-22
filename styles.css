@@ -66,7 +66,8 @@ html {
     overflow:auto; 
     max-height:95%;
 }
-.navbar-nav > li > .dropdown-menu { background-color: #007bff; }
+/* .navbar-nav > li > .dropdown-menu { background-color: #007bff; } */
+
 #endgame {
     width: 50%;
     overflow:auto; 
@@ -124,6 +125,11 @@ input.transparent-input{
     background-color:rgba(0,0,0,0) !important;
     border-color: #007bff !important;
     color: white !important;
+}
+
+
+.table tbody tr:hover td, .table tbody tr:hover th {
+    background-color: #eeeeea;
 }
 
 .footer {
