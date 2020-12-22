@@ -152,8 +152,11 @@ class LeagueClient {
             console.debug("joinTournament " + data);
             if(data.status == 200)
               popupMsg(data.message, "success")
+            else if(data.status == 500)
+              popupMsg(data.detail, "danger")
             else 
-            popupMsg(data, "danger")
+              popupMsg("LM Server Error", "danger")
+
           },
           type: 'POST',
           timeout: 10000 
