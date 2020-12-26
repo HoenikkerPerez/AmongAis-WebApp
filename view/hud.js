@@ -201,7 +201,19 @@ class HudUi {
             if(model.kind == model.PLAYER && _p.name != model.status.me.name) {
                 // Touring game visualization
                 let touring_button_human = document.createElement("button");
-                touring_button_human.innerText = "H";
+                // touring_button_human.innerText = "H";
+                // 
+                let svgHuman = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                svgHuman.setAttribute("xmlns","http://www.w3.org/2000/svg")
+                svgHuman.setAttribute("viewBox","0 0 16 16")
+                svgHuman.setAttribute("width","16")
+                svgHuman.setAttribute("height","16")
+                let pathHuman = document.createElementNS("http://www.w3.org/2000/svg", 'path'); //Create a path in SVG's namespace
+                pathHuman.setAttribute("fill-rule","evenodd"); //Set path's data fill-rule="evenodd"
+                pathHuman.setAttribute("d","M10.5 5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm.061 3.073a4 4 0 10-5.123 0 6.004 6.004 0 00-3.431 5.142.75.75 0 001.498.07 4.5 4.5 0 018.99 0 .75.75 0 101.498-.07 6.005 6.005 0 00-3.432-5.142z");
+                svgHuman.appendChild(pathHuman);
+                touring_button_human.appendChild(svgHuman)
+
                 let human_button_id = "touring-button-human";
                 touring_button_human.classList.add(human_button_id);
                 touring_button_human.classList.add("btn");
@@ -212,7 +224,19 @@ class HudUi {
                 touring_button_human.classList.add("ml-1");
 
                 let touring_button_ai = document.createElement("button");
-                touring_button_ai.innerText = "AI";
+                let svgAi = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                svgAi.setAttribute("xmlns","http://www.w3.org/2000/svg")
+                svgAi.setAttribute("viewBox","0 0 16 16")
+                svgAi.setAttribute("width","16")
+                svgAi.setAttribute("height","16")
+                let pathAi = document.createElementNS("http://www.w3.org/2000/svg", 'path'); //Create a path in SVG's namespace
+                pathAi.setAttribute("fill-rule","evenodd"); //Set path's data fill-rule="evenodd"
+                pathAi.setAttribute("d","M0 8a8 8 0 1116 0v5.25a.75.75 0 01-1.5 0V8a6.5 6.5 0 10-13 0v5.25a.75.75 0 01-1.5 0V8zm5.5 4.25a.75.75 0 01.75-.75h3.5a.75.75 0 010 1.5h-3.5a.75.75 0 01-.75-.75zM3 6.75C3 5.784 3.784 5 4.75 5h6.5c.966 0 1.75.784 1.75 1.75v1.5A1.75 1.75 0 0111.25 10h-6.5A1.75 1.75 0 013 8.25v-1.5zm1.47-.53a.75.75 0 011.06 0l.97.97.97-.97a.75.75 0 011.06 0l.97.97.97-.97a.75.75 0 111.06 1.06l-1.5 1.5a.75.75 0 01-1.06 0L8 7.81l-.97.97a.75.75 0 01-1.06 0l-1.5-1.5a.75.75 0 010-1.06z");
+                // newElement.style.stroke = "#000"; //Set stroke colour
+                // newElement.style.strokeWidth = "5px"; //Set stroke width
+                svgAi.appendChild(pathAi);
+                touring_button_ai.appendChild(svgAi)
+
                 let ai_button_id = "touring-button-ai";
                 touring_button_ai.classList.add(ai_button_id);
                 touring_button_ai.classList.add("btn");
@@ -259,15 +283,27 @@ class HudUi {
                 if(model.status.me != {} && model.status.me.team == _p.team && model.status.me.symbol != _p.symbol) { // && model.status.me.symbol != _p.symbol
                     // Social deduction
                     let accuse_button = document.createElement("button");
-                    accuse_button.innerText = "Accuse!";
-                    accuse_button.classList.add("accuse-button");
+                    let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                    svg.setAttribute("xmlns","http://www.w3.org/2000/svg")
+                    svg.setAttribute("viewBox","0 0 16 16")
+                    svg.setAttribute("width","16")
+                    svg.setAttribute("height","16")
+                    var path = document.createElementNS("http://www.w3.org/2000/svg", 'path'); //Create a path in SVG's namespace
+                    path.setAttribute("fill-rule","evenodd"); //Set path's data fill-rule="evenodd"
+                    path.setAttribute("d","M8.75.75a.75.75 0 00-1.5 0V2h-.984c-.305 0-.604.08-.869.23l-1.288.737A.25.25 0 013.984 3H1.75a.75.75 0 000 1.5h.428L.066 9.192a.75.75 0 00.154.838l.53-.53-.53.53v.001l.002.002.002.002.006.006.016.015.045.04a3.514 3.514 0 00.686.45A4.492 4.492 0 003 11c.88 0 1.556-.22 2.023-.454a3.515 3.515 0 00.686-.45l.045-.04.016-.015.006-.006.002-.002.001-.002L5.25 9.5l.53.53a.75.75 0 00.154-.838L3.822 4.5h.162c.305 0 .604-.08.869-.23l1.289-.737a.25.25 0 01.124-.033h.984V13h-2.5a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-2.5V3.5h.984a.25.25 0 01.124.033l1.29.736c.264.152.563.231.868.231h.162l-2.112 4.692a.75.75 0 00.154.838l.53-.53-.53.53v.001l.002.002.002.002.006.006.016.015.045.04a3.517 3.517 0 00.686.45A4.492 4.492 0 0013 11c.88 0 1.556-.22 2.023-.454a3.512 3.512 0 00.686-.45l.045-.04.01-.01.006-.005.006-.006.002-.002.001-.002-.529-.531.53.53a.75.75 0 00.154-.838L13.823 4.5h.427a.75.75 0 000-1.5h-2.234a.25.25 0 01-.124-.033l-1.29-.736A1.75 1.75 0 009.735 2H8.75V.75zM1.695 9.227c.285.135.718.273 1.305.273s1.02-.138 1.305-.273L3 6.327l-1.305 2.9zm10 0c.285.135.718.273 1.305.273s1.02-.138 1.305-.273L13 6.327l-1.305 2.9z"); //Set path's data fill-rule="evenodd"
+                    // newElement.style.stroke = "#000"; //Set stroke colour
+                    // newElement.style.strokeWidth = "5px"; //Set stroke width
+                    svg.appendChild(path);
+                    accuse_button.appendChild(svg)
+
+                    // accuse_button.classList.add("accuse-button");
                     accuse_button.classList.add("btn");
                     accuse_button.classList.add("btn-danger");
                     accuse_button.classList.add("btn-sm");
                     accuse_button.classList.add("px-1");
                     accuse_button.classList.add("py-0");
                     accuse_button.classList.add("ml-1");
-
+                    
                     accuse_button.onclick= () => {
                         document.dispatchEvent(new CustomEvent("BUTTON_ACCUSE", {detail: _p.name }));
                         let allb = document.getElementsByClassName("accuse-button");
