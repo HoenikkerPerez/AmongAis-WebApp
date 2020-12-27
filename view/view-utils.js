@@ -30,6 +30,44 @@ _popupMsg = function(msg, kind,timeout=3000){ // kind: success / info / warning 
     }.bind(this), timeout);
 };
 
+_popupMsgT = function(msg, kind,timeout=3000){ // kind: success / info / warning / danger
+    let d = new Date();
+    let id = "popup-msg-" + d.getTime();
+
+    let toast = "<div id=\""+id+"\" class=\"toast\" role=\"alert\" aria-live=\"assertive\" aria-atomic=\"true\">";
+    toast += "<div class=\"toast-header\">"
+    toast += "<strong class=\"mr-auto\">Bootstrap</strong>";
+    toast += "<small class=\"text-muted\">just now</small>"
+    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="toast-body">
+    See? Just like this.
+  </div>
+</div>
+    $("#alert-popup").append("<div id=\""+id+"\" class=\"modal-dialog\"><div class=\"alert alert-warning\" style=\"white-space: pre;\"><strong>Warning!</strong> Indicates a warning that might need attention.</div></div>");
+    console.debug("New popup Appended: " + id);
+    console.debug("msg: " + msg);
+    // alert_msg.className = 
+    let content = document.getElementById(id);
+    content = content.childNodes[0]
+    content.textContent=msg;
+    content.className = "alert alert-"+kind;
+    
+    $('#alert-popup').modal('show');
+    model.popupAck();
+
+    window.setTimeout(function(){ 
+        console.debug(id + " Timeout Expired after " + timeout + "msec")
+        $("#"+id).remove(); 
+        let remain = model.popupEnd();
+        if(remain<=0){
+            $(".modal-backdrop").remove();
+        }
+    }.bind(this), timeout);
+};
+
 let maxE = 256;
 
 buildProgress = function(nrg){
