@@ -15,7 +15,6 @@ class GameClient {
 
     // Queue for message requests to send to the server.
     _schedulerCounter = 0;
-    _wsRequests = [];
     _wsRequests_look = [];
     _wsRequests_cmd = [];
     _waitingResponse;
@@ -86,7 +85,6 @@ class GameClient {
 
         this._nopTime = new Date();
         console.debug("Game Client is initializing the request queue.");
-        this._wsRequests = [];
         this._noRequestsTime = new Date();
         this._waitingResponse = false;
         this._lastResponse = new Date();
@@ -302,6 +300,11 @@ class GameClient {
         console.debug("Game Client is requesting a touring choice for " + name + " being " + choice);
         let msg = this._sync.touringChoice(model.status.ga, name, choice);
         this._send("miticoOggettoCheNonEsiste.TOURING", msg);
-    }
+    };
+
+    cleanWSQueues(){
+        this._wsRequests_cmd = [];
+        this._wsRequests_look = [];
+    };
 
 }

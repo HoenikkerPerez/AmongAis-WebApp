@@ -345,6 +345,7 @@ class MatchController {
     _stopPoller() {
         window.clearTimeout(this._sPoller);
         window.clearTimeout(this._mPoller);
+        this._gameClient.cleanWSQueues();
     }
 
     /* SOCIAL DEDUCTION GAME */
