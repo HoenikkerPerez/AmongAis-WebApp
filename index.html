@@ -178,9 +178,9 @@
             </div>
           </div> -->
 
-        <div id="alert-popup" class="modal fade" role="textbox"></div>
+        <!-- <div id="alert-popup" class="modal fade" role="textbox"></div> -->
         <!-- <div id="toastHook" aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;"></div> -->
-        <div id="toastHook" aria-live="polite" aria-atomic="true"></div>
+        <!-- <div id="toastHook" aria-live="polite" aria-atomic="true" style="position: absolute; top: 0; right: 40%;"></div> -->
 
         <!-- SETTINGS -->
         <!-- Modal -->
@@ -321,7 +321,7 @@
 
             <div>
                 <!-- NON BLOCKING NOTIFICATION -->
-                <div class="toast bg-dark text-white" id="notificationToast" role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute; top: 0; right: 40%;">
+                <div class="toast bg-dark text-white" id="notificationToast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="1500" style="position: absolute; top: 0; right: 40%;">
                     <div class="toast-body">
                     Hello, world! This is a toast message.
                     </div>
@@ -509,6 +509,7 @@
         <p>Web App Version: v0.9-alpha</p>
     </footer>
 
+    <div id="toastHook" aria-live="polite" aria-atomic="true" style="position: absolute; top: 0; right: 0;"></div>
 
     </body>
 </html>
