@@ -454,6 +454,19 @@ var model = {
         document.dispatchEvent(new CustomEvent("MODEL_ENDGAME_SCORE_ADDED"));
     },
 
+    popupCounter:0,
+
+    popupAck(){
+        this.popupCounter++;
+    },
+
+    popupEnd(){
+        if(this.popupCounter>0){
+            this.popupCounter -= 1;
+        }
+        return this.popupCounter;
+    },
+
     newPopupMsg(msg, kind, timeout) {
         document.dispatchEvent(new CustomEvent("MODEL_POPUP_MSG", {detail: {msg:msg, kind:kind,timeout:timeout}}));
     }

@@ -5,7 +5,7 @@ popupMsg = function(msg, kind,timeout=3000){
     document.dispatchEvent(new CustomEvent("POPUP_MSG", {detail: {msg:msg, kind:kind,timeout:timeout}}));
 }
 
-_popupMsg = function(msg, kind,timeout=3000){ // kind: success / info / warning / danger
+_popupMsgM = function(msg, kind,timeout=3000){ // kind: success / info / warning / danger
     let d = new Date();
     let id = "popup-msg-" + d.getTime();
     $("#alert-popup").append("<div id=\""+id+"\" class=\"modal-dialog\"><div class=\"alert alert-warning\" style=\"white-space: pre;\"><strong>Warning!</strong> Indicates a warning that might need attention.</div></div>");
@@ -18,10 +18,50 @@ _popupMsg = function(msg, kind,timeout=3000){ // kind: success / info / warning 
     content.className = "alert alert-"+kind;
     
     $('#alert-popup').modal('show');
+    model.popupAck();
+
     window.setTimeout(function(){ 
         console.debug(id + " Timeout Expired after " + timeout + "msec")
         $("#"+id).remove(); 
+        let remain = model.popupEnd();
+        if(remain<=0){
+            $(".modal-backdrop").remove();
+        }
     }.bind(this), timeout);
+};
+
+_popupMsg = function(msg, kind,timeout=3000){ // kind: success / info / warning / danger
+    let d = new Date();
+    let id = "popup-msg-" + d.getTime();
+
+    let toast = "<div id=\""+id+"\" class=\"toast bg-dark text-white\" role=\"alert\" aria-live=\"assertive\" aria-atomic=\"true\""
+    toast += "data-delay="+timeout+">";
+    toast += "<div class=\"toast-header bg-dark text-white\">"
+    toast += "<strong class=\"mr-auto bg-dark text-white\">" + "Message:" + "</strong>";
+    toast += "<small class=\"text-muted\">just now</small>";
+    toast += "<button type=\"button\" class=\"ml-2 mb-1 close\" data-dismiss=\"toast\" aria-label=\"Close\">"
+    toast += "<span aria-hidden=\"true\">&times;</span></button></div>"
+    toast += "<div class=\"alert alert-"+kind+"\"style=\"white-space: pre;\">" + msg + "</div></div>"
+    $("#toastHook").append(toast);
+    console.debug("New popup Appended: " + id);
+    console.debug("msg: " + msg);
+    // alert_msg.className = 
+    // let content = document.getElementById(id);
+    // content = content.childNodes[0]
+    // content.textContent=msg;
+    // content.className = "alert alert-"+kind;
+    
+    $("#"+id).toast("show"); 
+    model.popupAck();
+
+    // window.setTimeout(function(){ 
+    //     console.debug(id + " Timeout Expired after " + timeout + "msec")
+    //     $("#"+id).remove(); 
+    //     let remain = model.popupEnd();
+    //     if(remain<=0){
+    //         $(".modal-backdrop").remove();
+    //     }
+    // }.bind(this), timeout);
 };
 
 let maxE = 256;
