@@ -66,23 +66,6 @@ class HudUi {
             window.setTimeout(function(){ this.meeting_countdown(15,id) }.bind(this), 1000);
         }, false);
 
-        document.addEventListener("MODEL_MEETING_END", () => {
-            console.debug("hud EMERGENCY MEETING END");
-            // _popupMsg("EMERGENCY MEETING END!!!", "danger");
-            let id = model.meetingsQueue.shift();
-            let eMeeting = document.getElementById("emergency-meeting-"+id);
-            eMeeting.className = "emergency-meeting-ended";
-            window.setTimeout(function(){ 
-                let meet_div_id = document.getElementById("emergency-meeting-"+id);
-                meet_div_id.style.display="none";
-                if(model.meetingsQueue.length<=0){
-                    let meet_div = document.getElementById("emergency-meeting");
-                    meet_div.innerText="";
-                    meet_div.style.display="none";
-                }
-            }, 5000);
-        }, false);
-
         document.addEventListener("MODEL_MEETING_ACCUSE", (evt) => {
             console.debug("hud displaying EMERGENCY MEETING ACCUSE");
             let who = model.status.pl_list[evt.detail.accuser];
@@ -103,12 +86,12 @@ class HudUi {
             let murder = evt.detail.murder;
             let murdered = evt.detail.murdered;
             let murderColor = murder.team == "0" ? "red" : "blue";
-            let murderedColor = murder.team == "0" ? "red" : "blue";
+            let murderedColor = murdered.team == "0" ? "red" : "blue";
             console.debug("hud displaying kill: " + murder + " kills " + murdered);
             let notificationHtml = '<p>' 
-                            + '<span style="color: ' + murderColor +  '" >' + murdered.name + '</span>' 
+                            + '<span style="color: ' + murderedColor +  '" >' + murdered.name + '</span>' 
                             + ' killed by '
-                            + '<span style="color: ' + murderedColor +  '" >' + murder.name + '</span></p>';
+                            + '<span style="color: ' + murderColor +  '" >' + murder.name + '</span></p>';
             console.debug("notification toast kill shows: " + notificationHtml)
             $('#notificationToast')
                 .html(notificationHtml)
@@ -129,6 +112,19 @@ class HudUi {
 
         if(times>0){
             window.setTimeout(function(){ this.meeting_countdown(times-1,id) }.bind(this), 1000);
+        } else {
+            let id = model.meetingsQueue.shift();
+            let eMeeting = document.getElementById("emergency-meeting-"+id);
+            eMeeting.className = "emergency-meeting-ended";
+            window.setTimeout(function(){ 
+                let meet_div_id = document.getElementById("emergency-meeting-"+id);
+                meet_div_id.style.display="none";
+                if(model.meetingsQueue.length<=0){
+                    let meet_div = document.getElementById("emergency-meeting");
+                    meet_div.innerText="";
+                    meet_div.style.display="none";
+                }
+            }, 5000);
         }
     }
     

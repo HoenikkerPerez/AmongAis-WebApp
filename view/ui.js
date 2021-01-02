@@ -140,7 +140,7 @@ class Ui {
                     msg += "Move view on map: Muouse-Left drag-n-drop\n"
                     msg += "Mouse Shoot: Muouse-Right\n"
                     msg += "Path-Finding: [Ctrl] + Mouse-Left\n"
-                    popupMsg(msg,"info",15000);
+                    popupMsg(msg,"info",30000);
                 }
             } else {
                 this._gameDeactivated();
