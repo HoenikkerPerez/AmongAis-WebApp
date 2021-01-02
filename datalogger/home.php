@@ -21,12 +21,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     http_response_code(500);
     die(json_encode(array('error' => 'success missed')));
   }
+  if(!isset($_POST['logSessionID'])) {
+    http_response_code(500);
+    die(json_encode(array('error' => 'logSessionID missed')));
+  }
+
   //immediately return for performance
   var_dump($_POST); // DEBUG
 
   $username = $_POST['username'];
   $op_type  = $_POST['op_type'];
   $success  = $_POST['success'];
+  $logSessionID  = $_POST['logSessionID'];
+
   if(isset($_POST['emo_rec'])) {
     $emo_rec   = $_POST['emo_rec'];
   }
@@ -40,11 +47,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $dbname_db = "my_amongais";
 
   $sql = "INSERT INTO home_op (username, 
+                              session_id,
                               op_type, 
                               success, 
                               emo_rec,
                               extra)
-          VALUES (?,?,?,?,?)";
+          VALUES (?,?,?,?,?,?)";
 
   $conn = new mysqli($servername_db, $username_db, $password_db, $dbname_db);
   // Check connection
@@ -53,8 +61,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
 
   $stmt= $conn->prepare($sql);
-  $stmt->bind_param("ssiss", 
+  // var_dump($stmt);
+  $stmt->bind_param("sisiss", 
                     $username, 
+                    $logSessionID,
                     $op_type, 
                     $success, 
                     $emo_rec,

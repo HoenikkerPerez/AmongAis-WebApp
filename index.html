@@ -25,6 +25,9 @@
         <!-- Model -->
         <script src="model/model.js"></script>
         
+        <!-- E2E campaign -->
+        <script src="datalogger/utils.js"></script>
+
         <!-- Client -->
         <script src="clients/log-client.js"></script>
         <script src="clients/game-client/auth.js"></script>
@@ -78,6 +81,9 @@
                 loadController();
                 loadView();
             }
+        </script>
+        <script>
+            let logSessionID = Math.floor(Math.random()*1000000)
         </script>
     </head>
     <body class="container-fluid p-3 my-3 bg-dark text-white">

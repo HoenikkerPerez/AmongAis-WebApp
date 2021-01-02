@@ -76,6 +76,7 @@ class SessionController {
                 model.username = username;
                 this._loginButShouldBeInView(username);
                 // enter event
+                new DatalogHome("LOGIN", 1);
                 document.removeEventListener("keydown", this._keydownLogin, false);
             }
         });
@@ -193,9 +194,11 @@ class SessionController {
             let msgOk= msg.startsWith("OK");
 
             if(msgOk) {
-                popupMsg("You started the game!","success")
+                popupMsg("You started the game!","success");
+                new DatalogMatch("STARTGAME", 1);
             } else {
-                popupMsg(msg, "danger")
+                popupMsg(msg, "danger");
+                new DatalogMatch("STARTGAME", {extra: msg});
             }
         }, false);
 

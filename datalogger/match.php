@@ -30,6 +30,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     http_response_code(500);
     die(json_encode(array('error' => 'success missed')));
   }
+  if(!isset($_POST['logSessionID'])) {
+    http_response_code(500);
+    die(json_encode(array('error' => 'logSessionID missed')));
+  }
 
   //immediately return for performance
   var_dump($_POST); // DEBUG
@@ -38,6 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $matchname = $_POST['matchname'];
   $op_type = $_POST['op_type'];
   $success  = $_POST['success'];
+  $logSessionID  = $_POST['logSessionID'];
 
   if(isset($_POST['mouse_cmds'])) {
     $emo_rec   = $_POST['emo_rec'];
@@ -85,6 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // emo_rec       STRING
 // extra         STRING
   $sql = "INSERT INTO match_op (username,
+                                session_id,
                                 matchname,
                                 op_type,
                                 success,
@@ -94,10 +100,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 why_survey,
                                 emo_rec,
                                 extra)
-          VALUES (?,?,?,?,?,?,?,?,?,?)";
+          VALUES (?,?,?,?,?,?,?,?,?,?,?)";
   $stmt= $conn->prepare($sql);
-  $stmt->bind_param("sssiiiisss", 
+  $stmt->bind_param("sissiiiisss", 
           $username, 
+          $logSessionID,
           $matchname,
           $op_type, 
           $success,

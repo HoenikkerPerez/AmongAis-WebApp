@@ -16,23 +16,18 @@
             window.onload = () => {
                 
                 let test_dataH = new DatalogHome("edo-web","TEST",1);
-                // test_dataH.extra = "Home: first try with class";
-                test_dataH.send();
 
-                let test_dataH2 = new DatalogHome("edo-web","TEST",1, {extra: "test extra", emo_rec: "HAPPY"});
-                test_dataH2.send();
+                new DatalogHome("edo-web","TEST",1, {extra: "test extra", emo_rec: "HAPPY"});
 
-                let test_dataM = new DatalogMatch("edo-web", "test-match", "TEST",1);
-                test_dataM.send();
+                new DatalogMatch("edo-web", "test-match", "TEST",1);
 
-                let test_dataM2 = new DatalogMatch("edo-web", "test-match", "TEST",1, {evaluation_survey: 2, 
-                                                                                        why_survey: "bad graphics",
-                                                                                        extra: "Match: first try with class",
-                                                                                        mouse_cmds: 42,
-                                                                                        keyboard_cmds: 420,
-                                                                                        emo_rec: "SAD",
-                                                                                        extra: "nothing to be sad"});
-                test_dataM2.send();
+                new DatalogMatch("edo-web", "test-match", "TEST",1, {evaluation_survey: 2, 
+                                                                    why_survey: "bad graphics",
+                                                                    extra: "Match: first try with class",
+                                                                    mouse_cmds: 42,
+                                                                    keyboard_cmds: 420,
+                                                                    emo_rec: "SAD",
+                                                                    extra: "nothing to be sad"});
             }
 
         </script>

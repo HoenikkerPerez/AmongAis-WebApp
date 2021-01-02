@@ -35,23 +35,26 @@ class DatalogHome {
     username = "";
     success = 0;
     op_type = "";
-    constructor(loginName,optype,isSuccess, optionals){
-        this.username=loginName;
-        // this.username=model.username;
+    constructor(optype, isSuccess, optionals){
+
+        this.username=model.username;
+        this.logSessionID = logSessionID;
+
         this.op_type=optype;
         this.success=isSuccess;
+        
         if(optionals != undefined) {
             if(optionals.extra != undefined)
                 this.extra = optionals.extra;
             if(optionals.emo_rec != undefined)
                 this.emo_rec = optionals.emo_rec;
         }
+        this.send();
     };
     
     send = function () {
         logData(JSON.stringify(this),'datalogger/home.php');
     }
-    // emo_rec=null;
 }
 
 class DatalogMatch {
@@ -59,23 +62,15 @@ class DatalogMatch {
     matchname="";
     op_type="";
     success = 0;
-    constructor(    loginName,
-                    matchName,
-                    optype,
-                    isSuccess, 
-                    optionals
-                    ) {
-                        // mouse_cmds, 
-                        // keyboard_cmds, 
-                        // evaluation_survey, 
-                        // why_survey, 
-                        // emo_rec
-        this.username=loginName;
-        this.matchname=matchName;
-        // this.username=model.username;
-        // this.matchname=model.status.ga;
+    constructor(optype, isSuccess, optionals) {
+
+        this.username=model.username;
+        this.matchname=model.status.ga;
+        this.logSessionID = logSessionID;
+
         this.op_type=optype;
         this.success=isSuccess;
+
         if(optionals != undefined) {
             if(optionals.mouse_cmds != undefined)
                 this.mouse_cmds = optionals.mouse_cmds;
@@ -90,6 +85,7 @@ class DatalogMatch {
             if(optionals.extra != undefined)
                 this.extra = optionals.extra;
         }
+        this.send();
     };
 
     send = function() {
