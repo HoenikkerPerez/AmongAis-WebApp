@@ -1,16 +1,26 @@
 <?php
-// id           NULL
-// username     STRING
-// timerequest  NULL
-// success      BOOLEAN
-// emo_rec      STRING
-// extra        STRING
+// id            NULL
+// username      STRING
+// matchname     STRING
+// op_type       STRING
+// req_time      NULL
+// mouse_cmds    INT
+// keyboard_cmds INT
+// evaluation_survey INT
+// why_survey    STRING
+// success       BOOLEAN
+// emo_rec       STRING
+// extra         STRING
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   // validation
   if(!isset($_POST['username'])) {
     http_response_code(500);
     die(json_encode(array('error' => 'username missed')));
+  }
+  if(!isset($_POST['matchname'])) {
+    http_response_code(500);
+    die(json_encode(array('error' => 'matchname missed')));
   }
   if(!isset($_POST['op_type'])) {
     http_response_code(500);
@@ -20,24 +30,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     http_response_code(500);
     die(json_encode(array('error' => 'success missed')));
   }
-  if(!isset($_POST['emo_rec'])) {
-    http_response_code(500);
-    die(json_encode(array('error' => 'emo_rec missed')));
-  }
+
   //immediately return for performance
   var_dump($_POST); // DEBUG
 
   $username = $_POST['username'];
+  $matchname = $_POST['matchname'];
   $op_type = $_POST['op_type'];
   $success  = $_POST['success'];
-  $em_rec   = $_POST['emo_rec'];
-  if(isset($_POST['extra'])) {
-    $extras = $_POST['extra'];
+
+  if(isset($_POST['mouse_cmds'])) {
+    $emo_rec   = $_POST['emo_rec'];
   }
+  if(isset($_POST['mouse_cmds'])) {
+    $mouse_cmds = $_POST['mouse_cmds'];
+  }
+  if(isset($_POST['keyboard_cmds'])) {
+    $keyboard_cmds = $_POST['keyboard_cmds'];
+  }
+  if(isset($_POST['evaluation_survey'])) {
+    $evaluation_survey = $_POST['evaluation_survey'];
+  }
+  if(isset($_POST['why_survey'])) {
+    $why_survey = $_POST['why_survey'];
+  }
+  if(isset($_POST['extra'])) {
+    $extra = $_POST['extra'];
+  }
+
+
+
 
   $servername_db = "localhost";
   $username_db = "amongais";
-  $password_db = "UPQ6aAvEJzU6";
+  $password_db = "";
   $dbname_db = "my_amongais";
 
   // Create connection
@@ -46,31 +72,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
   }
+// id            NULL
+// username      STRING
+// matchname     STRING
+// op_type       STRING
+// success       BOOLEAN
+// req_time      NULL
+// mouse_cmds    INT
+// keyboard_cmds INT
+// evaluation_survey INT
+// why_survey    STRING
+// emo_rec       STRING
+// extra         STRING
+  $sql = "INSERT INTO match_op (username,
+                                matchname,
+                                op_type,
+                                success,
+                                mouse_cmds,
+                                keyboard_cmds,
+                                evaluation_survey,
+                                why_survey,
+                                emo_rec,
+                                extra)
+          VALUES (?,?,?,?,?,?,?,?,?,?)";
+  $stmt= $conn->prepare($sql);
+  $stmt->bind_param("sssiiiisss", 
+          $username, 
+          $matchname,
+          $op_type, 
+          $success,
+          $mouse_cmds,
+          $keyboard_cmds,
+          $evaluation_survey,
+          $why_survey,
+          $emo_rec,
+          $extra);
 
-  // if(isset($extra)) {
-  //   $sql = "INSERT INTO home_op (username, op_type, success, emo_rec, extra)
-  //           VALUES (?,?,?,?,?)";
-  //   $stmt = $conn->prepare($sql);
-  //   if(!$stmt) {
-  //     die(json_encode(array('error' => 'query preparation failed.')));
-  //   }
-  //   $stmt->bind_param("ssiss", $username, $op_type, $success, $em_rec, $extra);
-  // } else {
-    $sql = "INSERT INTO home_op (username, op_type, success, emo_rec)
-            VALUES (?,?,?,?)";
-    $stmt= $conn->prepare($sql);
-    $stmt->bind_param("ssis", $username, $op_type, $success, $em_rec);
-  }
-
-  // try {
   $stmt->execute();
+  var_dump($stmt);
   $conn->close();
-
+  
   echo "New record created successfully";
-
-  // } catch (Exception $e){
-  //   $resp = (json_encode(array('error' => $e->getMessage())));
-  //   echo $resp;
-  // }
 }
 ?>

@@ -35,6 +35,29 @@
                     type: 'POST',
                     timeout: 10000 
                     });
+
+                let datalog1 = {
+                    username: "luca",
+                    matchname: "testMatch",
+                    success: 1,
+                    emo_rec: "sad",
+                    op_type: "CREATE"
+                }
+                $.ajax({
+                    url: 'match.php',
+                    error: function(xhr, status, error) {
+                        console.debug("ERROR received: " + xhr.responseText);
+                    },
+                    data: datalog1,
+                    success: function(data) {
+                        console.debug("log data sent");
+                        console.debug("OK received: " + data);
+
+                    },
+                    type: 'POST',
+                    timeout: 10000 
+                    });
                 };
+
         </script>
     </body>
