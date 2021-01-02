@@ -61,7 +61,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $extra);
   $stmt->execute();
   $conn->close();
-
-  echo "New record created successfully";
 }
 ?>

@@ -109,9 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           $extra);
 
   $stmt->execute();
-  var_dump($stmt);
+  // var_dump($stmt);
   $conn->close();
-  
-  echo "New record created successfully";
-}
+  }
 ?>
