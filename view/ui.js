@@ -51,6 +51,8 @@ class Ui {
         + "\nThank you for using our Web Client!", "info");
 
         document.getElementById("endgame-title").innerText = message;
+
+        new DatalogMatch("END",1,{extra:message});
     }
 
     // _refreshLadder() {
