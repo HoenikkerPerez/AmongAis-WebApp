@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
 
   $stmt= $conn->prepare($sql);
-  $stmt->bind_param("ssis", 
+  $stmt->bind_param("ssiss", 
                     $username, 
                     $op_type, 
                     $success, 
