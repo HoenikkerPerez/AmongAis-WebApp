@@ -148,10 +148,12 @@ class SessionController {
                 //     this._gameClient.startGame(document.getElementById("gameNameInput").value);
                 // });
             }
-            else
+            else{
                 // alert("Game creation failed.");
                 popupMsg(msg,"danger")
                 new DatalogMatch("CREATE",0,{extra:msg});
+            }
+                
         }, false);
 
         document.addEventListener("miticoOggettoCheNonEsiste.JOIN_GAME", (evt) => {
@@ -206,7 +208,7 @@ class SessionController {
                 new DatalogMatch("STARTGAME", 1);
             } else {
                 popupMsg(msg, "danger");
-                new DatalogMatch("STARTGAME", {extra: msg});
+                new DatalogMatch("STARTGAME",0, {extra: msg});
             }
         }, false);
 
