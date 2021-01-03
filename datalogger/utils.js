@@ -1,3 +1,8 @@
+let commandsRatio = {
+    keys:0,
+    clicks:0
+}
+
 let logData = function (datalog, urlTargetPHP="datalogger/home.php") {
     // console.debug("logData");
     datalog = JSON.parse(datalog)
@@ -72,10 +77,23 @@ class DatalogMatch {
         this.success=isSuccess;
 
         if(optionals != undefined) {
-            if(optionals.mouse_cmds != undefined)
-                this.mouse_cmds = optionals.mouse_cmds;
-            if(optionals.keyboard_cmds != undefined)
-                this.keyboard_cmds = optionals.keyboard_cmds;
+            
+            // if(optionals.mouse_cmds != undefined){
+            //     this.mouse_cmds = optionals.mouse_cmds;
+            // }
+            if(commandsRatio.clicks >0){
+                this.mouse_cmds = commandsRatio.clicks;
+                commandsRatio.clicks=0;
+            }
+
+            // if(optionals.keyboard_cmds != undefined){
+            //     this.keyboard_cmds = optionals.keyboard_cmds;
+            // }
+            if(commandsRatio.keys > 0){
+                this.keyboard_cmds = commandsRatio.keys;
+                commandsRatio.keys = 0;
+            }
+            
             if(optionals.evaluation_survey != undefined)
                 this.evaluation_survey = optionals.evaluation_survey;
             if(optionals.why_survey != undefined)
