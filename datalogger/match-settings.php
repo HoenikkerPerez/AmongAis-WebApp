@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $password_db = "";
   $dbname_db = "my_amongais";
 
-  $sql = "INSERT INTO map_settings_op (username,
+  $sql = "INSERT INTO settings_op (username,
                               grid, 
                               minimap,
                               lowres,
