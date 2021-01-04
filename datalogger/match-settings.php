@@ -18,14 +18,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     http_response_code(500);
     die(json_encode(array('error' => 'lowres missed')));
   }
+  if(!isset($_POST['volume'])) {
+    http_response_code(500);
+    die(json_encode(array('error' => 'volume missed')));
+  }
 
   //immediately return for performance
   var_dump($_POST); // DEBUG
 
   $username = $_POST['username'];
-  $grid = $_POST['grid'];
+  $grid     = $_POST['grid'];
   $minimap  = $_POST['minimap'];
-  $lowres  = $_POST['lowres'];
+  $lowres   = $_POST['lowres'];
+  $volume   = $_POST['volume'];
 
   $servername_db = "localhost";
   $username_db = "amongais";
@@ -35,8 +40,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $sql = "INSERT INTO map_settings_op (username,
                               grid, 
                               minimap,
-                              lowres)
-          VALUES (?,?,?,?)";
+                              lowres,
+                              volume)
+          VALUES (?,?,?,?,?)";
 
   $conn = new mysqli($servername_db, $username_db, $password_db, $dbname_db);
   // Check connection
@@ -46,11 +52,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   $stmt= $conn->prepare($sql);
   // var_dump($stmt);
-  $stmt->bind_param("siii", 
+  $stmt->bind_param("siiii", 
                     $username,
                     $grid, 
                     $minimap,
-                    $lowres);
+                    $lowres,
+                    $volume);
   $stmt->execute();
   $conn->close();
 }
