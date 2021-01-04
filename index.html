@@ -186,36 +186,27 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content bg-dark text-white">
                     <div class="modal-header">
-                    <h5 class="modal-title" id="surveyModalLabel">Rate us!</h5>
+                    <h5 class="modal-title" id="surveyModalLabel">Please rate your experience with Web App!</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                     </div>
                     <div class="modal-body" id="surveyModalBody">
-                        <form id="survey-form" class="form-row mb-3">
-                            <span>Very bad  </span>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="ratingRadio" id="radioRating1" value="1" checked>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="ratingRadio" id="radioRating2" value="2">
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="ratingRadio" id="radioRating3" value="3">
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="ratingRadio" id="radioRating4" value="4">
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="ratingRadio" id="radioRating5" value="5">
-                            </div>
-                            <span>Very good</span>
+                        <form class="rating" id="survey-form"> 
+                            <input type="radio" name="ratingRadio" value="5" id="radioRating1">
+                            <label for="radioRating1">☆</label> 
+                            <input type="radio" name="ratingRadio" value="4" id="radioRating2">
+                            <label for="radioRating2">☆</label> 
+                            <input type="radio" name="ratingRadio" value="3" id="radioRating3">
+                            <label for="radioRating3">☆</label> 
+                            <input type="radio" name="ratingRadio" value="2" id="radioRating4">
+                            <label for="radioRating4">☆</label> 
+                            <input type="radio" name="ratingRadio" value="1" id="radioRating5">
+                            <label for="radioRating5">☆</label>
                         </form>
-
-
                         <div id="whyInput" class="form-row" style="display: none;">
-                            <label class="col-sm-4 mr-3 text-right">Why?</label>
-                            <input type="text" class="form-control col-sm-4" id="whySurveyInput" name="whySurveyInput"  placeholder="..." value="">
+                            <label class="col-1 m-1 text-left">Why?</label>
+                            <input type="text" class="form-control col" id="whySurveyInput" name="whySurveyInput"  placeholder="..." value="">
                         </div>
                     </div>
                     <div class="modal-footer">
