@@ -9,6 +9,7 @@ class DsClient {
       $.ajax({
         url: this.API_GW + '/global_statistics/' + username,
         error: function(request, status, error) {
+          new DatalogHome("S-FIND-OTHER", 0);
           console.debug("Error retrieving Global Statistics");
           if(request.status == "404") {
             let respJson = JSON.parse(request.responseText);
@@ -25,6 +26,7 @@ class DsClient {
         contentType: 'application/json; charset=utf-8',
         success: function(data) {
             console.debug(data)
+            new DatalogHome("S-FIND-OTHER", 1);
             document.dispatchEvent(new CustomEvent("DS_GLOBALSTATISTICS", {detail: {itsMe: false, data:data}}));                      
         },
         type: 'GET',
@@ -103,6 +105,7 @@ class DsClient {
                 if(request.status == "404") {
                   console.debug("Error retrieving Global Statistics");
                   console.debug(request.responseText);
+                  new DatalogHome("S-FINDME", 0);
                   popupMsg("You don't have any stats yet.\nPlay and build your reputation!", "warning");
                 } else {
                   console.log(request.message);
@@ -115,6 +118,7 @@ class DsClient {
             contentType: 'application/json; charset=utf-8',
             success: function(data) {
                 console.debug(data)
+                new DatalogHome("S-FIND-ME", 1);
                 document.dispatchEvent(new CustomEvent("DS_GLOBALSTATISTICS", {detail: {itsMe: true, data:data}}));                      
             },
             type: 'GET',

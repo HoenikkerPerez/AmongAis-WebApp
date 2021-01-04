@@ -92,15 +92,19 @@ class LeagueController {
     _joinTournamentHandler() {
         let tournamentUsername = document.getElementById("usernameJoinTournament").value;
         let tournamentName = document.getElementById("nameJoinTournament").value;
-        if(tournamentName && tournamentUsername)
+        if(tournamentName && tournamentUsername) {
             this._leagueClient.joinTournament(tournamentUsername, tournamentName);
+            new DatalogHome("T-JOIN-PAGE", 1);
+        }
     }
 
     _leaveTournamentHandler() {
         let tournamentUsername = document.getElementById("usernameLeaveTournament").value;
         let tournamentName = document.getElementById("nameLeaveTournament").value;
-        if(tournamentName && tournamentUsername)
+        if(tournamentName && tournamentUsername) {
             this._leagueClient.leaveTournament(tournamentUsername, tournamentName);
+            new DatalogHome("T-LEAVE", 1);
+        }
     }
 
     _joinTournamentReceiver(evt) {
@@ -230,7 +234,7 @@ class LeagueController {
             
             playerTable.appendChild(tEl);
         });        
-        tournamentModal.appendChild(playerTable)
+        tournamentModal.appendChild(playerTable);
     }
 
     _leaderboardTournamentReceiver(evt) {
@@ -384,6 +388,7 @@ class LeagueController {
                             let tournamentUsername = inputJoin.value;
                             let tournamentName = tournament.id;
                             this._leagueClient.joinTournament(tournamentUsername, tournamentName);
+                            new DatalogHome("T-JOIN-LIST", 1);
                         })
                         formJoin.appendChild(buttonJoin);
 
