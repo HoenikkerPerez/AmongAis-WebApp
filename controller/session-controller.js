@@ -98,6 +98,8 @@ class SessionController {
             let balancedTeam = Array.from(document.getElementsByName("teamBalancedRadio")).find(r => r.checked).value == "B"; 
             let battleOfSpecies = document.getElementById("battleOfSpeciesCheckbox").checked;
             this._gameClient.createGame(gameName, mapType, mapSize, balancedTeam, battleOfSpecies);
+            // TODO: add here logSettings
+            new DatalogMapSettings();
         });
 
         // Join game
@@ -140,15 +142,19 @@ class SessionController {
                 // alert("Game has been created!");
                 popupMsg("Game has been created!","success");
                 model.addCreatedGame(document.getElementById("gameNameInput").value);
+                new DatalogMatch("CREATE",1);
                 // document.getElementById("start-button").style.display = "";
                 // document.getElementById("start-button").addEventListener("click", () => {
                 //     console.debug("MatchController is asking the game client to START the joined game");
                 //     this._gameClient.startGame(document.getElementById("gameNameInput").value);
                 // });
             }
-            else
+            else{
                 // alert("Game creation failed.");
                 popupMsg(msg,"danger")
+                new DatalogMatch("CREATE",0,{extra:msg});
+            }
+                
         }, false);
 
         document.addEventListener("miticoOggettoCheNonEsiste.JOIN_GAME", (evt) => {
@@ -158,15 +164,18 @@ class SessionController {
             if(msg.startsWith("OK")) {
                 // Remove home UI elements
                 console.debug("Session Controller is going to set the game as running with user kind " + model.PLAYER);
+                new DatalogMatch("JOIN",1);
                 model.setRunningGame(true, model.PLAYER);
                 loadMatch();
             } else if(msg.startsWith("ERROR 502")) {
                 console.debug("Session Controller is going to force the spectator mode because of server error: " + msg);
                 popupMsg(msg + " received from the server. Activating spectator mode for game " + model.status.ga, "success");
+                new DatalogMatch("JOIN",0,{extra:msg});
                 this._gameClient.spectateGame(model.status.ga);
                 loadMatch();
             } else {
                 popupMsg(msg,"danger")
+                new DatalogMatch("JOIN",0,{extra:msg});
             } 
         }, false);
 
@@ -179,12 +188,14 @@ class SessionController {
             if(msgOk) {
                 // Remove home UI elements
                 console.debug("Session Controller is going to set the game as running with user kind " + model.SPECTATOR);
+                new DatalogMatch("SPECTATE",1);
                 model.setRunningGame(true, model.SPECTATOR);
                 loadMatch();
 
             } else {
                 // alert("GAME NOT EXIST")
-                popupMsg(msg,"danger")
+                new DatalogMatch("SPECTATE",0,{extra:msg});
+                popupMsg(msg,"danger");
             }
         }, false);
 
@@ -198,12 +209,13 @@ class SessionController {
                 new DatalogMatch("STARTGAME", 1);
             } else {
                 popupMsg(msg, "danger");
-                new DatalogMatch("STARTGAME", {extra: msg});
+                new DatalogMatch("STARTGAME",0, {extra: msg});
             }
         }, false);
 
         document.addEventListener("miticoOggettoCheNonEsiste.LEAVE", (evt) => {
             console.debug("SessionController has received a LEAVE response from WS.");
+            new DatalogMatch("LEAVE",1,{extra:evt.details});
             alert("This has been so refreshing!");
             location.reload(); 
         });

@@ -80,6 +80,9 @@
             window.onload = function() {
                 loadController();
                 loadView();
+                $('#settingsModal').on('hidden.bs.modal', function () {
+                    new DatalogSettings();
+                });
             }
         </script>
         <script>

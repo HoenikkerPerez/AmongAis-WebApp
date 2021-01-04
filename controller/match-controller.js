@@ -96,7 +96,10 @@ class MatchController {
                 // SHOOT
                 console.debug("MatchController is asking the game client to SHOOT in the last direction moved (" + model.status.me.lastDirection + ").");
                 gameClient.shoot(model.status.me.lastDirection);
+                commandsRatio.keys+=1;
+                new DatalogMatch("SHOOT",1,{extra: "Keyboard Shoot"});
                 break;
+
             default:
                 // MOVE. Moving also sets the lastDirection in which the player shoots.
                 let newDirection = undefined;
@@ -104,18 +107,23 @@ class MatchController {
                 case "w":
                     console.debug("MatchController acknowledged the wish of the player to MOVE UP and is going to behave accordingly.");
                     newDirection = GameClient.UP;
+                    commandsRatio.keys+=1;
                     break;
+
                 case "a":
                     console.debug("MatchController acknowledged the wish of the player to MOVE LEFT and is going to behave accordingly.");
                     newDirection = GameClient.LEFT;
+                    commandsRatio.keys+=1;
                     break;
                 case "s":
                     console.debug("MatchController acknowledged the wish of the player to MOVE DOWN and is going to behave accordingly.");
                     newDirection = GameClient.DOWN;
+                    commandsRatio.keys+=1;
                     break;
                 case "d":
                     console.debug("MatchController acknowledged the wish of the player to MOVE RIGHT and is going to behave accordingly.");
                     newDirection = GameClient.RIGHT;
+                    commandsRatio.keys+=1;
                     break;
                 }
                 if(newDirection) {
@@ -377,6 +385,9 @@ class MatchController {
             console.debug("MatchController _pathfindingMove is asking the game client to pathfinding-move " + nextMove);
             gameClient.move(nextMove);
             model.status.me.lastDirection = nextMove;
+            // TODO: is good choice count how many moves are done with pathfinding?
+            commandsRatio.clicks+=1;
+
         } 
     }
 
@@ -387,6 +398,8 @@ class MatchController {
             console.debug("MatchController _moveHandler is asking the game client to pathfinding-move " + nextMove);
             gameClient.move(nextMove);
             model.status.me.lastDirection = nextMove;
+            // TODO: is good choice count how many moves are done with pathfinding?
+            commandsRatio.clicks+=1;
         }
     }
 
@@ -548,6 +561,9 @@ class MatchController {
                 // FIRE!
                 console.debug("FIRE! Direction: " + direction);
                 this._gameClient.shoot(direction)
+                commandsRatio.clicks+=1;
+                new DatalogMatch("SHOOT",1,{extra: "Mouse Shoot"});
+
             }
         }
     }
@@ -762,6 +778,7 @@ class MatchController {
             let touringChoice = evt.detail.touring;
             this._touringQueue.push({name: name, touring: touringChoice});
             this._gameClient.tour(name, touringChoice);
+            new DatalogMatch("TOURING",1,{extra: name + " voted as " + touringChoice});
         }, false);
     }
 
