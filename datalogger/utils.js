@@ -122,7 +122,7 @@ class DatalogSettings {
         this.volume=Math.floor(model.musicVolume*10);
         this.grid=(model.world.showGrid)?1:0;
         this.minimap=(model.world.showMinimap)?1:0;
-        this.lowers=(model.world.lowResolutionMap)?1:0;
+        this.lowres=(model.world.lowResolutionMap)?1:0;
         this.send();
     };
     
