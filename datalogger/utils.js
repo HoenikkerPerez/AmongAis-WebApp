@@ -141,7 +141,7 @@ class DatalogMapSettings {
         let battleOfSpecies = document.getElementById("battleOfSpeciesCheckbox").checked;
 
         this.size=(mapSize=="1")? "small": (mapSize=="2")? "medium" : "large";
-        this.balanced=(balancedTeam=="B")? 1 : 0;
+        this.balanced=(balancedTeam)? 1 : 0;
         this.square=(mapType=="Q")? 1 : 0;
         this.bos=(battleOfSpecies)? 1 : 0;
 
