@@ -113,9 +113,6 @@ class DatalogMatch {
 }
 
 class DatalogSettings {
-    username = "";
-    success = 0;
-    op_type = "";
     constructor(){
         this.username=model.username;
 
