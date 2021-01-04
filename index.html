@@ -27,8 +27,8 @@
         
         <!-- E2E campaign -->
         <script src="datalogger/utils.js"></script>
-        <script src="datalogger/insideout/face-api.min.js"></script>
-        <script src="datalogger/insideout/emotion-recognizer.js"></script>
+        <script src="datalogger/insideout/face-api.js"></script>
+        <script src="datalogger/insideout/emotion-recognizer.js" defer></script>
 
         <!-- Client -->
         <script src="clients/log-client.js"></script>
@@ -92,7 +92,7 @@
         </script>
     </head>
     <body class="container-fluid p-3 my-3 bg-dark text-white">
-
+        <video id="video" autoplay muted style="visibility: hidden; position: fixed;"></video>
         <!-- NAVBAR -->
         <nav id="navigation-bar" class="navbar navbar-dark navbar-expand-lg bg-dark text-white" style="display:none">
             <a class="navbar-brand"  id="brandLink" href="#">AmongAIs</a>
