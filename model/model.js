@@ -81,7 +81,8 @@ var model = {
         showGrid: false,
         showMinimap: true,
         refresh: false,
-        animation: undefined
+        animation: undefined,
+        lowResolutionMap:false
     },
     musicVolume: 0.3,
 

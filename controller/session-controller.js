@@ -99,6 +99,7 @@ class SessionController {
             let battleOfSpecies = document.getElementById("battleOfSpeciesCheckbox").checked;
             this._gameClient.createGame(gameName, mapType, mapSize, balancedTeam, battleOfSpecies);
             // TODO: add here logSettings
+            new DatalogMapSettings();
         });
 
         // Join game

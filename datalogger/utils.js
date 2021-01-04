@@ -111,3 +111,44 @@ class DatalogMatch {
     }
 
 }
+
+class DatalogSettings {
+    username = "";
+    success = 0;
+    op_type = "";
+    constructor(){
+        this.username=model.username;
+
+        this.volume=Math.floor(model.musicVolume*10);
+        this.grid=(model.world.showGrid)?1:0;
+        this.minimap=(model.world.showMinimap)?1:0;
+        this.lowers=(model.world.lowResolutionMap)?1:0;
+        this.send();
+    };
+    
+    send = function () {
+        logData(JSON.stringify(this),'datalogger/match-settings.php');
+    }
+}
+
+class DatalogMapSettings {
+    constructor(){
+        this.username=model.username;
+
+        let mapSize = Array.from(document.getElementsByName("mapSizeRadio")).find(r => r.checked).value;
+        let mapType = Array.from(document.getElementsByName("mapTypeRadio")).find(r => r.checked).value;
+        let balancedTeam = Array.from(document.getElementsByName("teamBalancedRadio")).find(r => r.checked).value == "B"; 
+        let battleOfSpecies = document.getElementById("battleOfSpeciesCheckbox").checked;
+
+        this.size=(mapSize=="1")? "small": (mapSize=="2")? "medium" : "large";
+        this.balanced=(balancedTeam=="B")? 1 : 0;
+        this.square=(mapType=="Q")? 1 : 0;
+        this.bos=(battleOfSpecies)? 1 : 0;
+
+        this.send();
+    };
+    
+    send = function () {
+        logData(JSON.stringify(this),'datalogger/map-settings.php');
+    }
+}
