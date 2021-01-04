@@ -57,10 +57,6 @@ class LeagueClient {
 
     // Withdraw from a specific tournament
     leaveTournament(tournamentId, playerId) {
-      let dataJson = {
-        "tournament_id": tournamentId,
-        "player_id": playerId
-      };
       let queries = '?tournament_id=' + 
                         tournamentId +
                         '&player_id=' + 
