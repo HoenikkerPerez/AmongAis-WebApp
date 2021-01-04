@@ -730,7 +730,13 @@ class MatchController {
             // model.startRefreshMap();
         });
     
-       
+       // SURVEY
+       let surveyForm = document.getElementById("survey-form");
+       surveyForm.addEventListener("change", ()=>{
+           let rating = Array.from(document.getElementsByName("ratingRadio")).find(r => r.checked).value;
+           let whyText = document.getElementById("whyInput");
+           whyText.style.display = (rating <= 3) ? "" : "none";
+       })
 
     };
 

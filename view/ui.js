@@ -126,6 +126,11 @@ class Ui {
         $('#resultsModal').modal('toggle');
     }
 
+    _showSurvey() {
+        $('#surveyModal').modal('toggle');
+    }
+
+
     _loadWsMessages() {
         console.debug("UI: _loadWsMessages");
 
@@ -168,12 +173,14 @@ class Ui {
 
         document.addEventListener("MODEL_ENDGAME_SCORE_ADDED", () => {
             this._refreshLadder();
+            this._showSurvey();
         });
 
         document.addEventListener("MODEL_POPUP_MSG", (evt) => {
             let popup = evt.detail;
             _popupMsg(popup.msg, popup.kind, popup.timeout);
         }, false);
+
     };
 
      _loadUI() {
