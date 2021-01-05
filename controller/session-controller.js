@@ -76,6 +76,8 @@ class SessionController {
                 model.username = username;
                 this._loginButShouldBeInView(username);
                 // enter event
+                if(EmotionManager)
+                    EmotionManager.startTracking();
                 new DatalogHome("LOGIN", 1);
                 document.removeEventListener("keydown", this._keydownLogin, false);
             }
@@ -125,6 +127,10 @@ class SessionController {
         // Logout
         document.getElementById('logoutLink').addEventListener("click", () => {
             model.username = undefined; // Better to avoid explicit null values with model.logout()
+            if(EmotionManager) {
+                EmotionManager.stopTracking();
+                EmotionManager.popTrack();
+            }
             this._logoutButShouldBeInView();
             document.addEventListener("keydown", this._keydownLogin, false);
         }, false)
@@ -163,7 +169,11 @@ class SessionController {
             if(msg.startsWith("OK")) {
                 // Remove home UI elements
                 console.debug("Session Controller is going to set the game as running with user kind " + model.PLAYER);
-                new DatalogMatch("JOIN",1);
+                let userEmotions = "";
+                if(EmotionManager) {
+                    userEmotions = EmotionManager.popTrack();
+                }
+                new DatalogMatch("JOIN", 1, {emo_rec: userEmotions});
                 model.setRunningGame(true, model.PLAYER);
                 loadMatch();
             } else if(msg.startsWith("ERROR 502")) {

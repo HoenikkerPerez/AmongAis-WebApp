@@ -52,7 +52,11 @@ class Ui {
 
         document.getElementById("endgame-title").innerText = message;
 
-        new DatalogMatch("END",1,{extra:message});
+        let userEmotions = '';
+        if(EmotionManager) {
+            userEmotions = EmotionManager.popTrack();
+        }
+        new DatalogMatch("END",1,{emo_rec: userEmotions, extra:message});
     }
 
     // _refreshLadder() {
