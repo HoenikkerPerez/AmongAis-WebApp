@@ -86,6 +86,7 @@ class MatchController {
                 console.error("Unable to retrieve user kind.");
                 popupMsg("Are you a PLAYER or a SPECTATOR?", "danger");
         }
+        new DatalogMatch("STARTGAME",1,{extra:model.kind});
     }
 
     /* PHYSICAL GAME */
@@ -737,15 +738,15 @@ class MatchController {
            let whyText = document.getElementById("whyInput");
            whyText.style.display = (rating <= 3) ? "" : "none";
        })
-       $('#surveyModal').on('hidden.bs.modal', function () {
-            let rating = 0;
-            let ratingEl = Array.from(document.getElementsByName("ratingRadio")).find(r => r.checked)
-            if(ratingEl != undefined)
-                rating = ratingEl.value;
-            let whyText = document.getElementById("whySurveyInput").value;
-            console.log(whyText)
-            new DatalogMatch("SURVEY", 1, {evaluation_survey:rating, why_survey:whyText});
-        });
+    //    $('#surveyModal').on('hidden.bs.modal', function () {
+    //         let rating = 0;
+    //         let ratingEl = Array.from(document.getElementsByName("ratingRadio")).find(r => r.checked)
+    //         if(ratingEl != undefined)
+    //             rating = ratingEl.value;
+    //         let whyText = document.getElementById("whySurveyInput").value;
+    //         console.log(whyText)
+    //         new DatalogMatch("SURVEY", 1, {evaluation_survey:rating, why_survey:whyText});
+    //     });
 
     };
 

@@ -98,7 +98,6 @@ class SessionController {
             let balancedTeam = Array.from(document.getElementsByName("teamBalancedRadio")).find(r => r.checked).value == "B"; 
             let battleOfSpecies = document.getElementById("battleOfSpeciesCheckbox").checked;
             this._gameClient.createGame(gameName, mapType, mapSize, balancedTeam, battleOfSpecies);
-            // TODO: add here logSettings
             new DatalogMapSettings();
         });
 

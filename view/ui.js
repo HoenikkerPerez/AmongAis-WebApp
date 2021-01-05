@@ -127,6 +127,18 @@ class Ui {
     }
 
     _showSurvey() {
+        $('#surveyModal').on('hidden.bs.modal', function () {
+            let rating = 0;
+            let ratingEl = Array.from(document.getElementsByName("ratingRadio")).find(r => r.checked)
+            if(ratingEl != undefined)
+                rating = ratingEl.value;
+            let whyText = document.getElementById("whySurveyInput").value;
+            console.log("********** SURVEY SUBMITTED!!! *********")
+            console.log(whyText)
+            new DatalogMatch("SURVEY", 1, {evaluation_survey:rating, why_survey:whyText, extra:model.kind});
+            $(this).off('hide.bs.modal');
+
+        });
         $('#surveyModal').modal('toggle');
     }
 
@@ -166,6 +178,7 @@ class Ui {
         document.addEventListener("CHAT_GAME_FINISHED", (evt) => {
             let msg = evt.detail.message;
             this._gameEnded(msg);
+            this._showSurvey();
             
             // open modal results
             // $('#resultsModal').modal('toggle');
@@ -173,7 +186,7 @@ class Ui {
 
         document.addEventListener("MODEL_ENDGAME_SCORE_ADDED", () => {
             this._refreshLadder();
-            this._showSurvey();
+            // this._showSurvey();
         });
 
         document.addEventListener("MODEL_POPUP_MSG", (evt) => {
