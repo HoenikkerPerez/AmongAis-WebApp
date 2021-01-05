@@ -294,7 +294,7 @@
                     <input type="text" class="form-control col-sm-4" id="gameNameInput" name="gameNameInput"  placeholder="matchname" value="">
                 </div>
 
-                <div class="form-row mb-3">
+                <div class="form-row mb-3" onclick="logSetting('Map Size');">
                     <label class="col-sm-4 mr-3 text-right">Map Size</label>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="mapSizeRadio" id="radio1" value="1" checked>
@@ -310,7 +310,7 @@
                     </div>
                 </div>
                 
-                <div class="form-row mb-3">
+                <div class="form-row mb-3" onclick="logSetting('Map type');">
                     <label class="col-sm-4 mr-3 text-right">Map type</label>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="mapTypeRadio" id="radioSize1" value="Q" checked>
@@ -322,7 +322,7 @@
                     </div>
                 </div>
 
-                <div class="form-row mb-3">
+                <div class="form-row mb-3" onclick="logSetting('Team composition');">
                     <label class="col-sm-4 mr-3 text-right">Team composition</label>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="teamBalancedRadio" id="radioBancanced1" value="U" checked>
@@ -334,7 +334,7 @@
                     </div>
                 </div>
 
-                <div class="form-row mb-3">
+                <div class="form-row mb-3" onclick="logSetting('Battle of species');">
                     <label class="col-sm-4 mr-3 text-right"></label>
                     <div class="form-check" id="popoverBattleOfSpecies" data-container="body" trigger="hover" data-toggle="popover" data-placement="right" data-content='The "Battle of the Species" match will be held between AIs and Humans, divided in two opposing teams.'>
                         <input type="checkbox" class="form-check-input" id="battleOfSpeciesCheckbox">

@@ -149,3 +149,7 @@ class DatalogMapSettings {
         logData(JSON.stringify(this),'datalogger/map-settings.php');
     }
 }
+
+let logSetting= function(wich){
+    new DatalogHome("MAPSETT-CLICK",1, {extra:wich});
+}
