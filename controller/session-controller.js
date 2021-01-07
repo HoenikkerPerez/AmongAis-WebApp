@@ -152,7 +152,7 @@ class SessionController {
             else{
                 // alert("Game creation failed.");
                 popupMsg(msg,"danger");
-                new DatalogMatch("CREATE",0,{extra:msg,matchname:gameName});
+                new DatalogMatch("CREATE",0,{extra:msg, matchname:gameName});
             }
                 
         }, false);
@@ -204,12 +204,15 @@ class SessionController {
             let msg = evt.detail;
             let msgOk= msg.startsWith("OK");
 
+            let gameName = document.getElementById("gameNameInput").value;
+
             if(msgOk) {
                 popupMsg("You started the game!","success");
-                new DatalogMatch("STARTGAME", 1);
+                new DatalogMatch("STARTGAME", 1, {matchname:gameName});
             } else {
                 popupMsg(msg, "danger");
-                new DatalogMatch("STARTGAME",0, {extra: msg});
+                new DatalogMatch("STARTGAME",0, {extra: msg, matchname:gameName});
+                
             }
         }, false);
 
