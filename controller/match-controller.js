@@ -39,6 +39,10 @@ class MatchController {
         console.debug("MatchController is stopping the music.");
         this.sfxAudio.stopGameSound();
         this.sfxAudio.playMenuSound(.1);
+
+        // readjust the timeframes 
+        model.connectionTimeframe = model.homeConnectionTimeframe;
+
         // Terminate this controller instance
         closeMatch();
     }

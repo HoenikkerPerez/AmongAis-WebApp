@@ -4,7 +4,8 @@ var model = {
     playerTimeframe: 150, // Player's map polling rate
     timeframeMap: undefined,
     timeframeStatus: undefined,
-    connectionTimeframe: 150, // Minimum delay between requests
+    homeConnectionTimeframe: 500,
+    connectionTimeframe: 500, // Minimum delay between requests
     nopTimeframe: 20000,
     net: {
         game: {
