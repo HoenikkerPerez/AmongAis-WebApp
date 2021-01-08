@@ -7,8 +7,15 @@ pd.set_option('display.max_colwidth', 20)
 pd.set_option('display.max_columns', 20)
 
 df_home_op = pd.read_csv("home_op.csv", sep=",", index_col=0)
+df_home_op = df_home_op[df_home_op["username"] != "edo-web"]
+df_home_op = df_home_op[df_home_op["username"] != "lucaWeb"]
+
 df_map_settings_op = pd.read_csv("map_settings_op.csv", sep=",", index_col=0)
+
 df_match_op = pd.read_csv("match_op.csv", sep=",", index_col=0)
+df_match_op = df_match_op[df_match_op["username"] != "edo-web"]
+df_match_op = df_match_op[df_match_op["username"] != "lucaWeb"]
+
 df_settings_op = pd.read_csv("settings_op.csv", sep=",", index_col=0)
 
 
@@ -17,7 +24,12 @@ def plotMapSettings():
   # print(size_sums.head())
   labels = size_sums.keys().tolist()
   sizes = size_sums.to_numpy()
-  explode = (0, 0.1, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
+  if sizes.shape[0] == 3:
+    explode = (0, 0.1, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
+  elif sizes.shape[0] == 2:
+    explode = (0, 0.1)
+  else:
+    explode = (0)
   fig1, ax1 = plt.subplots()
   ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
           shadow=False, startangle=90)
@@ -37,7 +49,10 @@ def plotMapSettings():
   square_sums = df_map_settings_op.groupby(by="square")["square"].count().sort_values(ascending=False)
   labels = ["Square" if x == 1 else "Rectangular" for x in square_sums.keys().tolist()]
   sizes = square_sums.to_numpy()
-  explode = (0.1, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
+  if sizes.shape[0] == 2:
+    explode = (0.1, 0)
+  else:
+    explode = (0)
   fig1, ax1 = plt.subplots()
   ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
           shadow=False, startangle=90)
@@ -46,13 +61,19 @@ def plotMapSettings():
 
   bos_sums = df_map_settings_op.groupby(by="bos")["bos"].count().sort_values(ascending=False)
   labels = ["Battle of Species" if x == 1 else "Normal" for x in bos_sums.keys().tolist()]
-  sizes = square_sums.to_numpy()
-  explode = (0.1, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
+  sizes = bos_sums.to_numpy()
   fig1, ax1 = plt.subplots()
-  ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
-          shadow=False, startangle=90)
+  if sizes.shape[0] == 2:
+    explode = (0.1, 0)
+    ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+            shadow=False, startangle=90)
+  else:
+    ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
+            shadow=False, startangle=90)
+
   ax1.set(aspect="equal", title='Map Battle of Species')
   plt.show()
+
 
 # time between JOIN game command and first user interaction
 def plotTimeJoinInteraction():
@@ -71,28 +92,29 @@ def plotTimeJoinInteraction():
     if sz >= 2:
       firstTimes = group["req_time"][:2].to_numpy()
       firstT = datetime.strptime(firstTimes[0], '%Y-%m-%d %H:%M:%S')
-      secondT= datetime.strptime(firstTimes[1], '%Y-%m-%d %H:%M:%S')
+      secondT = datetime.strptime(firstTimes[1], '%Y-%m-%d %H:%M:%S')
       deltaTime = (secondT - firstT).total_seconds()
       deltaTimes.append(deltaTime)
-  df_delta_times = pd.DataFrame(deltaTimes,columns =['delta times'])
+  df_delta_times = pd.DataFrame(deltaTimes, columns=['delta times'])
   delta_mean = df_delta_times.mean()
   delta_std = df_delta_times.std()
   count = df_delta_times.count()
   print("Time between JOIN game command and first user interaction:")
   print("Delta Mean:", delta_mean[0])
   print("Delta Std:", delta_std[0])
-  #plot
+  # plot
   fig1, ax1 = plt.subplots()
   n, bins, patches = plt.hist(df_delta_times['delta times'], 20, facecolor='g', alpha=0.75)
   meanstr = f"{delta_mean[0]:.2f}"
-  meanstd_str = r'$\mu='+\
-                f"{delta_mean[0]:.1f}"+\
-                's,\ \sigma='+f"{delta_std[0]:.1f}"+'s$'
+  meanstd_str = r'$\mu=' + \
+                f"{delta_mean[0]:.1f}" + \
+                's,\ \sigma=' + f"{delta_std[0]:.1f}" + 's$'
   plt.text(180, 10, meanstd_str)
   plt.xlabel('Time [s]')
   plt.ylabel('Frequency')
   plt.title('Time passed between JOIN and first user interaction')
   plt.show()
+
 
 def plotKeyboardMouseCmds():
   keyb_cmds_series = df_match_op["keyboard_cmds"]
@@ -137,6 +159,7 @@ def plotKeyboardMouseCmds():
   # plt.plot(usernames, ratios)
   # plt.show()
 
+
 def plotOverallHourPassed():
   req_time_home = df_home_op[["session_id", "req_time"]]
   req_time_match = df_match_op[["session_id", "req_time"]]
@@ -151,14 +174,14 @@ def plotOverallHourPassed():
 
   userTimes = []
   for name_u, group_u in username_groups:
-    userTime=0
+    userTime = 0
     sessions_groups = group_u.groupby(by="session_id", as_index=False)
     for name_s, group_s in sessions_groups:
       sz = group_s.shape[0]
       if sz >= 2:
         firstTimes = group_s["req_time"].to_numpy()
         firstT = datetime.strptime(firstTimes[0], '%Y-%m-%d %H:%M:%S')
-        lastT = datetime.strptime(firstTimes[sz-1], '%Y-%m-%d %H:%M:%S')
+        lastT = datetime.strptime(firstTimes[sz - 1], '%Y-%m-%d %H:%M:%S')
         deltaTime = (lastT - firstT).total_seconds()
         userTime = userTime + deltaTime
     userTimes.append(userTime)
@@ -183,10 +206,11 @@ def plotOverallHourPassed():
   plt.title('Overall playng time')
   plt.show()
 
+
 def plotWebAppAccesses():
-  accesses_home = df_home_op[["username","op_type","session_id"]]
+  accesses_home = df_home_op[["username", "op_type", "session_id"]]
   accesses_home[accesses_home["op_type"] == "LOGIN"]
-  accesses_home = accesses_home[["username","session_id"]]
+  accesses_home = accesses_home[["username", "session_id"]]
   usernames = accesses_home.groupby(by="username").agg('nunique')
   login_per_user = usernames.to_numpy()
   fig1, ax1 = plt.subplots()
@@ -216,10 +240,8 @@ def plotWebAppAccesses():
 # print(df_settings_op.head())
 
 
-
-
-# plotMapSettings()
-# plotTimeJoinInteraction()
-# plotKeyboardMouseCmds()
-# plotOverallHourPassed()
+plotMapSettings()
+plotTimeJoinInteraction()
+plotKeyboardMouseCmds()
+plotOverallHourPassed()
 plotWebAppAccesses()
