@@ -136,7 +136,7 @@ class Ui {
             console.log("********** SURVEY SUBMITTED!!! *********")
             console.log(whyText)
             new DatalogMatch("SURVEY", 1, {evaluation_survey:rating, why_survey:whyText, extra:model.kind});
-            $(this).off('hide.bs.modal');
+            $(this).off('hidden.bs.modal');
 
         });
         $('#surveyModal').modal('toggle');
@@ -178,7 +178,10 @@ class Ui {
         document.addEventListener("CHAT_GAME_FINISHED", (evt) => {
             let msg = evt.detail.message;
             this._gameEnded(msg);
-            this._showSurvey();
+            // this._showSurvey();
+            window.setTimeout(function(){ 
+                this._showSurvey();
+            }.bind(this), 2000);
             
             // open modal results
             // $('#resultsModal').modal('toggle');

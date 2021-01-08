@@ -9,7 +9,7 @@ TCP_PORT = 8421
 TIMEOUT = 100000
 
 def main(argv):
-   playerName = "webTest"
+   playerName = "T"
    gameName = ''
    try:
       opts, args = getopt.getopt(argv,"hi:o:")

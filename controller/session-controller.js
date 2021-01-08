@@ -137,11 +137,12 @@ class SessionController {
         document.addEventListener("miticoOggettoCheNonEsiste.CREATE_GAME", (evt) => {
             let msg = evt.detail
             let msgOk = msg.startsWith("OK");
+            let gameName = document.getElementById("gameNameInput").value;
             if(msgOk){
                 // alert("Game has been created!");
                 popupMsg("Game has been created!","success");
                 model.addCreatedGame(document.getElementById("gameNameInput").value);
-                new DatalogMatch("CREATE",1);
+                new DatalogMatch("CREATE",1,{matchname:gameName});
                 // document.getElementById("start-button").style.display = "";
                 // document.getElementById("start-button").addEventListener("click", () => {
                 //     console.debug("MatchController is asking the game client to START the joined game");
@@ -150,8 +151,8 @@ class SessionController {
             }
             else{
                 // alert("Game creation failed.");
-                popupMsg(msg,"danger")
-                new DatalogMatch("CREATE",0,{extra:msg});
+                popupMsg(msg,"danger");
+                new DatalogMatch("CREATE",0,{extra:msg, matchname:gameName});
             }
                 
         }, false);
@@ -203,12 +204,15 @@ class SessionController {
             let msg = evt.detail;
             let msgOk= msg.startsWith("OK");
 
+            let gameName = document.getElementById("gameNameInput").value;
+
             if(msgOk) {
                 popupMsg("You started the game!","success");
-                new DatalogMatch("STARTGAME", 1);
+                new DatalogMatch("STARTGAME", 1, {matchname:gameName});
             } else {
                 popupMsg(msg, "danger");
-                new DatalogMatch("STARTGAME",0, {extra: msg});
+                new DatalogMatch("STARTGAME",0, {extra: msg, matchname:gameName});
+                
             }
         }, false);
 

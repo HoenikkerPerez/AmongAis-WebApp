@@ -7,8 +7,7 @@
 // TRACKING
 // + startTracking()
 // + stopTracking()
-// + getTrack()
-// + resetTrack()
+// + popTrack()
 
 const MODEL_PATH = './assets/models/face-api'
 
@@ -35,13 +34,17 @@ function startVideoForEmotionRecognition() {
 
 var EmotionManager = {
     _current: undefined,
-    _recording: [],
+    _recording: {},
     _isRecording: false,
     setEmotion: function(emotion) {
         console.debug("EMOTION MANAGER: Is setting " + emotion);
         this._current = emotion;
-        if(this._isRecording)
-            this._recording.push({emotion: emotion, time: Date.now()});
+        if(this._isRecording) {
+            if(this._recording[emotion])
+                this._recording[emotion]++;
+            else
+                this._recording[emotion] = 1;
+        }
     },
     getCurrent: function() {
         console.debug("EMOTION MANAGER is returning " + this._current);
@@ -57,14 +60,19 @@ var EmotionManager = {
         this._isRecording = false;
         console.debug("EMOTION MANAGER just stopped tracking the emotions. isRecording is now " + this._isRecording)
     },
-    getTrack: function() {
+    popTrack: function() {
         console.debug("EMOTION MANAGER is returning _recording:");
         console.debug(this._recording);
-        return this._recording;
-    },
-    resetTrack: function() {
+        let result = "";
+        Object.entries(this._recording).forEach(([key, value]) => {
+            result += (key[0] + (key[1] + ",") + value + "\n");
+        });
         this._recording = [];
-        console.debug("EMOTION MANAGER has reset the expression tracking. _recording is now length " + this._recording.length);
+        return result;
+    },
+    increase: function() {
+        if(this._current)
+            this._recording[this._current]++;
     }
 }
 
@@ -81,6 +89,8 @@ video.addEventListener('play', () => {
             });
             EmotionManager.setEmotion(emotion.type);
             console.debug("EMOTION-RECOGNIZER: Current emotion is " + emotion.type);
+        } else {
+            EmotionManager.increase();
         }
     }, 500)
 })

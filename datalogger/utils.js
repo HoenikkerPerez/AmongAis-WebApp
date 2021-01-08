@@ -102,6 +102,8 @@ class DatalogMatch {
                 this.emo_rec = optionals.emo_rec;
             if(optionals.extra != undefined)
                 this.extra = optionals.extra;
+            if(optionals.matchname != undefined)
+                this.matchname = optionals.matchname;
         }
         this.send();
     };
