@@ -34,7 +34,9 @@ def plotMapSettings():
   ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
           shadow=False, startangle=90)
   ax1.set(aspect="equal", title='Map Size')
+  plt.savefig(fig1.axes[0].get_title() + ".png")
   plt.show()
+
 
   balanced_sums = df_map_settings_op.groupby(by="balanced")["balanced"].count().sort_values(ascending=False)
   labels = ["Balanced" if x == 1 else "Unbalanced" for x in balanced_sums.keys().tolist()]
@@ -44,7 +46,9 @@ def plotMapSettings():
   ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
           shadow=False, startangle=90)
   ax1.set(aspect="equal", title='Map Balanced')
+  plt.savefig(fig1.axes[0].get_title() + ".png")
   plt.show()
+
 
   square_sums = df_map_settings_op.groupby(by="square")["square"].count().sort_values(ascending=False)
   labels = ["Square" if x == 1 else "Rectangular" for x in square_sums.keys().tolist()]
@@ -57,7 +61,9 @@ def plotMapSettings():
   ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
           shadow=False, startangle=90)
   ax1.set(aspect="equal", title='Map Type')
+  plt.savefig(fig1.axes[0].get_title() + ".png")
   plt.show()
+
 
   bos_sums = df_map_settings_op.groupby(by="bos")["bos"].count().sort_values(ascending=False)
   labels = ["Battle of Species" if x == 1 else "Normal" for x in bos_sums.keys().tolist()]
@@ -72,7 +78,9 @@ def plotMapSettings():
             shadow=False, startangle=90)
 
   ax1.set(aspect="equal", title='Map Battle of Species')
+  plt.savefig(fig1.axes[0].get_title() + ".png")
   plt.show()
+
 
 
 # time between JOIN game command and first user interaction
@@ -104,16 +112,25 @@ def plotTimeJoinInteraction():
   print("Delta Std:", delta_std[0])
   # plot
   fig1, ax1 = plt.subplots()
-  n, bins, patches = plt.hist(df_delta_times['delta times'], 20, facecolor='g', alpha=0.75)
+
+  n, bins, patches = plt.hist(df_delta_times['delta times'],
+                              bins=50,
+                              range=[0,250],
+                              facecolor='g',
+                              alpha=0.75)
   meanstr = f"{delta_mean[0]:.2f}"
   meanstd_str = r'$\mu=' + \
                 f"{delta_mean[0]:.1f}" + \
                 's,\ \sigma=' + f"{delta_std[0]:.1f}" + 's$'
   plt.text(180, 10, meanstd_str)
+  # plt.xticks(, ('G1', 'G2', 'G3', 'G4', 'G5'))
   plt.xlabel('Time [s]')
+  plt.xlim([0, 250])
   plt.ylabel('Frequency')
   plt.title('Time passed between JOIN and first user interaction')
+  plt.savefig(fig1.axes[0].get_title() + ".png")
   plt.show()
+
 
 
 def plotKeyboardMouseCmds():
@@ -142,7 +159,7 @@ def plotKeyboardMouseCmds():
   print(x)
   width = 0.35  # the width of the bars
 
-  fig, ax = plt.subplots()
+  fig1, ax = plt.subplots()
   rects1 = ax.bar(x - width / 2, k_cmds, width, label='Keyboard')
   rects2 = ax.bar(x + width / 2, m_cmds, width, label='Mouse')
   # Add some text for labels, title and custom x-axis tick labels, etc.
@@ -152,12 +169,14 @@ def plotKeyboardMouseCmds():
   ax.set_xticklabels(x)
   ax.legend()
 
-  fig.show()
+  fig1.show()
   # usernames = df_single_user_cmds["username"].to_numpy()
   # # ratios = df_single_user_cmds["ratio [mouse/keyb]"].to_numpy()
   # ratios = df_single_user_cmds["mouse_cmds"].to_numpy()
   # plt.plot(usernames, ratios)
+  plt.savefig(fig1.axes[0].get_title() + ".png")
   # plt.show()
+
 
 
 def plotOverallHourPassed():
@@ -204,7 +223,9 @@ def plotOverallHourPassed():
   plt.xlabel('Playing Time [s]')
   plt.ylabel('Number of Users')
   plt.title('Overall playng time')
+  plt.savefig(fig1.axes[0].get_title() + ".png")
   plt.show()
+
 
 
 def plotWebAppAccesses():
@@ -223,9 +244,55 @@ def plotWebAppAccesses():
   plt.ylabel('Visits')
   plt.title('Web App distinct visits')
   ax1.get_xaxis().set_visible(False)
+  plt.savefig(fig1.axes[0].get_title() + ".png")
   plt.show()
 
+def plotSurvey():
+  df_evaluation_survey = df_match_op
+  votes = df_evaluation_survey.groupby(by="evaluation_survey").agg('count')
+  login_per_user = votes["username"].to_numpy()
+  fig1, ax1 = plt.subplots()
+  plt.bar([1,2,3,4,5],
+          login_per_user[1:],
+          alpha=0.75)
+  # meanstr = f"{delta_mean[0]:.2f}"
+  # meanstd_str = r'$\mu=' + \
+  #               f"{delta_mean[0]:.1f}" + \
+  #               's,\ \sigma=' + f"{delta_std[0]:.1f}" + 's$'
+  # plt.text(1500, 3, meanstd_str)
+  plt.ylabel('Occurrences')
+  plt.xlabel('Vote')
+  plt.title('Survey Results')
+  # ax1.get_xaxis().set_visible(False)
+  plt.savefig(fig1.axes[0].get_title() + ".png")
+  plt.show()
 
+def plotSurveyVoters():
+  df_evaluation_survey = df_match_op
+  votes = df_evaluation_survey.groupby(by="evaluation_survey").agg('count')
+  login_per_user = votes["username"].to_numpy()
+  voters = login_per_user[1:].sum()
+  notVoters = login_per_user[0]
+  labels = ["Voting", "not Voting"]
+  res = np.ndarray(2, np.int32)
+  res[0] = voters
+  res[1] = notVoters
+  fig1, ax1 = plt.subplots()
+  if res.shape[0] == 2:
+    explode = (0.1, 0)
+    ax1.pie(res, explode=explode, labels=labels, autopct='%1.1f%%',
+            shadow=False, startangle=90)
+
+  ax1.set(aspect="equal", title='Survey Voting')
+  plt.savefig(fig1.axes[0].get_title() + ".png")
+  plt.show()
+
+def dumpWhySurvey():
+  df_evaluation_survey = df_match_op
+  votes = df_evaluation_survey.dropna(subset=['why_survey'])
+  login_per_user = votes["why_survey"]
+  for text in login_per_user:
+    print(text)
 #
 # print("----------------------------------")
 #
@@ -240,8 +307,11 @@ def plotWebAppAccesses():
 # print(df_settings_op.head())
 
 
-plotMapSettings()
-plotTimeJoinInteraction()
-plotKeyboardMouseCmds()
-plotOverallHourPassed()
-plotWebAppAccesses()
+# plotMapSettings()
+# plotTimeJoinInteraction()
+# plotKeyboardMouseCmds()
+# plotOverallHourPassed()
+# plotWebAppAccesses()
+# plotSurvey()
+# plotSurveyVoters()
+dumpWhySurvey()

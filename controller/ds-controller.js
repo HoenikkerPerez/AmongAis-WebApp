@@ -67,7 +67,7 @@ class DsController {
         let pairs = [["BEST SCORE", globalStatistics.best_score],
                     ["SPECIES", species], 
                     ["NAME", globalStatistics.name], 
-                    ["PLAYED MATCHES",globalStatistics.name],
+                    ["PLAYED MATCHES",globalStatistics.played_matches],
                     ["ACCURACY", globalStatistics.total_accuracy], 
                     ["K / D", globalStatistics.total_kill_death_ratio],
                     ["KILLS",globalStatistics.total_kills],
