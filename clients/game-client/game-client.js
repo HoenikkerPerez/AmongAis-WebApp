@@ -15,14 +15,13 @@ class GameClient {
 
     // Queue for message requests to send to the server.
     _schedulerCounter = 0;
-    _wsRequests = [];
     _wsRequests_look = [];
     _wsRequests_cmd = [];
     _waitingResponse;
     _lastResponse;
     _nopTime;
     _noRequestsTime;
-
+    _tmpMsg = "";
     constructor(clientType) {
         this._connect();
         this._lobby = new LobbyManager();
@@ -46,22 +45,50 @@ class GameClient {
 
         this._wsQueue = [];
         this._ws.onmessage = async function(evt) {
-            this._waitingResponse = false;
-            this._lastResponse = new Date();
+            // this._waitingResponse = false;
+            // TODO lastresponse after first or last response?
             let msg = await evt.data.text();
-            let msgtag = this._wsQueue.shift()
-            //console.debug(this._clientType + " received a message - " + msgtag);
-            // console.debug("Game Client: Dispatching event" + msgtag);
-            document.dispatchEvent(new CustomEvent(msgtag, {detail: msg }));
+            let msgtag = this._wsQueue[0];
+            if(msgtag==="miticoOggettoCheNonEsiste.LOOK_MAP") {
+                this._tmpMsg += msg;
+                if(this._tmpMsg.endsWith("«ENDOFMAP»\n")) {
+                    this._lastResponse = new Date();
+                    // console.debug("Game Client: Dispatching event" + msgtag);
+                    document.dispatchEvent(new CustomEvent(msgtag, {detail: this._tmpMsg }));
+                    // console.debug(this._clientType + " received a message - \n" + msg);
+                    this._tmpMsg = "";
+                    this._waitingResponse = false;
+                    this._wsQueue.shift()
+                } 
+            } else if(msgtag==="STATUS") {
+                this._tmpMsg += msg;
+                if(this._tmpMsg.endsWith("«ENDOFSTATUS»\n")) {
+                    this._lastResponse = new Date();
+                    // console.debug("Game Client: Dispatching event" + msgtag);
+                    document.dispatchEvent(new CustomEvent(msgtag, {detail: this._tmpMsg }));
+                    // console.debug("************* END OF STATUS *************\n");
+                    // console.debug(this._clientType + " received a message - \n" + this._tmpMsg);
+                    this._tmpMsg = "";
+                    this._waitingResponse = false;
+                    this._wsQueue.shift()
+                } 
+            } else {
+                this._wsQueue.shift();
+                // console.debug(this._clientType + " received a message - \n" + msg);
+                this._lastResponse = new Date();
+                // console.debug("Game Client: Dispatching event" + msgtag);
+                document.dispatchEvent(new CustomEvent(msgtag, {detail: msg }));
+                this._waitingResponse = false;
+
+            }
         }.bind(this)
 
         this._nopTime = new Date();
         console.debug("Game Client is initializing the request queue.");
-        this._wsRequests = [];
         this._noRequestsTime = new Date();
         this._waitingResponse = false;
         this._lastResponse = new Date();
-        
+
         window.setTimeout(function(){ this._requestHandler() }.bind(this), model.connectionTimeframe);
         // window.setTimeout(function(){ this._requestCmdHandler() }.bind(this), model.connectionTimeframe);
         // window.setTimeout(function(){ this._requestLookHandler() }.bind(this), model.connectionTimeframe);
@@ -73,7 +100,7 @@ class GameClient {
         //console.debug("Game Client pushing response tag " + msgtag);
         // this._wsQueue.push(msgtag);
         //console.debug("Game Client pushing request message " + msg);
-        if(msgtag==="STATUS" || msgtag==="miticoOggettoCheNonEsiste.SPECTATE_GAME" || msgtag==="miticoOggettoCheNonEsiste.LOOK_MAP"){
+        if(msgtag==="STATUS" || msgtag==="miticoOggettoCheNonEsiste.LOOK_MAP"){
             this._wsRequests_look.push({tag:msgtag, msg:msg});
         } else {
             this._wsRequests_cmd.push({tag:msgtag, msg:msg});
@@ -90,11 +117,11 @@ class GameClient {
         // console.debug("_requestHandler _waiting: " + this._waitingResponse)
         let now = new Date()
         let elapsed = now - this._lastResponse;
-        // if(this._waitingResponse) {
-        //     console.debug("_requetHandler waitingResponse: " + this._waitingResponse)
-        //     window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
-        //     return;
-        // }
+        if(this._waitingResponse) {
+            // console.debug("_requetHandler waitingResponse: " + this._waitingResponse)
+            window.setTimeout(function(){ this._requestHandler() }.bind(this), timeframe);
+            return;
+        }
         
         if (elapsed < timeframe) {
             let deltaTimeframe = timeframe - elapsed; // add a little more waiting time
@@ -102,7 +129,7 @@ class GameClient {
             window.setTimeout(function(){ this._requestHandler() }.bind(this), deltaTimeframe);
             return;
         }
-        
+        // console.debug("Passed " + elapsed + " from previous message");
         if(this.isOdd(this._schedulerCounter)) {
             if(this._wsRequests_cmd.length > 0) {
                 //console.debug("Game Client's request queue is not empty.");
@@ -178,23 +205,21 @@ class GameClient {
 
     /* SESSION interface */
 
-    createGame(gameName) {
+    createGame(gameName, type, mapSize, balancedTeams, battleOfSpecies) {
         //console.debug("Game Client is requesting a game creation for " + gameName);
-        let msg = this._lobby.createGame(gameName);
+        let msg = this._lobby.createGame(gameName, type, mapSize, balancedTeams, battleOfSpecies);
         this._send("miticoOggettoCheNonEsiste.CREATE_GAME", msg);
     }
 
-    joinGame(gameName, characterName) {
+    joinGame(gameName, characterName, logName) {
         //console.debug("Game Client is joining game named " + gameName);
-        model.status.ga = gameName;
-        let msg = this._lobby.joinGame(gameName, characterName);
+        let msg = this._lobby.joinGame(gameName, characterName, logName);
         this._send("miticoOggettoCheNonEsiste.JOIN_GAME", msg);
     }
     
-    spectateGame(gameName) {
+    spectateGame(gameName, characterName, logName) {
         //console.debug("Game Client is joining game named " + gameName);
-        model.status.ga = gameName;
-        let msg = this._lobby.spectateGame(gameName);
+        let msg = this._lobby.spectateGame(gameName, characterName, logName);
         this._send("miticoOggettoCheNonEsiste.SPECTATE_GAME", msg);
     }
 
@@ -275,6 +300,11 @@ class GameClient {
         console.debug("Game Client is requesting a touring choice for " + name + " being " + choice);
         let msg = this._sync.touringChoice(model.status.ga, name, choice);
         this._send("miticoOggettoCheNonEsiste.TOURING", msg);
-    }
+    };
+
+    cleanWSQueues(){
+        this._wsRequests_cmd = [];
+        this._wsRequests_look = [];
+    };
 
 }

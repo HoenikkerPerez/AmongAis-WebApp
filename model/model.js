@@ -1,22 +1,22 @@
 var model = {
-    _map: [],
-    timeframe: 500, // Default map polling rate
-    timeframeMap: 500,
-    timeframeStatus:1500,
-    spectatorTimeframe: 500, // Spectator's map polling rate
-    playerTimeframe: 500, // Player's map polling rate
-    connectionTimeframe: 500, // Minimum delay between requests
+    // timeframe: 150, // Default map polling rate
+    spectatorTimeframe: 50, // Spectator's map polling rate
+    playerTimeframe: 150, // Player's map polling rate
+    timeframeMap: undefined,
+    timeframeStatus: undefined,
+    connectionTimeframe: 150, // Minimum delay between requests
     nopTimeframe: 20000,
     net: {
         game: {
-            // ws: "ws://margot.di.unipi.it:8521"
-            ws: "ws://93.39.188.250:8521"
+            ws: "ws://margot.di.unipi.it:8521"
+            // ws: "ws://93.39.188.250:8521"
         },
         chat: {
-            // ws: "ws://margot.di.unipi.it:8522"
-            ws: "ws://93.39.188.250:8522"
+            ws: "ws://margot.di.unipi.it:8522"
+            // ws: "ws://93.39.188.250:8522"
         }
     },
+
     status: {
         ga: "gamename",
         state: "lobby-started-ended",
@@ -28,16 +28,9 @@ var model = {
             loyalty:0,
             energy:256,
             score:0,
+            lastDirection: undefined
         },
         pl_list:[]
-        //     pl_list: (2) […]
-            //     0: {…}
-                //     name: "undesiderable1"
-                //     state: "LOBBYOWNER" / "LOBBYGUEST" / "ACTIVE" / "KILLED"
-                //     symbol: "A"
-                //     team: "0"
-                //     x: "13"
-                //     y: "25"
     },
 
     NONE: "NONE",
@@ -66,13 +59,72 @@ var model = {
         isRunning: false,
         iVote: false,
     },
+    meetingsQueue: [],
     shoots: [],
+    shooting: {
+        duration: 10,
+        animations: {} // {name:____, cnt:10}
+    }, 
+    dieing: [], // [{name:____, cnt:5}]
     pathfindigMoves: [],
     path: [],
     createdGames:new Set(),
+    pl_directions: [],  // Todo insert into status!
+    // word parameters
+    world: {
+        _map: [],
+        _rendering: false,
+        _initSize: false,
+        tmp_players: [],
+        tmp_objects: [],
+        _imageLoaded: false,
+        showGrid: false,
+        showMinimap: true,
+        refresh: false,
+        animation: undefined
+    },
+    musicVolume: 0.3,
 
+    setMusicVolume(volume) {
+        this.musicVolume = volume;
+        document.dispatchEvent(new CustomEvent("MODEL_MUSIC_VOLUME", {detail: {volume: volume}}));
+    },
+
+    showGrid(show) {
+        this.world.showGrid = show;
+    },
+
+    lowResolutionMap(flag) {
+        this.world.lowResolutionMap = flag;
+    },
+
+    needRefresh() {
+        return this.world.refresh;
+    },
+
+    startRefreshMap() {
+        this.world.refresh = true;
+    },
+
+    stopRefreshMap() {
+        this.world.refresh = false;
+    },
+
+    showMinimap(show) {
+        this.world.showMinimap = show;
+    },
+
+    
     addCreatedGame(nameGame){
         this.createdGames.add(nameGame);
+    },
+    
+    setRendering(rendering) {
+        this.world._rendering = rendering;
+    },
+        
+    getRendering() {
+        return this.world._rendering;
     },
 
     imCreator(nameGame){
@@ -88,22 +140,68 @@ var model = {
 
     setMap: function(map) {
         // preprocess map
-        this._map = map;
+        this.world._map = map;
         // remove exausted shoots
         this._removeExaustedShoots();
-        // update player position
         let tmpMap = map.tiles;
         for(let i = 0; i<tmpMap.length; i++) {
             let symbol_code = tmpMap[i].charCodeAt(0);
-            if(symbol_code >= 65 && symbol_code <= 84 || symbol_code >= 97 && symbol_code <= 116) { 
+            // update player position and direction
+            if(symbol_code >= 65 && symbol_code <= 87 || symbol_code >= 97 && symbol_code <= 119) { 
                 let pl = this.findPlayerBySymbol(tmpMap[i]);
                 if(pl != undefined) {
-                    pl.x = i % map.cols;
-                    pl.y = Math.floor(i / map.cols);
+                    let name = pl.name;
+                    let newDirection;
+                    if(this.pl_directions[name] == undefined) {
+                        // add new player
+                        this.pl_directions[name] = "S";
+                    } else {
+                        let oldDirection =  this.pl_directions[name];
+                        let oldPosition = {x: pl.x, y: pl.y};
+                        let newPosition = {x: i % map.cols, y:  Math.floor(i / map.cols)};
+                        // N
+                        if(oldPosition.x < newPosition.x) {
+                            newDirection = "E";
+                        } else if(oldPosition.x > newPosition.x) {
+                            newDirection = "W";
+                        } else if(oldPosition.y > newPosition.y) {
+                            newDirection = "N";
+                        } else if(oldPosition.y < newPosition.y || oldDirection == undefined) {
+                            newDirection = "S";
+                        } else {
+                            newDirection = oldDirection; // default positioning (start)
+                        }
+
+                        this.pl_directions[name] = newDirection;
+                        pl.x = newPosition.x;
+                        pl.y = newPosition.y;
+                    }
                 } 
             }
         }
+        this.startRefreshMap();
         document.dispatchEvent(new CustomEvent("MODEL_SETMAP", {detail: {map:map}}));
+    },
+
+    setDirection(name, direction){
+        this.pl_directions[name] = direction;
+    },
+
+    // Shooting Animation
+    shootAnimationStart(shooter, direction) {
+        // if(this.shooting.animations[shooter]==undefined){
+        // }
+        this.shooting.animations[shooter] = this.shooting.duration;
+        this.setDirection(shooter, direction);
+    },
+
+    getShootAnimationStep(shooter) {
+        let s = this.shooting.animations[shooter]
+        if((s != undefined) && (s>0)){
+            this.shooting.animations[shooter] -= 1;
+            return this.shooting.duration - s;
+        }
+        return  -1;
     },
 
     setPath(steps) {
@@ -168,6 +266,10 @@ var model = {
                 newPlayers[name].touring = oldPlayers[name].touring;
     },
 
+    _restoreLastDirection(oldMatchStatus, newMatchStatus) {
+        newMatchStatus.me.lastDirection = oldMatchStatus.me.lastDirection;
+    },
+
     _isMatchStatusChange(oldMatchStatus,newMatchStatus){
         if(newMatchStatus !== oldMatchStatus){
             let newstate_tag = "MODEL_MATCH_STATUS_"+this.status.state; // LOBBY, ACTIVE, FINISHED
@@ -188,14 +290,24 @@ var model = {
         }
     },
 
+    isDying(name){
+        for (let i = 0; i < this.dieing.length; i++) {
+            if(this.dieing[i].name === name){
+                return true;
+            }
+        }
+        return false;
+    },
+
     setStatus: function(status) {
         let old = this.status;
         this.status = status;
         
         // Postprocess the status after it is received from the server
-        if(old != undefined) {
-            this._restoreTouringGame(old, this.status);
-        }
+        // if(old != undefined) {
+        this._restoreTouringGame(old, this.status);
+        this._restoreLastDirection(old, this.status);
+        // }
 
         // Fire an event if the match status actually changed
         this._isMatchStatusChange(old.state,status.state);
@@ -204,6 +316,7 @@ var model = {
         this._isMePlayerStatusChange(old,status);
 
         document.dispatchEvent(new CustomEvent("MODEL_SETSTATUS", {detail: {status:status}}));
+        this.startRefreshMap();
     },
 
     // enter into the match: players & spectators
@@ -212,7 +325,7 @@ var model = {
         this.kind = kindOfUser;
         // preprocess status
         this.isRunning = isRunning;
-        document.dispatchEvent(new CustomEvent("MODEL_RUN_GAME", {detail:isRunning}));
+        document.dispatchEvent(new CustomEvent("MODEL_RUN_GAME", { detail: {running: isRunning} }));
     },
 
     setGameActive: function(){
@@ -327,6 +440,10 @@ var model = {
         document.dispatchEvent(new CustomEvent("MODEL_MEETING_END"));
     },
 
+    murderCatched(murder, murdered){
+        this.dieing.push({name:murdered,cnt:5});
+    },
+
     // Endgame
 
     endgameScore: [],
@@ -335,6 +452,23 @@ var model = {
         this.endgameScore.push(endscore);
         this.endgameScore.sort((a,b) => (a.score < b.score) ? 1 : ((b.score < a.score) ? -1 : 0));
         document.dispatchEvent(new CustomEvent("MODEL_ENDGAME_SCORE_ADDED"));
+    },
+
+    popupCounter:0,
+
+    popupAck(){
+        this.popupCounter++;
+    },
+
+    popupEnd(){
+        if(this.popupCounter>0){
+            this.popupCounter -= 1;
+        }
+        return this.popupCounter;
+    },
+
+    newPopupMsg(msg, kind, timeout) {
+        document.dispatchEvent(new CustomEvent("MODEL_POPUP_MSG", {detail: {msg:msg, kind:kind,timeout:timeout}}));
     }
 
 };
@@ -345,3 +479,37 @@ var model = {
 // PL: symbol=A name=ardo team=0 x=3 y=27
 // PL: symbol=a name=edo team=1 x=23 y=5
 // «ENDOFSTATUS»
+
+var ModelManager = {
+
+    snapshot: undefined,
+
+    snap: function() {
+        let createdGames = model.createdGames;
+        let values = JSON.parse(JSON.stringify(model, function(key, val){
+            if(typeof(val) != "function") {
+                console.debug("I'm cloning " + key);
+                return val;
+            } else {
+                console.debug("SKIPPED " + key);
+            }
+        }));
+        this.snapshot = {
+            createdGames: createdGames,
+            values: values
+        }
+    },
+
+    shot: function() {
+        if(this.snapshot) {
+            Object.keys(this.snapshot.values).forEach((k => {
+                console.debug("Restoring " + k);
+                model[k] = this.snapshot.values[k];
+            }).bind(this));
+            model.createdGames = this.snapshot.createdGames;
+            this.snapshot = undefined;
+        } else {
+            console.error("ModelManager is trying to restore a snapshot without having one.");
+        }
+    }
+}

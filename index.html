@@ -21,16 +21,18 @@
         <meta charset="UTF-8">
         <title>AMONGAIs</title>
         <meta name="description" content="AMONGAIs">
-
+        <link rel="icon" href="favicon.ico" />
         <!-- Model -->
         <script src="model/model.js"></script>
         
         <!-- Client -->
+        <script src="clients/log-client.js"></script>
         <script src="clients/game-client/auth.js"></script>
         <script src="clients/game-client/match-sync.js"></script>
         <script src="clients/game-client/lobby-manager.js"></script>
         <script src="clients/game-client/game-client.js"></script>
-
+        <script src="clients/league-client.js"></script>
+        <script src="clients/ds-client.js"></script>        
         <script src="clients/chat-client.js"></script>
 
         <!-- Controller -->
@@ -39,86 +41,335 @@
         <script src="controller/session-controller.js"></script>
         <script src="controller/match-controller.js"></script>
         <script src="controller/chat-controller.js"></script>
+        <script src="controller/league-controller.js"></script>
+        <script src="controller/ds-controller.js"></script>
 
         <script src="controller/controller.js"></script>
+
+        <!-- Audio -->
+        <script src="sfx/sounds.js"></script>
+
+
         <!-- View -->
         <script src="view/view-utils.js"></script>
         <script src="view/ui.js"></script>
         <script src="view/world.js"></script>
         <script src="view/hud.js"></script>
         <script src="view/gui.js"></script>
-
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         
         <link rel="stylesheet" href="styles.css" type="text/css">
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-61G3EHBYY6"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
 
+        gtag('config', 'G-61G3EHBYY6');
+        </script>
+        <!-- onload for View and Controller -->
+        <script>
+            window.onload = function() {
+                loadController();
+                loadView();
+            }
+        </script>
     </head>
     <body class="container-fluid p-3 my-3 bg-dark text-white">
-        <div id="alert-popup" class="modal fade" role="alert"></div>
-        <script>
-            // popupMsg("Uomo avvisato ... ", "info");
-            // popupMsg("... uomo avvisato.", "danger");
-        </script>
-        <div id="homeUI" class="container p-3 my-3 bg-dark text-white">
-            <div class="form-group p-3 my-3" id="login-form-wrapper">
-                <div class="form" name="loginForm" for="email" id="loginForm">Login Credentials:
-                    <!-- <div class="col-sm-4"> . </div> -->
-                    <input type="text" id="usernameInput" name="usernameInput" class="form-control my-3" placeholder="loginName" autofocus> <!-- col-sm-4 -->
-                    <input type="button" class="btn btn-primary" id="loginButton" name="loginButton" value="LOGIN" disabled>
-                    <!-- <div class="col-sm-4"></div> -->
 
-                </div>
-                <div>For the moment you can use the username you want. [this is useless, we know where you live]</div>
-            </div>
-            <div class="form-group" id="startgame-form-wrapper" style="display: none;">
-                <div name="startGameForm" id="startGameForm" action="">Enter game name:<br>
-                    <input type="text" class="form-control my-3" id="ingamenameInput" name="ingamenameInput" placeholder="username"><P>
-                    <input type="text" class="form-control my-3" id="gameNameInput" name="gameNameInput"  placeholder="matchname" value=""><P>
-                        <div class="btn-group">
-                            <input type="button" class="btn btn-primary" id="createButton" name="createButton" value="CREATE" disabled>
-                            <input type="button" class="btn btn-primary" id="startButtonNoJoin" name="startButtonNoJoin" value="START MATCH" disabled>
-                        </div>
-                        <input type="button" class="btn btn-primary" id="joinButton" name="joinButton" value="JOIN" disabled>
-                    <input type="button" class="btn btn-primary" id="spectateButton" name="spectateButton" value="SPECTATE" disabled>
+        <!-- NAVBAR -->
+        <nav id="navigation-bar" class="navbar navbar-dark navbar-expand-lg bg-dark text-white" style="display:none">
+            <a class="navbar-brand"  id="brandLink" href="#">AmongAIs</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav mr-auto">
+                  
+                <li class="nav-item active">
+                  <a class="nav-link" id="homeLink" href="#">Play</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Tournaments
+                  </a>
+                  <div class="dropdown-menu " aria-labelledby="navbarDropdown1">
+                    <a class="dropdown-item" id="joinTournamentLink" href="#">Join</a>
+                    <a class="dropdown-item"  id="leaveTournamentLink" href="#">Leave</a>
+                    <!-- <a class="dropdown-item" href="#scheduleTournament">Schedule</a> -->
+                    <a class="dropdown-item" id="listTournamentLink" href="#">Available Tournaments</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" id="globalLeaderboardLink" href="#">Global Leaderboard</a>
+                  </div>
+
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Statistics
+                    </a>
+                    <div class="dropdown-menu " aria-labelledby="navbarDropdown2">
+                      <a class="dropdown-item" id="yourStatsLink" href="#">Your Statistics</a>
+                      <!-- <a class="dropdown-item" href="#scheduleTournament">Schedule</a> -->
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" id="searchPlayerLink" href="#">Search player</a>
                     </div>
+                  </li>
+
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" id="logoutLink" href="#">Logout</a>
+                </li>
+              </ul>
+              <span class="navbar-text" id="usernameNavbar">
+              </span>
+            </div>
+        </nav>
+
+        <!-- TOURNAMENT MODAL -->
+        <div class="modal fade text-white" id="tournamentModal" tabindex="-1" role="dialog" aria-labelledby="tournamentModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content bg-dark text-white">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="tournamentModalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body" id="tournamentModalBody">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
             </div>
         </div>
 
+        <!-- ENDGAME RESULTS MODAL -->
+        <div class="modal fade" id="resultsModal" tabindex="-1" role="dialog" aria-labelledby="resultsModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content bg-dark text-white">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="resultsModalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body" id="resultsModalBody">
 
-        <div id="console" class="row" style="display:none">
-            <div id="endgame" style="max-width: 20%">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NON BLOCKING NOTIFICATION
+        <div class="toast bg-dark text-white" id="notificationToast" role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute; top: 0; right: 0;">
+            <div class="toast-body">
+              Hello, world! This is a toast message.
+            </div>
+          </div> -->
+
+        <!-- <div id="alert-popup" class="modal fade" role="textbox"></div> -->
+        <!-- <div id="toastHook" aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;"></div> -->
+        <!-- <div id="toastHook" aria-live="polite" aria-atomic="true" style="position: absolute; top: 0; right: 40%;"></div> -->
+
+        <!-- SETTINGS -->
+        <!-- Modal -->
+        <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="settingsModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                <h5 class="modal-title" id="settingsModalLabel">Settings</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+
+                    <div>
+                        <input type="checkbox" id="minimapSwitch" checked>
+                        <label for="minimapSwitch">Minimap</label>
+                    </div>
+
+                    <div>
+                        <input type="checkbox" id="gridViewSwitch">
+                        <label for="gridViewSwitch">Map grid</label>
+                    </div>
+                    
+                    <div>
+                        <input type="checkbox" id="lowResolutionSwitch">
+                        <label for="lowResolutionSwitch">Low resolution</label>
+                    </div>
+
+                    <div>
+                        <input id="volumeSlider" class="border-0" type="range" min="0" max="100" value="30"/>
+                        <label for="volumeSlider">Volume</label>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <!-- HOME FORMS -->
+        <div id="homeUI" class="container p-3 my-3 bg-dark text-white">
+
+            <div class="my-3" id="login-form-wrapper">
+                <label class="col-sm-4 mb-3 text-center">Login Name</label>
+                <input type="text" id="usernameInput" name="usernameInput" class="form-control mb-3 text-center" placeholder="loginName" autofocus> <!-- col-sm-4 -->
+                <input type="button" class="btn btn-primary mb-3" id="loginButton" name="loginButton" value="LOGIN" disabled>
+                <p>The login name will be used by the DM-LOG system. If you want to store and retrieve your statistics, please use always the same login name.</p>
+                <p>Special character allowed: "-" </p>
+            </div>
+
+            <div class="form-group" id="startgame-form-wrapper" style="display: none;">
+                <div class="form-row mb-3">
+                    <label class="col-sm-4 mr-3 text-right">Username</label>
+                    <input type="text" class="form-control col-sm-4" id="ingamenameInput" name="ingamenameInput" placeholder="username">
+                </div>
+
+                <div class="form-row mb-3">
+                    <label class="col-sm-4 mr-3 text-right">Game Name</label>
+                    <input type="text" class="form-control col-sm-4" id="gameNameInput" name="gameNameInput"  placeholder="matchname" value="">
+                </div>
+
+                <div class="form-row mb-3">
+                    <label class="col-sm-4 mr-3 text-right">Map Size</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="mapSizeRadio" id="radio1" value="1" checked>
+                        <label class="form-check-label" for="radio1">Small</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="mapSizeRadio" id="radio2" value="2">
+                        <label class="form-check-label" for="radio2">Medium</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="mapSizeRadio" id="radio3" value="3">
+                        <label class="form-check-label" for="radio3">Large</label>
+                    </div>
+                </div>
+                
+                <div class="form-row mb-3">
+                    <label class="col-sm-4 mr-3 text-right">Map type</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="mapTypeRadio" id="radioSize1" value="Q" checked>
+                        <label class="form-check-label" for="radioSize1">Square</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="mapTypeRadio" id="radioSize2" value="W">
+                        <label class="form-check-label" for="radioSize2">Rectangular (2x1)</label>
+                    </div>
+                </div>
+
+                <div class="form-row mb-3">
+                    <label class="col-sm-4 mr-3 text-right">Team composition</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="teamBalancedRadio" id="radioBancanced1" value="U" checked>
+                        <label class="form-check-label" for="radioBancanced1">Unbalanced</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="teamBalancedRadio" id="radioBancanced1" value="B">
+                        <label class="form-check-label" for="radioBancanced1">Balanced</label>
+                    </div>
+                </div>
+
+                <div class="form-row mb-3">
+                    <label class="col-sm-4 mr-3 text-right"></label>
+                    <div class="form-check" id="popoverBattleOfSpecies" data-container="body" trigger="hover" data-toggle="popover" data-placement="right" data-content='The "Battle of the Species" match will be held between AIs and Humans, divided in two opposing teams.'>
+                        <input type="checkbox" class="form-check-input" id="battleOfSpeciesCheckbox">
+                        <label class="form-check-label" for="battleOfSpeciesCheckbox">Battle of species</label>
+                      </div>
+                </div>
+
+
+                <div class="btn-group">
+                    <input type="button" class="btn btn-primary" id="createButton" name="createButton" value="CREATE" disabled>
+                    <input type="button" class="btn btn-primary" id="startButtonNoJoin" name="startButtonNoJoin" value="START MATCH" disabled>
+                </div>
+                <input type="button" class="btn btn-primary" id="joinButton" name="joinButton" value="JOIN" disabled>
+                <input type="button" class="btn btn-primary" id="spectateButton" name="spectateButton" value="SPECTATE" disabled>
+            </div>
+        </div>
+
+        <!-- GAME GUI -->
+        <div id="console" style="display:none">
+
+            <div id="endgame" style="display: none;">
                 <h1 id="endgame-title"></h1>
                 <div id="endgame-ladder"></div>
             </div>
-            <button id="start-button" type="button" class="btn btn-primary" style="display: none;">START</button>
-            <div class="col-sm-2" >
-                <div id="hud" style="overflow:auto; max-height:100vh;"></div>
+            
+            <div id="left-hud">
+                <button id="start-button" type="button" class="btn btn-primary" style="display: none;">START</button>
                 <div id="emergency-meeting" class="emergency-meeting-yellow"style="display: none;"></div>
+                <!-- <div id="emergency-meeting"></div> -->
+
+                <div id="hud"></div>
             </div>
-            <div class="col">
+
+            <div>
+                <!-- NON BLOCKING NOTIFICATION -->
+                <div class="toast bg-dark text-white" id="notificationToast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="1500" style="position: absolute; top: 0; right: 40%;">
+                    <div class="toast-body">
+                    Hello, world! This is a toast message.
+                    </div>
+                </div>
                 <canvas id="canvas" tabindex='1'></canvas>
             </div>
-            <!-- chat -->
-            <div class="col-sm-2"> 
-                <div class="form-group"> 
+
+            <!-- Right column -->
+            <div  id="right-hud"> 
+                <div class="form-group">
+                    <!-- Button trigger modal -->
+                    <button type="button" id="setting-button" class="btn btn-primary mr-1 transparent-input" data-toggle="modal" data-target="#settingsModal">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill-rule="evenodd" d="M7.875 2.292a.125.125 0 00-.032.018A7.24 7.24 0 004.75 8.25a7.247 7.247 0 003.654 6.297c.57.327.982.955.941 1.682v.002l-.317 6.058a.75.75 0 11-1.498-.078l.317-6.062v-.004c.006-.09-.047-.215-.188-.296A8.747 8.747 0 013.25 8.25a8.74 8.74 0 013.732-7.169 1.547 1.547 0 011.709-.064c.484.292.809.835.809 1.46v4.714a.25.25 0 00.119.213l2.25 1.385c.08.05.182.05.262 0l2.25-1.385a.25.25 0 00.119-.213V2.478c0-.626.325-1.169.81-1.461a1.547 1.547 0 011.708.064 8.74 8.74 0 013.732 7.17 8.747 8.747 0 01-4.41 7.598c-.14.081-.193.206-.188.296v.004l.318 6.062a.75.75 0 11-1.498.078l-.317-6.058v-.002c-.041-.727.37-1.355.94-1.682A7.247 7.247 0 0019.25 8.25a7.24 7.24 0 00-3.093-5.94.125.125 0 00-.032-.018l-.01-.001c-.003 0-.014 0-.031.01-.036.022-.084.079-.084.177V7.19a1.75 1.75 0 01-.833 1.49l-2.25 1.385a1.75 1.75 0 01-1.834 0l-2.25-1.384A1.75 1.75 0 018 7.192V2.477c0-.098-.048-.155-.084-.176a.062.062 0 00-.031-.011l-.01.001z"></path></svg>
+                        <!-- <img src="assets/icons/law.svg" /> -->
+                    </button>
+
+                    <button id="close-button" type="button" class="btn btn-primary mr-1 transparent-input">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M9.036 7.976a.75.75 0 00-1.06 1.06L10.939 12l-2.963 2.963a.75.75 0 101.06 1.06L12 13.06l2.963 2.964a.75.75 0 001.061-1.06L13.061 12l2.963-2.964a.75.75 0 10-1.06-1.06L12 10.939 9.036 7.976z"></path><path fill-rule="evenodd" d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1zM2.5 12a9.5 9.5 0 1119 0 9.5 9.5 0 01-19 0z"></path></svg>
+                    </button>
+                    <!-- <div>
+                        <input type="checkbox" id="minimapSwitch" checked>
+                        <label for="minimapSwitch">Minimap</label>
+                    </div>
+
+                    <div>
+                        <input type="checkbox" id="gridViewSwitch">
+                        <label for="gridViewSwitch">Map grid</label>
+                    </div>
+                    
+                    <div>
+                        <input type="checkbox" id="lowResolutionSwitch">
+                        <label for="lowResolutionSwitch">Low resolution</label>
+                    </div> -->
 
                     <div name="chatForm" id="chatForm"><br>
                         <div id="chatChannelBlock" class="form-row mb-2">
-                            <input type="text" class="form-control col-8 mr-1" id="chatChannelInput" name="chatChannelInput" placeholder="channel" value="">
-                            <input type="button" class="btn btn-primary col-3" id="chatChannelButton" name="chatChannelButton" value="SUBS" disabled>
+                            <input type="text text-white" class="form-control col-8 mr-1 transparent-input" id="chatChannelInput" name="chatChannelInput" placeholder="channel" value="">
+                            <input type="button" class="btn btn-outline-primary col-3" id="chatChannelButton" name="chatChannelButton" value="SUBS" disabled>
                             <span id="subscribedChannels"> </span>
                         </div>
                         <div id="chatSendMessageBlock" class="form-row mb-1">
                             <div class="col-8 mr-1">
                                 <div class="form-row">
-                                    <input type="text"  class="form-control col mr-1" id="chatSendChannelInput" name="chatSendChannelInput" placeholder="channel" value="">
-                                    <input type="text"  class="form-control col" id="chatSendMessageInput" name="chatSendMessageInput" placeholder="message" value="">
+                                    <input type="text"  class="form-control col mr-1 transparent-input" id="chatSendChannelInput" name="chatSendChannelInput" placeholder="channel" value="">
+                                    <input type="text"  class="form-control col transparent-input" id="chatSendMessageInput" name="chatSendMessageInput" placeholder="message" value="">
                                 </div>
                             </div>
-                            <input type="button" class="btn btn-primary col-3" id="chatSendButton" name="chatSendButton" value="SEND" disabled>
+                            <input type="button" class="btn btn-outline-primary col-3" id="chatSendButton" name="chatSendButton" value="SEND" disabled>
                             
                         </div>
                         <div id="messageList" style="overflow:auto; max-height:50vh;"></div>
@@ -126,10 +377,139 @@
                     </div>
                 </div>
             </div>
+
+        </div>
+
+        <!-- TOURNAMENTS -->
+        <div id="joinTournament" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
+            <label class="col-sm-4 mb-3 text-center"><h2>Join Tournament</h2></label>
+            
+            <div class="form-row mb-3">
+                <label class="col-sm-4 mr-3 text-right">Username</label>
+                <input type="text" class="form-control col-sm-4" id="usernameJoinTournament" placeholder="username">
+            </div>
+
+            <div class="form-row mb-3">
+                <label class="col-sm-4 mr-3 text-right">Tournament name</label>
+                <select class="selectpicker form-control col-sm-4" id="nameJoinTournament" data-live-search="true"></select>
+                <!-- <input type="text" class="form-control col-sm-4" id="nameJoinTournament" placeholder="smartCUP" value=""> -->
+            </div>
+
+            <input type="button" class="btn btn-primary mb-3" id="joinTournamentButton" value="JOIN">
+        </div>
+        
+        <div id="leaveTournament" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
+            <label class="col-sm-4 mb-3 text-center"><h2>Leave Tournament</h2></label>
+            <div class="form-row mb-3">
+                <label class="col-sm-4 mr-3 text-right">Username</label>
+                <input type="text" class="form-control col-sm-4" id="usernameLeaveTournament" placeholder="username">
+            </div>
+
+            <div class="form-row mb-3">
+                <label class="col-sm-4 mr-3 text-right">Tournament name</label>
+                <select class="selectpicker form-control col-sm-4" id="nameLeaveTournament" data-live-search="true"></select>
+            </div>
+
+            <input type="button" class="btn btn-danger mb-3" id="leaveTournamentButton" name="leaveTournamentButton" value="LEAVE">
+        </div>
+
+        <div id="listTournament" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
+            <div class="my-3">
+                <label class="col-sm-4 mb-3 text-center"><h2>Tournament List</h2></label>
+            <table id="listTournamentTable" class="table text-white"></table>
+            </div>
+        </div>
+
+        <div id="globalLeaderboard" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
+            <div class="my-3">
+                <label class="col-sm-4 mb-3 text-center"><h2>Global Leaderboard</h2></label>
+                <table id="globalRankingTable" class="table text-white"></table>
+            </div>
+        </div>
+
+        <!-- STATISTICS -->
+        <div id="yourStats" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
+            <label class="mb-3 text-center"><h2>Your Statistics</h2></label>
+
+            <div class="row">
+                <div class="col mr-3">
+                    <h1>Global Stats</h1>
+                    <table id="yourGlobalStatsTable" class="table bg-dark table-hover text-white"></table>
+                </div>
+                <div class="col ml-3">
+                    <h1>Match history</h1>
+                    <table id="yourHistoryTable" class="table bg-dark table-hover text-white"></table>
+                </div>
+            </div>
+        </div>
+
+        <div id="searchPlayer" class="container p-3 my-3 bg-dark text-white tournament" style="display:none">
+            <label class="mb-3 text-center"><h2>Search player</h2></label>
+            <div class="form-row mb-3">
+                <label class="col-sm-4 text-right"></label>
+                <input type="text" class="form-control col-sm-3" id="usernameSearchPlayer" placeholder="username">
+                <input type="button" class="btn btn-danger col-sm-1 ml-1" id="searchPlayerButton" name="searchPlayerButton" value="SEARCH">
+            </div>
+
+            <!-- <table id="searchPlayerGlobalStatsTable" class="col-6 table text-white"></table> -->
+            <div class="row">
+                <div class="col mr-3">
+                    <h1 style="display:none">Global Stats</h1>
+                    <div class="spinner-border text-primary" style="display:none" id="searchPlayerGlobalStatsSpinner" role="status"> 
+                        <span class="sr-only">Loading...</span> 
+                    </div> 
+                    <table id="searchPlayerGlobalStatsTable" class="table bg-dark table-hover text-white"></table>
+                </div>
+                <div class="col ml-3">
+                    <h1 style="display:none">Match history</h1>
+                    <div class="spinner-border text-primary" style="display:none" id="searchPlayerHistorySpinner" role="status"> 
+                        <span class="sr-only">Loading...</span> 
+                    </div> 
+                    <table id="searchPlayerHistoryTable" class="table bg-dark table-hover text-white"></table>
+                </div>
+            </div>
+        </div>
+
+
+
+    <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+        <!-- Position it -->
+        <div style="position: absolute; top: 0; right: 0;">
+        
+            <!-- Then put toasts within -->
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="mr-auto">Bootstrap</strong>
+                <small class="text-muted">just now</small>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body">
+                See? Just like this.
+            </div>
+            </div>
+        
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="mr-auto">Bootstrap</strong>
+                <small class="text-muted">2 seconds ago</small>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body">
+                Heads up, toasts will stack automatically
+            </div>
+            </div>
+        </div>
         </div>
 
     <footer class="footer">
-        <p>Web App Version: v0.6.0-proto</p>
+        <p>Web App Version: v1.0-beta</p>
     </footer>
+
+    <div id="toastHook" aria-live="polite" aria-atomic="true" style="position: absolute; top: 0; right: 0;"></div>
+
     </body>
 </html>
