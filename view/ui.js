@@ -139,7 +139,7 @@ class Ui {
             $(this).off('hidden.bs.modal');
 
         });
-        $('#surveyModal').modal('toggle');
+        // $('#surveyModal').modal('toggle');
     }
 
 
@@ -179,9 +179,9 @@ class Ui {
             let msg = evt.detail.message;
             this._gameEnded(msg);
             // this._showSurvey();
-            window.setTimeout(function(){ 
-                this._showSurvey();
-            }.bind(this), 2000);
+            // window.setTimeout(function(){ 
+            //     this._showSurvey();
+            // }.bind(this), 2000);
             
             // open modal results
             // $('#resultsModal').modal('toggle');
