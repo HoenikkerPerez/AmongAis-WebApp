@@ -100,6 +100,11 @@ class HudUi {
     };
 
     meeting_countdown(times, id){
+        if(model.meetingsQueue.length<=0){
+            this._cleanAllMeetings();
+            return;
+        }
+        
         if (times>5) {
             let cnt_div = document.getElementById("countdown-" + id);
             cnt_div.textContent = times;
@@ -120,12 +125,19 @@ class HudUi {
                 let meet_div_id = document.getElementById("emergency-meeting-"+id);
                 meet_div_id.style.display="none";
                 if(model.meetingsQueue.length<=0){
-                    let meet_div = document.getElementById("emergency-meeting");
-                    meet_div.innerText="";
-                    meet_div.style.display="none";
+                    // let meet_div = document.getElementById("emergency-meeting");
+                    // meet_div.innerText="";
+                    // meet_div.style.display="none";
+                    this._cleanAllMeetings();
                 }
-            }, 5000);
+            }.bind(this), 5000);
         }
+    }
+
+    _cleanAllMeetings(){
+        let meet_div = document.getElementById("emergency-meeting");
+        meet_div.innerText="";
+        meet_div.style.display="none";
     }
     
     renderHud() {
@@ -337,40 +349,40 @@ class HudUi {
                 case "system":
                     box.className = "system-message"
                      // server chat -> [time from start] AmongAis message
-                    if (timestr == undefined)
-                        box.innerHTML = "[lobby] " + msgstr;
+                    if (timestr == "")
+                        box.innerHTML = msgstr;
                     else 
                         box.innerHTML = "[" + timestr +  "] " + msgstr;
                   break;
                   
                 case "me":
                     box.className = "my-message"
-                    if (timestr == undefined)
-                        box.innerHTML = "[lobby] " + msgstr;
+                    if (timestr == "")
+                        box.innerHTML = msgstr;
                     else 
                         box.innerHTML = "[" + timestr +  "] " + msgstr;
                         break;
 
                 case "teamA":
                     box.className = "teama-message"
-                    if (timestr == undefined)
-                        box.innerHTML = "[lobby] " + usrstr + ": "+ msgstr;
+                    if (timestr == "")
+                        box.innerHTML = usrstr + ": "+ msgstr;
                     else 
                         box.innerHTML = "[" + timestr +  "] "  + usrstr + ": "+ msgstr;
                     break;
 
                 case "teamB":
                     box.className = "teamb-message"
-                    if (timestr == undefined)
-                        box.innerHTML = "[lobby] " + usrstr + ": "+ msgstr;
+                    if (timestr == "")
+                        box.innerHTML = usrstr + ": "+ msgstr;
                     else 
                         box.innerHTML = "[" + timestr +  "] "  + usrstr + ": "+ msgstr;
                     break;
                     
                 default:
                     box.className = "others-message"
-                    if (timestr == undefined)
-                        box.innerHTML = "[lobby] " + "<" + chstr + "> " + usrstr + ": "+ msgstr;
+                    if (timestr == "")
+                        box.innerHTML = "<" + chstr + "> " + usrstr + ": "+ msgstr;
                     else 
                         box.innerHTML = "[" + timestr +  "] "  + "<" + chstr + "> " + usrstr + ": "+ msgstr;
                     break;

@@ -375,6 +375,8 @@ var model = {
         let time = undefined;
         if (this._startGameTime != undefined)
             time = this._sec2time((new Date() - this._startGameTime)/1000);
+        else
+            time="";
         this.chat.messages.unshift({time: time,
                                  channel: channel,
                                  user: user, 
